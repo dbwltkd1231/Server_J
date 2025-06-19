@@ -1,12 +1,11 @@
 #pragma once
 #include <fstream>
 #include <../library/nlohmann/json.hpp> 
+#include "../utility/Debug.h"
 
-#include "Debug.h"
-
-namespace Auth
+namespace Utility
 {
-	static void CreateSettingFiles()
+	static void CreateAuthServerSettingFiles()
 	{
 		nlohmann::json config;
 

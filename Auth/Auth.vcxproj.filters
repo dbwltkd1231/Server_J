@@ -113,8 +113,8 @@
     <ClInclude Include="include\auth\BasicData.h">
       <Filter>헤더 파일\Auth</Filter>
     </ClInclude>
-    <ClInclude Include="include\auth\ConfigCreator.h">
-      <Filter>헤더 파일\Auth</Filter>
+    <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
