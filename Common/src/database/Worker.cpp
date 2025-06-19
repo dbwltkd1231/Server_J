@@ -10,9 +10,13 @@ namespace Database
 		_henv = SQL_NULL_HENV;
 		_hdbc = SQL_NULL_HDBC;
 		_hstmt = SQL_NULL_HSTMT;
+
+		_isOn = false;
 	}
 	Worker::~Worker()
 	{
+		_isOn = false;
+
 		if (_hstmt != SQL_NULL_HSTMT)
 			SQLFreeHandle(SQL_HANDLE_STMT, _hstmt);
 		if (_hdbc != SQL_NULL_HDBC)
@@ -124,16 +128,18 @@ namespace Database
 
 		// SQL 문 실행
 		SQLWCHAR* dataQuery = (SQLWCHAR*)query.c_str();
-		SQLRETURN retcode = SQLExecDirectW(_hstmt, dataQuery, SQL_NTS);
+		SQLRETURN dataRet = SQLExecDirectW(_hstmt, dataQuery, SQL_NTS);
 
 
-		if (retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO) 
+		if (dataRet == SQL_SUCCESS || dataRet == SQL_SUCCESS_WITH_INFO)
 		{
-			std::cout << "저장 프로시저 실행 성공: " << procedureName << std::endl;
+			std::cout << "프로시저 실행 성공: " << procedureName << std::endl;
+
+
 		}
 		else 
 		{
-			std::cerr << "저장 프로시저 실행 실패: " << procedureName << std::endl;
+			std::cerr << "프로시저 실행 실패: " << procedureName << std::endl;
 		}
 
 		SQLFreeHandle(SQL_HANDLE_STMT, _hstmt);

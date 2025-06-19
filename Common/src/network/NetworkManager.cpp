@@ -244,7 +244,7 @@ namespace Network
 		client->ReceiveReady(newOverlappedPtr);
 	}
 
-	void NetworkManager::SendRequest(ULONG_PTR targetSocket, uint32_t contentType, int bodySize, std::string stringBuffer)
+	void NetworkManager::SendRequest(ULONG_PTR& targetSocket, uint32_t& contentType, std::string& stringBuffer, int& bodySize)
 	{
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())

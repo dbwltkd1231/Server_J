@@ -17,10 +17,10 @@ namespace Auth
 		void ConnectDatabase(std::string databaseName, std::string sqlServerAddress);
 
 	public:
-		void ReadMessage(ULONG_PTR targetSocket, uint32_t contentsType, std::string stringValue);
+		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue);
 
 	private:
-		Network::NetworkManager networkManager;
+		Network::NetworkManager _networkManager;
 
 	private:
 		SQLHENV _henv;
@@ -32,8 +32,10 @@ namespace Auth
 		Database::Worker _insertWorker;
 		Database::Worker _deleteWorker;
 		Database::Worker _updateWorker;
+
+
 	private:
-		void LoginRequest(ULONG_PTR targetSocket, std::string userId);
+		void DatabaseCallback(ULONG_PTR& targetSocket, uint32_t& contentsType, SQLHSTMT& hstmt);
 
 	};
 }

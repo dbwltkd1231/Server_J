@@ -88,7 +88,7 @@ namespace Network
 	}
 
 
-	void Client::Send(CustomOverlapped* overlappedPtr, const MessageHeader header, std::string& stringBuffer, int bodySize)
+	void Client::Send(CustomOverlapped* overlappedPtr, const MessageHeader header, std::string& stringBuffer, int& bodySize)
 	{
 		if (ClientSocketPtr == nullptr || *ClientSocketPtr == INVALID_SOCKET)
 		{

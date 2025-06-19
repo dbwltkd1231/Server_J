@@ -41,7 +41,7 @@ namespace Network
 		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectCallback;
 
 	public:
-		std::function<void(ULONG_PTR, uint32_t, std::string)> ReadMessage;
+		std::function<void(ULONG_PTR&, uint32_t, std::string)> ReadMessage;
 
 	public:
 		void Construct(); //IOCP handle 생성, 컨테이너 생성, 송수신콜백연결, Session 생성 등 초기세팅목적.
@@ -56,8 +56,8 @@ namespace Network
 	public:
 		void PrepareSocket();// 준비된 소켓이 0개일때 소켓을 생성하는 코드.
 
-	private:
-		void SendRequest(ULONG_PTR targetSocket, uint32_t contentType, int bodySize, std::string stringBuffer); // auth,lobby logic에서 메세지 송신시 콜백되는 함수.
+	public:
+		void SendRequest(ULONG_PTR& targetSocket, uint32_t& contentType, std::string& stringBuffer, int& bodySize); // auth,lobby logic에서 메세지 송신시 콜백되는 함수.
 
 	private:
 		void UnexpectedDisconnect(ULONG_PTR targetSocket, int errorCode);//비정상접속종료 처리.

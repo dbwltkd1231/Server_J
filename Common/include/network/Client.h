@@ -20,7 +20,7 @@ namespace Network
 	public:
 		bool AcceptEx(SOCKET& listenSocket, LPFN_ACCEPTEX& acceptExPtr, CustomOverlapped* overlappedPtr);
 		void ReceiveReady(CustomOverlapped* overlappedPtr);
-		void Send(CustomOverlapped* overlappedPtr, const MessageHeader header, std::string& stringBuffer, int bodySize);
+		void Send(CustomOverlapped* overlappedPtr, const MessageHeader header, std::string& stringBuffer, int& bodySize);
 
 	public:
 		std::shared_ptr<SOCKET> ClientSocketPtr;

@@ -156,6 +156,9 @@
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
     <ClInclude Include="include\auth\AuthManager.h" />
+    <ClInclude Include="include\auth\BasicData.h" />
+    <ClInclude Include="include\auth\DatabaseProtocol.h" />
+    <ClInclude Include="include\auth\NetworkProtocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

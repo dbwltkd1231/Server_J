@@ -7,7 +7,7 @@ namespace Database
 	struct Task
 	{
 		ULONG_PTR Socket;
-		int MessageType;
+		uint32_t MessageType;
 		std::string DatabaseName;
 		std::string ProcedureName;
 		std::string Parameters;

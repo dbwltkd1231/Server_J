@@ -107,5 +107,14 @@
     <ClInclude Include="..\Common\include\database\Worker.h">
       <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
+    <ClInclude Include="include\auth\NetworkProtocol.h">
+      <Filter>헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="include\auth\DatabaseProtocol.h">
+      <Filter>헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="include\auth\BasicData.h">
+      <Filter>헤더 파일\Auth</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
