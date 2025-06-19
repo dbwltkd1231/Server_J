@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b10b6882-2f65-4be5-94cc-d2111ad8a845}</ProjectGuid>
-    <RootNamespace>Auth</RootNamespace>
+    <ProjectGuid>{d3dd96d3-75dd-494c-a393-4c4fa1dee7c0}</ProjectGuid>
+    <RootNamespace>Client</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,10 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Common\library\oneTBB\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Common\library\oneTBB\lib\intel64\vc14;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -109,13 +105,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include\auth;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\include\database;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(ProjectDir)src\auth;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,7 +136,6 @@
     <ClCompile Include="..\Common\src\network\NetworkManager.cpp" />
     <ClCompile Include="..\Common\src\network\Session.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\auth\AuthManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\include\database\LOGINSERVER_PROTOCOL_generated.h" />
@@ -154,11 +148,6 @@
     <ClInclude Include="..\Common\include\utility\ConstValue.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
-    <ClInclude Include="include\auth\AuthManager.h" />
-    <ClInclude Include="include\auth\BasicData.h" />
-    <ClInclude Include="include\auth\ConfigCreator.h" />
-    <ClInclude Include="include\auth\DatabaseProtocol.h" />
-    <ClInclude Include="include\auth\NetworkProtocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

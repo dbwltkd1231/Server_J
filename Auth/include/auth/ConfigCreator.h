@@ -4,7 +4,7 @@
 
 #include "Debug.h"
 
-namespace Utility
+namespace Auth
 {
 	static void CreateSettingFiles()
 	{
@@ -25,16 +25,8 @@ namespace Utility
 
 
 
-
-
-
-
 		std::ofstream file("config.json");
 		file << config.dump(4);  // 4는 들여쓰기 수준
-
-
-
-
 		Utility::Log("Utility", "JsonCreator", "File Create Success !");
 	}
 

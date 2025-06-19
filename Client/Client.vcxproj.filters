@@ -14,37 +14,31 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="공용">
-      <UniqueIdentifier>{8ed97564-da25-4b01-b79b-c9b7e33f471e}</UniqueIdentifier>
+      <UniqueIdentifier>{29f17ab3-2e89-44fe-91f9-6d6adcbfe2bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="공용\소스 파일">
-      <UniqueIdentifier>{2f61ccb0-bc3f-4fc3-ae23-ed0d9e5aeb7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="공용\헤더 파일">
-      <UniqueIdentifier>{fc16cc63-0cd3-4b4f-8400-e4e9f218c764}</UniqueIdentifier>
+      <UniqueIdentifier>{e14f44ed-3f98-4bb4-8448-246f53678466}</UniqueIdentifier>
     </Filter>
     <Filter Include="공용\소스 파일\Network">
-      <UniqueIdentifier>{ee124415-20f0-42b6-beba-3e96bc26ba61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="공용\헤더 파일\Network">
-      <UniqueIdentifier>{e94bca03-ffe5-462f-9a13-ac95fd1af665}</UniqueIdentifier>
+      <UniqueIdentifier>{71acafda-a927-44ce-ba66-c03f68c264c2}</UniqueIdentifier>
     </Filter>
     <Filter Include="공용\소스 파일\Utility">
-      <UniqueIdentifier>{96761214-bdb2-46af-bbf0-ca2a4ecdfa07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="공용\헤더 파일\Utility">
-      <UniqueIdentifier>{20f2b394-9efb-48d2-95a4-e180354b347a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="헤더 파일\Auth">
-      <UniqueIdentifier>{95b1e9e9-a1c2-4064-84ec-5ea3366e3a0d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Auth">
-      <UniqueIdentifier>{a3766bbd-a9cb-4051-8e85-4613368bc5f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="공용\헤더 파일\Database">
-      <UniqueIdentifier>{c47682ea-befc-4614-9227-074faef2c551}</UniqueIdentifier>
+      <UniqueIdentifier>{e6b6df2b-bc63-455e-8bcc-392319739561}</UniqueIdentifier>
     </Filter>
     <Filter Include="공용\소스 파일\Database">
-      <UniqueIdentifier>{194fb3e1-4be8-4113-a49e-0205ae8d65b8}</UniqueIdentifier>
+      <UniqueIdentifier>{5ce9e4bb-6626-4fc2-af3b-33706d531116}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일">
+      <UniqueIdentifier>{0110f97a-d7f2-4638-9550-b6150f392a6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Network">
+      <UniqueIdentifier>{b745d24a-58f8-4c52-842f-faa226b0d91f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Utility">
+      <UniqueIdentifier>{cdfce263-fbba-41f4-aa3d-a5c33eb35d02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Database">
+      <UniqueIdentifier>{c9a85ccf-4f13-4bbb-96a1-19a6ed841145}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,14 +54,11 @@
     <ClCompile Include="..\Common\src\network\Session.cpp">
       <Filter>공용\소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\auth\AuthManager.cpp">
-      <Filter>소스 파일\Auth</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\Common\src\database\Worker.cpp">
       <Filter>공용\소스 파일\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>공용\소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,9 +83,6 @@
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\auth\AuthManager.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\database\LOGINSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
@@ -103,18 +91,6 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\database\Worker.h">
       <Filter>공용\헤더 파일\Database</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\NetworkProtocol.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\DatabaseProtocol.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\BasicData.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\ConfigCreator.h">
-      <Filter>헤더 파일\Auth</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

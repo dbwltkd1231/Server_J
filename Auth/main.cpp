@@ -3,7 +3,7 @@
 //#define SettingMode  
 
 #include "../Auth/AuthManager.h"
-#include "../Common/include/utility/ConfigCreator.h"
+#include "../Auth/ConfigCreator.h"
 #include "../Common/include/utility/ConstValue.h"
 
 int main()
@@ -12,7 +12,7 @@ int main()
 	Utility::CreateSettingFiles();
 #else
 
-	auto config = Utility::LoadSettingFiles();
+	auto config = Auth::LoadSettingFiles();
 	if (config == NULL)
 	{
 		return 0;
