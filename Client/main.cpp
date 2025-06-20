@@ -36,6 +36,7 @@ int main()
 	clientManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort,
 		Client::ConstValue::GetInstance().ClientCount, Client::ConstValue::GetInstance().ThreadCount);
 		
+	clientManager.Process(Client::ConstValue::GetInstance().ThreadCount);
 
 	while (true)
 	{

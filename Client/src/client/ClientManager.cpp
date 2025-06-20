@@ -34,6 +34,7 @@ namespace Client
 		Utility::Log("Client", "ClientManager", "OverlappedQueue Ready");
 
 		WSADATA wsaData;
+		_iocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
 		// Winsock ÃÊ±âÈ­
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -93,9 +94,66 @@ namespace Client
 			overlappedPtr->Clear();
 			client->ConnectEx(connectEx, serverAddr, *overlappedPtr);
 
-			_clientMap.insert({ reinterpret_cast<ULONG_PTR>(socketSharedPtr.get()), client });
+			auto ulongPtr = (ULONG_PTR)socketSharedPtr.get();
+			CreateIoCompletionPort((HANDLE)*socketSharedPtr, _iocpHandle, ulongPtr, threadCount);
+			_clientMap.insert({ ulongPtr, client });
 		}
 
+		_connected = true;
 		Utility::Log("Client", "ClientManager", "Client Count: " + std::to_string(_clientMap.size()) + " Initialize Success");
+	}
+
+	void ClientManager::Process(int threadCount)
+	{
+		if (!_connected)
+			return;
+
+		for (int i = 0;i < threadCount; ++i)
+		{
+			std::thread sessionThread(&ClientManager::Work, this);
+			sessionThread.detach();
+		}
+	}
+
+	void ClientManager::Work()
+	{
+		DWORD bytesTransferred;
+		ULONG_PTR completionKey;
+		Network::CustomOverlapped* oerlapped = nullptr;
+
+		while (_connected)
+		{
+			bytesTransferred = 0;
+			completionKey = 0;
+			oerlapped = nullptr;
+
+			bool result = GetQueuedCompletionStatus(_iocpHandle, &bytesTransferred, &completionKey, reinterpret_cast<LPOVERLAPPED*>(&oerlapped), INFINITE);
+			if (result)
+			{
+				auto targetOverlapped = static_cast<Network::CustomOverlapped*>(oerlapped);
+
+				auto finder = _clientMap.find(completionKey);
+				if (finder == _clientMap.end())
+				{
+					Utility::LogError("Client", "ClientManager", "Client Find Fail");
+					
+					continue;
+				}
+
+				auto client = finder->second;
+
+				switch (targetOverlapped->GetOperation())
+				{
+					case Network::OperationType::OP_ACCEPT:
+					{
+						Utility::Log("Client", "ClientManager", "Client Connect !!");
+						targetOverlapped->Clear();
+						_overlappedQueue.push(std::move(targetOverlapped));
+						break;
+					}
+				}
+			}
+
+		}
 	}
 }

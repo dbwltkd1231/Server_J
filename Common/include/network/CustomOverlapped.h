@@ -39,6 +39,8 @@ namespace Network
 
     public:
         WSABUF Wsabuf[2];
+
+    private:
         std::shared_ptr<SOCKET> SocketPtr;
         OperationType Operation;
 

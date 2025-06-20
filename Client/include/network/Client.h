@@ -13,7 +13,6 @@ namespace Network
 		~Client();
 
 	private:
-		HANDLE _iocpHandle;
 		std::shared_ptr<SOCKET> ClientSocketPtr;
 
 	public:

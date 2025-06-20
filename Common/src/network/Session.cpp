@@ -78,17 +78,17 @@ namespace Network
 			}
 			Utility::Log("Network", "Session", "Message Recieve Check !");
 
-			switch (overlapped->Operation)
+			switch (overlapped->GetOperation())
 			{
 			case OperationType::OP_ACCEPT:
 			{
-				if (overlapped->SocketPtr == nullptr)
+				if (overlapped->GetSocket() == nullptr)
 				{
 					Utility::LogError("Network", "Session", "Socket is null !");
 					continue;
 				}
 
-				_acceptCallback((ULONG_PTR)overlapped->SocketPtr.get());
+				_acceptCallback((ULONG_PTR)overlapped->GetSocket().get());
 				break;
 			}
 			case OperationType::OP_RECV:
