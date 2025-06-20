@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace Utility
 {
@@ -12,6 +13,7 @@ namespace Utility
         }
 
         // 설정값들
+        std::string IP = "";
         int ServerPort = 0;
         int BuferSizeMax = 0;
         int SessionCountMax = 0;

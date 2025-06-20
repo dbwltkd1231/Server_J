@@ -69,6 +69,7 @@ namespace Auth
 		}
 	}
 
+	//TODO 콜백연결안되어있음.
 	void AuthManager::DatabaseCallback(ULONG_PTR& targetSocket, uint32_t& contentsType, SQLHSTMT& hstmt)
 	{
 		std::shared_ptr<Auth::BasicData> result = Auth::ReadReturnData(targetSocket, contentsType, hstmt);

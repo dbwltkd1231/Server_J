@@ -31,10 +31,31 @@
     <Filter Include="헤더 파일\Client">
       <UniqueIdentifier>{68439987-ea65-428f-9ad8-f93bd07516e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Network">
+      <UniqueIdentifier>{2a867c63-9d7a-4bef-8551-2f1cdb5d9b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Utility">
+      <UniqueIdentifier>{ad7cf0e9-fbcf-41d1-a8c6-f8e9fa046c4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Client">
+      <UniqueIdentifier>{05306d0a-0e44-4e36-a8e4-3b9fd235d8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{69815876-ee6a-4ee4-8eaa-5a6520fdcb00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\CustomOverlapped.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\Client.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client\ClientManager.cpp">
+      <Filter>소스 파일\Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -47,8 +68,20 @@
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\ConstValue.h">
+    <ClInclude Include="include\utility\ConstValue.h">
+      <Filter>헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\client\ClientManager.h">
       <Filter>헤더 파일\Client</Filter>
+    </ClInclude>
+    <ClInclude Include="include\network\CustomOverlapped.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\network\Client.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\ConstValue.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

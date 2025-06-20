@@ -13,8 +13,6 @@ namespace Client
         }
 
         // 설정값들
-        std::string IP = "";
-        int Port = 0;
         std::string TestUID = "";
         int ClientCount = 0;
         int ThreadCount = 0;

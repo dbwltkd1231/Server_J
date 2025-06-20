@@ -33,8 +33,12 @@ namespace Utility
 	void CreateClientSettingFiles()
 	{
 		nlohmann::json config;
-		config["CLIENT"]["IP"] = "127.0.0.1";
-		config["CLIENT"]["PORT"] = 9090;
+
+		config["NETWORK"]["IP"] = "127.0.0.1";
+		config["NETWORK"]["PORT"] = 9090;
+		config["NETWORK"]["BUFFER_SIZE_MAX"] = 1024;
+		config["NETWORK"]["OVERLAPPED_COUNT_MAX"] = 100;
+
 		config["CLIENT"]["CLIENT_TEST_UID"] = "TESTER";
 		config["CLIENT"]["TEST_CLIENT_COUNT"] = 10;
 		config["CLIENT"]["TEST_THREAD_COUNT"] = 5;
