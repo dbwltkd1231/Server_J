@@ -19,78 +19,36 @@
     <Filter Include="공용\소스 파일">
       <UniqueIdentifier>{e14f44ed-3f98-4bb4-8448-246f53678466}</UniqueIdentifier>
     </Filter>
-    <Filter Include="공용\소스 파일\Network">
-      <UniqueIdentifier>{71acafda-a927-44ce-ba66-c03f68c264c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="공용\소스 파일\Utility">
       <UniqueIdentifier>{e6b6df2b-bc63-455e-8bcc-392319739561}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="공용\소스 파일\Database">
-      <UniqueIdentifier>{5ce9e4bb-6626-4fc2-af3b-33706d531116}</UniqueIdentifier>
     </Filter>
     <Filter Include="공용\헤더 파일">
       <UniqueIdentifier>{0110f97a-d7f2-4638-9550-b6150f392a6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="공용\헤더 파일\Network">
-      <UniqueIdentifier>{b745d24a-58f8-4c52-842f-faa226b0d91f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="공용\헤더 파일\Utility">
       <UniqueIdentifier>{cdfce263-fbba-41f4-aa3d-a5c33eb35d02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="공용\헤더 파일\Database">
-      <UniqueIdentifier>{c9a85ccf-4f13-4bbb-96a1-19a6ed841145}</UniqueIdentifier>
+    <Filter Include="헤더 파일\Client">
+      <UniqueIdentifier>{68439987-ea65-428f-9ad8-f93bd07516e8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\src\network\Client.cpp">
-      <Filter>공용\소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp">
-      <Filter>공용\소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\src\network\NetworkManager.cpp">
-      <Filter>공용\소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\src\network\Session.cpp">
-      <Filter>공용\소스 파일\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Common\src\database\Worker.cpp">
-      <Filter>공용\소스 파일\Database</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>공용\소스 파일</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\include\network\Client.h">
-      <Filter>공용\헤더 파일\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\network\CustomOverlapped.h">
-      <Filter>공용\헤더 파일\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\network\NetworkManager.h">
-      <Filter>공용\헤더 파일\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\network\Session.h">
-      <Filter>공용\헤더 파일\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\utility\ConstValue.h">
-      <Filter>공용\헤더 파일\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\utility\Debug.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\database\LOGINSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Database</Filter>
+    <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\database\Task.h">
-      <Filter>공용\헤더 파일\Database</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\database\Worker.h">
-      <Filter>공용\헤더 파일\Database</Filter>
+    <ClInclude Include="include\ConstValue.h">
+      <Filter>헤더 파일\Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

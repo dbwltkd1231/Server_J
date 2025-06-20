@@ -1,0 +1,9 @@
+{
+    "CLIENT": {
+        "CLIENT_TEST_UID": "TESTER",
+        "IP": "127.0.0.1",
+        "PORT": 9090,
+        "TEST_CLIENT_COUNT": 10,
+        "TEST_THREAD_COUNT": 5
+    }
+}

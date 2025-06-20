@@ -24,11 +24,11 @@ namespace Auth
 	void AuthManager::Initialize()
 	{
 		_networkManager.Construct();
-		for (int i = 0;i < Utility::CLIENT_ACCEPTREADY_COUNT_MAX;++i)
+		for (int i = 0;i < Utility::ConstValue::GetInstance().ConnectReadyClientCountMax;++i)
 		{
 			_networkManager.ActivateClient();
 		}
-		std::string clientLog = "Client : " + std::to_string(Utility::CLIENT_ACCEPTREADY_COUNT_MAX) + " Activate Success !!";
+		std::string clientLog = "Client : " + std::to_string(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Auth", "AuthManager", clientLog);
 
 		_networkManager.ReadMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
@@ -81,7 +81,7 @@ namespace Auth
 			case protocol::MessageContent_RESPONSE_CONNECT:
 			{
 				auto requestConnectData = std::static_pointer_cast<Auth::RequestConnectData>(result);
-				CreateResponseConnect(requestConnectData->IsSuccess, "TOKEN", Utility::SERVER_PORT, contentsType, stringBuffer, bodySize);
+				CreateResponseConnect(requestConnectData->IsSuccess, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:

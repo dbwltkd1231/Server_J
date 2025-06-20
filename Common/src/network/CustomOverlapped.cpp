@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CustomOverlapped.h"
-#include "ConstValue.h"
+#include "../utility/ConstValue.h"
 
 namespace Network
 {
@@ -10,8 +10,8 @@ namespace Network
         Wsabuf[0].buf = new char[sizeof(MessageHeader)];
         Wsabuf[0].len = sizeof(MessageHeader);
 
-        Wsabuf[1].buf = new char[Utility::BUFFER_SIZE_MAX];
-        Wsabuf[1].len = Utility::BUFFER_SIZE_MAX;
+        Wsabuf[1].buf = new char[Utility::ConstValue::GetInstance().BuferSizeMax];
+        Wsabuf[1].len = Utility::ConstValue::GetInstance().BuferSizeMax;
 
         SocketPtr = nullptr;
         Operation = OperationType::OP_DEFAULT;
@@ -89,7 +89,7 @@ namespace Network
     {
         memset(Wsabuf[1].buf, 0, bodyLen);
 
-        if (bodyLen > Utility::BUFFER_SIZE_MAX)
+        if (bodyLen > Utility::ConstValue::GetInstance().BuferSizeMax)
         {
             Utility::Log("Network", "CustomOverlapped", " 메세지의 body가 BUFFER_SIZE보다 큼!!");
             return;
@@ -110,7 +110,7 @@ namespace Network
         memset(Wsabuf[0].buf, 0, sizeof(MessageHeader));
         Wsabuf[0].len = sizeof(MessageHeader);
         memset(Wsabuf[1].buf, 0, Wsabuf[1].len);
-        Wsabuf[1].len = Utility::BUFFER_SIZE_MAX;
+        Wsabuf[1].len = Utility::ConstValue::GetInstance().BuferSizeMax;
 
         Operation = OperationType::OP_DEFAULT;
         SocketPtr = nullptr;

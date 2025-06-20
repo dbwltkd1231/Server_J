@@ -5,7 +5,7 @@
 
 namespace Utility
 {
-	static void CreateAuthServerSettingFiles()
+	void CreateAuthServerSettingFiles()
 	{
 		nlohmann::json config;
 
@@ -29,7 +29,22 @@ namespace Utility
 		Utility::Log("Utility", "JsonCreator", "File Create Success !");
 	}
 
-	static nlohmann::json LoadSettingFiles()
+
+	void CreateClientSettingFiles()
+	{
+		nlohmann::json config;
+		config["CLIENT"]["IP"] = "127.0.0.1";
+		config["CLIENT"]["PORT"] = 9090;
+		config["CLIENT"]["CLIENT_TEST_UID"] = "TESTER";
+		config["CLIENT"]["TEST_CLIENT_COUNT"] = 10;
+		config["CLIENT"]["TEST_THREAD_COUNT"] = 5;
+
+		std::ofstream file("config.json");
+		file << config.dump(4);
+		Utility::Log("Utility", "JsonCreator", "File Create Success !");
+	}
+
+	nlohmann::json LoadSettingFiles()
 	{
 		std::ifstream file("config.json");  // JSON 파일 열기
 		if (!file)

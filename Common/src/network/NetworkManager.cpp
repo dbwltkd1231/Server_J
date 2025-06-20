@@ -2,7 +2,7 @@
 
 #include "NetworkManager.h"
 #include "Debug.h"
-#include "ConstValue.h"
+#include "../utility/ConstValue.h"
 
 
 namespace Network
@@ -38,7 +38,7 @@ namespace Network
 		sockaddr_in serverAddr{};
 		serverAddr.sin_family = AF_INET;
 		serverAddr.sin_addr.s_addr = INADDR_ANY;
-		serverAddr.sin_port = htons(Utility::SERVER_PORT);
+		serverAddr.sin_port = htons(Utility::ConstValue::GetInstance().ServerPort);
 
 		if (bind(_listenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
 		{
@@ -60,7 +60,7 @@ namespace Network
 
 		Utility::Log("Network", "IOCP", "listen success");
 
-		_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, Utility::SESSION_COUNT_MAX);
+		_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, Utility::ConstValue::GetInstance().SessionCountMax);
 		if (_handle == NULL)
 		{
 			Utility::LogError("Network", "IOCP", "CreateIoCompletionPort failed");
@@ -70,7 +70,7 @@ namespace Network
 		}
 		Utility::Log("Network", "IOCP", "IOCP Handle Ready");
 
-		if (!CreateIoCompletionPort((HANDLE)_listenSocket, _handle, 0, Utility::SESSION_COUNT_MAX))
+		if (!CreateIoCompletionPort((HANDLE)_listenSocket, _handle, 0, Utility::ConstValue::GetInstance().SessionCountMax))
 		{
 			Utility::LogError("Network", "IOCP", "CreateIoCompletionPort failed");
 			closesocket(_listenSocket);
@@ -88,9 +88,9 @@ namespace Network
 		}
 
 		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<CustomOverlapped*>>();
-		_overlappedQueue->Construct(Utility::OVERLAPPED_COUNT_MAX);
+		_overlappedQueue->Construct(Utility::ConstValue::GetInstance().OverlappedCountMax);
 
-		for (int i = 0;i < Utility::OVERLAPPED_COUNT_MAX; ++i)
+		for (int i = 0;i < Utility::ConstValue::GetInstance().OverlappedCountMax; ++i)
 		{
 			auto overlapped = new CustomOverlapped();
 			_overlappedQueue->push(std::move(overlapped));
@@ -128,14 +128,14 @@ namespace Network
 				}
 			);
 
-		for (int i = 0;i < Utility::SESSION_COUNT_MAX;++i)
+		for (int i = 0;i < Utility::ConstValue::GetInstance().SessionCountMax;++i)
 		{
 			auto session = std::make_shared<Session>();
 			session->Initialize(_acceptCallback, _receiveCallback, _disconnectCallback);
 			session->Activate(_handle);
 			_sessionSet.insert(std::move(session));
 		}
-		std::string sessionLog = "Session : " + std::to_string(Utility::SESSION_COUNT_MAX) + " Activate Success !!";
+		std::string sessionLog = "Session : " + std::to_string(Utility::ConstValue::GetInstance().SessionCountMax) + " Activate Success !!";
 		Utility::Log("Network", "NetworkManager", sessionLog);
 
 
@@ -144,22 +144,22 @@ namespace Network
 
 	void NetworkManager::PrepareSocket()
 	{
-		for (int index = 0;index < Utility::SOCKET_ONETIME_PREPARE_COUNT; ++index)
+		for (int index = 0;index < Utility::ConstValue::GetInstance().PreparedSocketCountMax; ++index)
 		{
 			SOCKET newSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 			auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
-			CreateIoCompletionPort((HANDLE)newSocket, _handle, (ULONG_PTR)socketSharedPtr.get(), Utility::SESSION_COUNT_MAX);
+			CreateIoCompletionPort((HANDLE)newSocket, _handle, (ULONG_PTR)socketSharedPtr.get(), Utility::ConstValue::GetInstance().SessionCountMax);
 
 			_preparedSocketQueue.push(socketSharedPtr);
 		}
 
-		std::string log = "SOCKET READY : " + std::to_string(Utility::SOCKET_ONETIME_PREPARE_COUNT);
+		std::string log = "SOCKET READY : " + std::to_string(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
 		Utility::LogError("Network", "NetworkManager", log);
 	}
 
 	void NetworkManager::ActivateClient()
 	{
-		int capacity = Utility::CLIENT_ACTIVATE_COUNT_MAX - _activatedClientMap.size();
+		int capacity = Utility::ConstValue::GetInstance().ConnectedClientCountMax - _activatedClientMap.size();
 		if (capacity < 1)
 		{
 			Utility::LogError("Network", "NetworkManager", "수용 가능한 클라이언트 초과 !!");

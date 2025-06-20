@@ -1,6 +1,7 @@
 #pragma once
+#include <string>
 
-namespace Utility
+namespace Client
 {
     class ConstValue
     {
@@ -12,14 +13,11 @@ namespace Utility
         }
 
         // 설정값들
-        int ServerPort = 0;
-        int BuferSizeMax = 0;
-        int SessionCountMax = 0;
-        int OverlappedCountMax = 0;
-        int ConnectReadyClientCountMax = 0;
-        int ConnectedClientCountMax = 0;
-        int PreparedSocketCountMax = 0;
-
+        std::string IP = "";
+        int Port = 0;
+        std::string TestUID = "";
+        int ClientCount = 0;
+        int ThreadCount = 0;
 
     private:
         ConstValue() = default;

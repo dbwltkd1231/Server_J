@@ -4,12 +4,12 @@
 
 #include "../Auth/AuthManager.h"
 #include "../utility/ConfigCreator.h"
-#include "../Common/include/utility/ConstValue.h"
 
+#include "../include/utility/ConstValue.h"
 int main()
 {
 #if defined(SettingMode)
-	Utility::CreateSettingFiles();
+	Utility::CreateAuthServerSettingFiles();
 #else
 
 	auto config = Utility::LoadSettingFiles();
@@ -30,13 +30,13 @@ int main()
 	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
 
-	Utility::SERVER_PORT = networkPort;
-	Utility::SOCKET_ONETIME_PREPARE_COUNT = socketOnetimePrepareCount;
-	Utility::CLIENT_ACTIVATE_COUNT_MAX = clientActivateCountMax;
-	Utility::CLIENT_ACCEPTREADY_COUNT_MAX = clientAcceptReadyCountMax;
-	Utility::OVERLAPPED_COUNT_MAX = overlappedCountMax;
-	Utility::BUFFER_SIZE_MAX = bufferSizeMax;
-	Utility::SESSION_COUNT_MAX = sessionCount;
+	Utility::ConstValue::GetInstance().ServerPort = networkPort;
+	Utility::ConstValue::GetInstance().BuferSizeMax = bufferSizeMax;
+	Utility::ConstValue::GetInstance().PreparedSocketCountMax = socketOnetimePrepareCount;
+	Utility::ConstValue::GetInstance().ConnectedClientCountMax = clientActivateCountMax;
+	Utility::ConstValue::GetInstance().ConnectReadyClientCountMax = clientAcceptReadyCountMax;
+	Utility::ConstValue::GetInstance().OverlappedCountMax = overlappedCountMax;
+	Utility::ConstValue::GetInstance().SessionCountMax = sessionCount;
 
 
 	std::string databaseName = config["SQL"]["USER_DB_NAME"];
