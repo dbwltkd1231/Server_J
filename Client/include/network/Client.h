@@ -19,5 +19,6 @@ namespace Network
 		void Initialize(std::shared_ptr<SOCKET>);
 		void Deinitialize();
 		void ConnectEx(LPFN_CONNECTEX& connectEx, sockaddr_in serverAddr, Network::CustomOverlapped& overlapped);
+		void ReceiveReady(CustomOverlapped& overlapped);
 	};
 }

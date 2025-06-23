@@ -7,16 +7,16 @@
 #include <sqlext.h>
 
 #include "../library/flatbuffers/flatbuffers.h"
-#include "../include/database/LOGINSERVER_PROTOCOL_generated.h"
-#include "../auth/BasicData.h"
+#include "../include/game/LOGINSERVER_PROTOCOL_generated.h"
+#include "../game/BasicData.h"
 #include "../utility/Debug.h"
 
 
-namespace Auth
+namespace Game
 {
-    std::shared_ptr<Auth::BasicData> ReadRequestConnect(ULONG_PTR& targetSocket, SQLHSTMT& hstmt);
+    std::shared_ptr<Game::BasicData> ReadRequestConnect(ULONG_PTR& targetSocket, SQLHSTMT& hstmt);
 
-	std::shared_ptr<Auth::BasicData> ReadReturnData(ULONG_PTR& targetSocket, int contentsType, SQLHSTMT& hstmt)
+	std::shared_ptr<Game::BasicData> ReadReturnData(ULONG_PTR& targetSocket, int contentsType, SQLHSTMT& hstmt)
 	{
 		auto messageType = static_cast<protocol::MessageContent>(contentsType);
 
@@ -31,9 +31,9 @@ namespace Auth
 
 	}
 
-    std::shared_ptr<Auth::BasicData> ReadRequestConnect(ULONG_PTR& targetSocket, SQLHSTMT& hstmt)
+    std::shared_ptr<Game::BasicData> ReadRequestConnect(ULONG_PTR& targetSocket, SQLHSTMT& hstmt)
 	{
-        Auth::RequestConnectData requestData;
+        Game::RequestConnectData requestData;
 		requestData.ContentsType = static_cast<uint32_t>(protocol::MessageContent_RESPONSE_CONNECT);
 
         int resultCode = -1;
@@ -50,7 +50,7 @@ namespace Auth
             requestData.IsSuccess = false;
         }
 
-        std::shared_ptr<Auth::BasicData> basicData = std::make_shared<Auth::BasicData>(requestData);
+        std::shared_ptr<Game::BasicData> basicData = std::make_shared<Game::BasicData>(requestData);
         return basicData;
 	}
 }

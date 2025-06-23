@@ -5,7 +5,7 @@
 #include "../Client/include/utility/ConstValue.h"
 #include "../Common/include/utility/ConstValue.h"
 
-#include "client/ClientManager.h"
+#include "game/GameManager.h"
 
 //#define SettingMode  
 
@@ -27,16 +27,42 @@ int main()
 	Utility::ConstValue::GetInstance().BuferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"];
 	Utility::ConstValue::GetInstance().OverlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"];
 
-	Client::ConstValue::GetInstance().TestUID = config["CLIENT"]["CLIENT_TEST_UID"].get<std::string>();
-	Client::ConstValue::GetInstance().ClientCount = config["CLIENT"]["TEST_CLIENT_COUNT"];
-	Client::ConstValue::GetInstance().ThreadCount = config["CLIENT"]["TEST_THREAD_COUNT"];
+	ClientUtility::ConstValue::GetInstance().TestUID = config["CLIENT"]["CLIENT_TEST_UID"].get<std::string>();
+	ClientUtility::ConstValue::GetInstance().ClientCount = config["CLIENT"]["TEST_CLIENT_COUNT"];
+	ClientUtility::ConstValue::GetInstance().ThreadCount = config["CLIENT"]["TEST_THREAD_COUNT"];
+
+	Game::GameManager gameManager;
+	gameManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort);
+	gameManager.Process(ClientUtility::ConstValue::GetInstance().ThreadCount);
+
+//	Network::NetworkManager authManager;
+//	Network::NetworkManager lobbyManager;
+//	Game::UserManager userManager;
+//
+//	authManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort,
+//		Client::ConstValue::GetInstance().ClientCount, Client::ConstValue::GetInstance().ThreadCount);
+//		
+//
+//
+//	std::function<void(ULONG_PTR)> acceptCallback = std::function<void(ULONG_PTR)>(
+//		[&userManager](ULONG_PTR targetSocket)
+//		{
+//			userManager.AcceptCallback(targetSocket);
+//		}
+//	);
+//
+//	authManager.CallbackSetting(acceptCallback);
 
 
-	Client::ClientManager clientManager;
-	clientManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort,
-		Client::ConstValue::GetInstance().ClientCount, Client::ConstValue::GetInstance().ThreadCount);
-		
-	clientManager.Process(Client::ConstValue::GetInstance().ThreadCount);
+//clientManager.CallbackSetting(
+//	std::function<void(ULONG_PTR)>(
+//		[&clientManager](ULONG_PTR targetSocket)
+//		{
+//			clientManager.AcceptCallback(targetSocket);
+//		}
+//	)
+//);
+
 
 	while (true)
 	{

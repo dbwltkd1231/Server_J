@@ -62,4 +62,37 @@ namespace Network
 
 		Utility::Log("Network", "Client", "ConnectEx 시작됨, WSA_IO_PENDING 상태");
 	}
+
+	void Client::ReceiveReady(CustomOverlapped& overlapped)
+	{
+		int errorCode;
+		int errorCodeSize = sizeof(errorCode);
+		getsockopt(*ClientSocketPtr, SOL_SOCKET, SO_ERROR, (char*)&errorCode, &errorCodeSize);
+		if (errorCode != 0)
+		{
+			std::cerr << "Socket error detected: " << errorCode << std::endl;
+			return;
+		}
+
+		overlapped.Clear();
+		overlapped.SetOperationType(OperationType::OP_RECV);
+
+		MessageHeader newHeader(0, 0);
+
+		DWORD flags = 0;
+		int result = WSARecv(*ClientSocketPtr, overlapped.Wsabuf, 2, nullptr, &flags, &overlapped, nullptr);
+
+		std::string log;
+		errorCode = WSAGetLastError();
+		if (result == SOCKET_ERROR && errorCode != WSA_IO_PENDING)
+		{
+			log = "WSARecv 실패! 오류 코드: " + std::to_string(errorCode);
+			Utility::LogError("Network", "Client", log);
+		}
+		else
+		{
+			log = " Socket Receive Ready";
+			Utility::Log("Network", "Client", log);
+		}
+	}
 } 

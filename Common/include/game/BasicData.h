@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Auth
+namespace Game
 {
 	struct BasicData
 	{

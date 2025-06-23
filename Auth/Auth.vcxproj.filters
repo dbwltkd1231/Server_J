@@ -46,6 +46,12 @@
     <Filter Include="공용\소스 파일\Database">
       <UniqueIdentifier>{194fb3e1-4be8-4113-a49e-0205ae8d65b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="공용\소스 파일\Game">
+      <UniqueIdentifier>{cfd49fcf-ff08-4dae-ad60-e0c608aeedf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Game">
+      <UniqueIdentifier>{2b99436c-2e77-4d4f-9a3e-1f479fd94499}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\network\Client.cpp">
@@ -92,29 +98,29 @@
     <ClInclude Include="include\auth\AuthManager.h">
       <Filter>헤더 파일\Auth</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\database\LOGINSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Database</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\database\Task.h">
       <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\include\database\Worker.h">
       <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
-    <ClInclude Include="include\auth\NetworkProtocol.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\DatabaseProtocol.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\BasicData.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\include\utility\ConstValue.h">
       <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\BasicData.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\DatabaseProtocol.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\NetworkProtocol.h">
+      <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

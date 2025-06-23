@@ -28,20 +28,23 @@
     <Filter Include="공용\헤더 파일\Utility">
       <UniqueIdentifier>{cdfce263-fbba-41f4-aa3d-a5c33eb35d02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\Client">
-      <UniqueIdentifier>{68439987-ea65-428f-9ad8-f93bd07516e8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="헤더 파일\Network">
       <UniqueIdentifier>{2a867c63-9d7a-4bef-8551-2f1cdb5d9b87}</UniqueIdentifier>
     </Filter>
     <Filter Include="헤더 파일\Utility">
       <UniqueIdentifier>{ad7cf0e9-fbcf-41d1-a8c6-f8e9fa046c4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Client">
-      <UniqueIdentifier>{05306d0a-0e44-4e36-a8e4-3b9fd235d8aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Network">
       <UniqueIdentifier>{69815876-ee6a-4ee4-8eaa-5a6520fdcb00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Game">
+      <UniqueIdentifier>{68439987-ea65-428f-9ad8-f93bd07516e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Game">
+      <UniqueIdentifier>{05306d0a-0e44-4e36-a8e4-3b9fd235d8aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Game">
+      <UniqueIdentifier>{8f329191-8ba4-4c0f-aaef-149ca3f8a4cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,8 +57,17 @@
     <ClCompile Include="src\network\Client.cpp">
       <Filter>소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\client\ClientManager.cpp">
-      <Filter>소스 파일\Client</Filter>
+    <ClCompile Include="src\game\User.cpp">
+      <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetManagerModule.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\network\NetworkManager.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game\GameManager.cpp">
+      <Filter>소스 파일\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -71,9 +83,6 @@
     <ClInclude Include="include\utility\ConstValue.h">
       <Filter>헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\client\ClientManager.h">
-      <Filter>헤더 파일\Client</Filter>
-    </ClInclude>
     <ClInclude Include="include\network\CustomOverlapped.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
@@ -82,6 +91,30 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\utility\ConstValue.h">
       <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\User.h">
+      <Filter>헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\BasicData.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\DatabaseProtocol.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\NetworkProtocol.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\network\NetmanagerModule.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\network\NetworkManager.h">
+      <Filter>헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\GameManager.h">
+      <Filter>헤더 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

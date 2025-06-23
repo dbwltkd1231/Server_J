@@ -156,8 +156,8 @@ namespace Network
 			_preparedSocketQueue.push(socketSharedPtr);
 		}
 
-		std::string log = "SOCKET READY : " + std::to_string(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
-		Utility::LogError("Network", "NetworkManager", log);
+		std::string log = "소켓 IOCP 연결 : " + std::to_string(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
+		Utility::Log("Network", "NetworkManager", log);
 	}
 
 	std::shared_ptr<SOCKET> NetworkManager::GetPreparedSocket()
@@ -182,6 +182,12 @@ namespace Network
 			return;
 		}
 
+		if (targetSocket == nullptr)
+		{
+			Utility::LogError("Network", "NetworkManager", "Prepare Socket is NULL");
+			return;
+		}
+
 		std::shared_ptr<Client> clientSharedPtr = std::make_shared<Client>();
 		clientSharedPtr->Initialize(targetSocket);
 		_activatedClientMap.insert(std::make_pair((ULONG_PTR)targetSocket.get(), clientSharedPtr));
@@ -190,8 +196,6 @@ namespace Network
 		overlappedPtr->Clear();
 
 		clientSharedPtr->AcceptEx(_listenSocket, _acceptExPointer, overlappedPtr);
-
-		Utility::Log("Network", "NetworkManager", "Client Accept Ready Success");
 	}
 
 	void NetworkManager::AcceptCallback(ULONG_PTR targetSocket)
@@ -209,9 +213,13 @@ namespace Network
 		auto client = finder->second;
 		client->ReceiveReady(overlappedPtr);
 
-		Utility::Log("Network", "NetworkManager", "Socket Accpet Success And Recv Ready Success !!");
-
 		std::shared_ptr<SOCKET> prepareSocket = GetPreparedSocket();
+
+		if (prepareSocket == nullptr)
+		{
+			Utility::LogError("Network", "NetworkManager", "Prepare Socket is NULL");
+			return;
+		}
 		ActivateClient(prepareSocket);
 	}
 
@@ -283,6 +291,7 @@ namespace Network
 
 		shutdown(*socket, SD_BOTH);
 		client->Deinitialize();
+		Utility::Log("Network", "NetworkManager", "클라이언트 연결 종료 확인.");
 
 		// 동기화객체사용 필요.
 		_activatedClientMap.unsafe_erase((ULONG_PTR)socket.get());
@@ -298,24 +307,28 @@ namespace Network
 		switch (errorCode)
 		{
 		case WSAECONNRESET:
-			Utility::LogError("Network", "NetworkManager", "상대방이 강제로 연결 종료");
+			Utility::Log("Network", "NetworkManager", "WSAECONNRESET : 상대방이 강제로 연결 종료");
 			break;
 		case WSAECONNABORTED:
-			Utility::LogError("Network", "NetworkManager", "서버 연결이 중단됨");
+			Utility::Log("Network", "NetworkManager", "WSAECONNABORTED : 서버 연결이 중단됨");
 			break;
 		case WSAENETRESET:
-			Utility::LogError("Network", "NetworkManager", "네트워크 연결이 끊김");
+			Utility::Log("Network", "NetworkManager", "WSAENETRESET : 네트워크 연결이 끊김");
 			break;
 		case WSAETIMEDOUT:
-			Utility::LogError("Network", "NetworkManager", "상대방 응답 없음");
+			Utility::Log("Network", "NetworkManager", "WSAETIMEDOUT : 상대방 응답 없음");
 			break;
 		case WSAENOTCONN:
-			Utility::LogError("Network", "NetworkManager", "연결되지 않은 소켓에서 recv 호출");
+			Utility::Log("Network", "NetworkManager", "WSAENOTCONN : 연결되지 않은 소켓에서 recv 호출");
 			break;
 		case WSAESHUTDOWN:
-			Utility::LogError("Network", "NetworkManager", "shutdown 상태 소켓이 요청한 메세지");
+			Utility::Log("Network", "NetworkManager", "WSAESHUTDOWN : shutdown 상태 소켓이 요청한 메세지");
+			break;
+		case ERROR_NETNAME_DELETED:
+			Utility::Log("Network", "NetworkManager", "ERROR_NETNAME_DELETED : 지정된 네트워크 이름을 더 이상 사용할 수 없습니다.");
 			break;
 		default:
+			Utility::Log("Network", "NetworkManager", "Unexpected error code: " + std::to_string(errorCode));
 			break;
 		}
 	}

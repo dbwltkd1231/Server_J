@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include\auth;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include\auth;$(SolutionDir)Common\include\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,9 +144,12 @@
     <ClCompile Include="src\auth\AuthManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\include\database\LOGINSERVER_PROTOCOL_generated.h" />
     <ClInclude Include="..\Common\include\database\Task.h" />
     <ClInclude Include="..\Common\include\database\Worker.h" />
+    <ClInclude Include="..\Common\include\game\BasicData.h" />
+    <ClInclude Include="..\Common\include\game\DatabaseProtocol.h" />
+    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h" />
+    <ClInclude Include="..\Common\include\game\NetworkProtocol.h" />
     <ClInclude Include="..\Common\include\network\Client.h" />
     <ClInclude Include="..\Common\include\network\CustomOverlapped.h" />
     <ClInclude Include="..\Common\include\network\NetworkManager.h" />
@@ -156,9 +159,6 @@
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
     <ClInclude Include="include\auth\AuthManager.h" />
-    <ClInclude Include="include\auth\BasicData.h" />
-    <ClInclude Include="include\auth\DatabaseProtocol.h" />
-    <ClInclude Include="include\auth\NetworkProtocol.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

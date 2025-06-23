@@ -4,11 +4,12 @@
 
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#include "../utility/Debug.h"
+#include <windows.h>
 #include <winsock2.h>
 #include <mswsock.h>
 #include <ws2tcpip.h>
 
+#include "../utility/Debug.h"
 
 namespace Network
 {

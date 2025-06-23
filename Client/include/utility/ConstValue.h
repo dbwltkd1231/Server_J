@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace Client
+namespace ClientUtility
 {
     class ConstValue
     {

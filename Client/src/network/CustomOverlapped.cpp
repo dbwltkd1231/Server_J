@@ -65,7 +65,7 @@ namespace Network
         return SocketPtr;
     }
 
-    OperationType CustomOverlapped::GetOperation() const
+    Network::OperationType CustomOverlapped::GetOperation() const
     {
         return Operation;
     }

@@ -2,9 +2,9 @@
 #include "../include/utility/ConstValue.h"
 
 #include "../auth/AuthManager.h"
-#include "../auth/NetworkProtocol.h"
-#include "../auth/DatabaseProtocol.h"
-#include "../auth/BasicData.h"
+#include "../game/NetworkProtocol.h"
+#include "../game/DatabaseProtocol.h"
+#include "../game/BasicData.h"
 
 
 namespace Auth
@@ -74,7 +74,7 @@ namespace Auth
 	//TODO 콜백연결안되어있음.
 	void AuthManager::DatabaseCallback(ULONG_PTR& targetSocket, uint32_t& contentsType, SQLHSTMT& hstmt)
 	{
-		std::shared_ptr<Auth::BasicData> result = Auth::ReadReturnData(targetSocket, contentsType, hstmt);
+		std::shared_ptr<Game::BasicData> result = Game::ReadReturnData(targetSocket, contentsType, hstmt);
 
 		auto contentsTypeOffset = static_cast<protocol::MessageContent> (result->ContentsType);
 		std::string stringBuffer;
@@ -83,7 +83,7 @@ namespace Auth
 		{
 			case protocol::MessageContent_RESPONSE_CONNECT:
 			{
-				auto requestConnectData = std::static_pointer_cast<Auth::RequestConnectData>(result);
+				auto requestConnectData = std::static_pointer_cast<Game::RequestConnectData>(result);
 				CreateResponseConnect(requestConnectData->IsSuccess, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
 				break;
 			}

@@ -3,7 +3,7 @@
 #include <winsock2.h>
 
 #include "../library/flatbuffers/flatbuffers.h"
-#include "../include/database/LOGINSERVER_PROTOCOL_generated.h"
+#include "../include/game/LOGINSERVER_PROTOCOL_generated.h"
 
 #include "../database/Task.h"
 

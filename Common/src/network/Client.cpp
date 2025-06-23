@@ -50,7 +50,7 @@ namespace Network
 		}
 		else
 		{
-			log = "Socket Accept Ready";
+			log = "클라이언트 AcceptEx 호출";
 		}
 
 		Utility::Log("Network", "Client", log);
@@ -81,7 +81,7 @@ namespace Network
 		}
 		else
 		{
-			log = " Socket Receive Ready";
+			log = " 클라이언트 WSARecv 호출";
 		}
 
 		Utility::Log("Network", "Client", log);
@@ -110,6 +110,6 @@ namespace Network
 			return;
 		}
 
-		Utility::Log("Network", "Client", "Socket Send");
+		Utility::Log("Network", "Client", "클라이언트 WSASend 호출");
 	}
 }

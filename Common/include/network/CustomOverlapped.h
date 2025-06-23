@@ -3,6 +3,7 @@
 
 #include <winsock2.h>
 #include <MSWSock.h>
+#include <windows.h>
 
 #include "Debug.h"
 

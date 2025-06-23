@@ -68,7 +68,8 @@ namespace Network
 				case WSAETIMEDOUT:
 				case WSAENOTCONN:
 				case WSAESHUTDOWN:
-					//_disconnectCallback(completionKey, bytesTransferred, errorCode);
+				case ERROR_NETNAME_DELETED:
+					_disconnectCallback(completionKey, bytesTransferred, errorCode);
 					break;
 				default:
 					break;
