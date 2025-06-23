@@ -97,8 +97,6 @@ namespace Network
 		}
 		Utility::Log("Network", "NetworkManager", "OverlappedQueue Ready Success");
 
-		PrepareSocket();
-
 		Utility::Log("Network", "NetworkManager", "Client Create Success");
 
 		_acceptCallback = std::function<void(ULONG_PTR)>
@@ -142,9 +140,14 @@ namespace Network
 		Utility::Log("Network", "NetworkManager", "Construct All Success !!");
 	}
 
-	void NetworkManager::PrepareSocket()
+	void NetworkManager::PrepareSocket(int count)
 	{
-		for (int index = 0;index < Utility::ConstValue::GetInstance().PreparedSocketCountMax; ++index)
+		if (count < 1)
+		{
+			return;
+		}
+
+		for (int index = 0;index < count; ++index)
 		{
 			SOCKET newSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 			auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
@@ -157,7 +160,20 @@ namespace Network
 		Utility::LogError("Network", "NetworkManager", log);
 	}
 
-	void NetworkManager::ActivateClient()
+	std::shared_ptr<SOCKET> NetworkManager::GetPreparedSocket()
+	{
+		std::shared_ptr<SOCKET> prepareSocket = nullptr;
+		bool result = _preparedSocketQueue.try_pop(prepareSocket);
+		if (result == false)
+		{
+			PrepareSocket(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
+			result = _preparedSocketQueue.try_pop(prepareSocket);
+		}
+
+		return prepareSocket;
+	}
+
+	void NetworkManager::ActivateClient(std::shared_ptr<SOCKET> targetSocket)
 	{
 		int capacity = Utility::ConstValue::GetInstance().ConnectedClientCountMax - _activatedClientMap.size();
 		if (capacity < 1)
@@ -166,32 +182,16 @@ namespace Network
 			return;
 		}
 
-		std::shared_ptr<SOCKET> newSocket;
-		bool result = _preparedSocketQueue.try_pop(newSocket);
-		if (!result)
-		{
-			Utility::LogError("Network", "NetworkManager", "소켓부족 -> 생성요청");
-			PrepareSocket();
-			return;
-		}
-
 		std::shared_ptr<Client> clientSharedPtr = std::make_shared<Client>();
-		clientSharedPtr->Initialize(newSocket);
-
+		clientSharedPtr->Initialize(targetSocket);
+		_activatedClientMap.insert(std::make_pair((ULONG_PTR)targetSocket.get(), clientSharedPtr));
+		
 		auto overlappedPtr = _overlappedQueue->pop();
 		overlappedPtr->Clear();
 
 		clientSharedPtr->AcceptEx(_listenSocket, _acceptExPointer, overlappedPtr);
 
-		_activatedClientMap.insert(std::make_pair((ULONG_PTR)newSocket.get(), clientSharedPtr));
-		
-
 		Utility::Log("Network", "NetworkManager", "Client Accept Ready Success");
-
-		if (_preparedSocketQueue.unsafe_size() < 1)//괜찮을까?
-		{
-			PrepareSocket();
-		}
 	}
 
 	void NetworkManager::AcceptCallback(ULONG_PTR targetSocket)
@@ -210,6 +210,9 @@ namespace Network
 		client->ReceiveReady(overlappedPtr);
 
 		Utility::Log("Network", "NetworkManager", "Socket Accpet Success And Recv Ready Success !!");
+
+		std::shared_ptr<SOCKET> prepareSocket = GetPreparedSocket();
+		ActivateClient(prepareSocket);
 	}
 
 	void NetworkManager::ReceiveCallback(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
@@ -286,7 +289,8 @@ namespace Network
 
 		_preparedSocketQueue.push(socket);
 
-		ActivateClient();
+		std::shared_ptr<SOCKET> prepareSocket = GetPreparedSocket();
+		ActivateClient(prepareSocket);
 	}
 
 	void NetworkManager::UnexpectedDisconnect(ULONG_PTR targetSocket, int errorCode)
@@ -315,6 +319,8 @@ namespace Network
 			break;
 		}
 	}
+
+
 	/*
 	* - 만약 비동기적으로 WSARecv()를 호출하여 IOCP가 데이터 수신을 대기 중인 경우, shutdown(SD_BOTH) 호출 후에도 완료되지 않은 수신 작업은 여전히 진행될 수 있어.
 	* - 하지만 shutdown(SD_BOTH)으로 새 데이터 수신이 차단되므로, 이후 새로운 WSARecv() 요청은 실패할 가능성이 높아 (WSAECONNRESET 또는 WSAESHUTDOWN 오류 발생 가능).

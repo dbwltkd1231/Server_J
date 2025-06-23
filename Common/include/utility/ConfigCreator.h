@@ -1,7 +1,8 @@
 #pragma once
+#include <iostream>
 #include <fstream>
 #include <../library/nlohmann/json.hpp> 
-#include "../utility/Debug.h"
+//#include "../utility/Debug.h"
 
 namespace Utility
 {
@@ -26,7 +27,9 @@ namespace Utility
 
 		std::ofstream file("config.json");
 		file << config.dump(4);  // 4는 들여쓰기 수준
-		Utility::Log("Utility", "JsonCreator", "File Create Success !");
+
+		std::string log = "[Utility] [JsonCreator] File CreateSuccess !";
+		std::cout << log << std::endl;
 	}
 
 
@@ -45,7 +48,9 @@ namespace Utility
 
 		std::ofstream file("config.json");
 		file << config.dump(4);
-		Utility::Log("Utility", "JsonCreator", "File Create Success !");
+
+		std::string log = "[Utility] [JsonCreator] File CreateSuccess !";
+		std::cout << log << std::endl;
 	}
 
 	nlohmann::json LoadSettingFiles()
@@ -53,7 +58,9 @@ namespace Utility
 		std::ifstream file("config.json");  // JSON 파일 열기
 		if (!file)
 		{
-			Utility::Log("Utility", "JsonCreator", "File Find Fail Eero !!");
+			std::string log = "[Utility] [JsonCreator] File Find Fail !!";
+			std::cout << log << std::endl;
+
 			return NULL;
 		}
 

@@ -90,7 +90,7 @@ namespace Network
 
         if (bodyLen > Utility::ConstValue::GetInstance().BuferSizeMax)
         {
-            //Utility::LogError("Network", "CustomOverlapped", " 메세지의 body가 BUFFER_SIZE보다 큼!!");
+            Utility::LogError("Network", "CustomOverlapped", " 메세지의 body가 BUFFER_SIZE보다 큼!!");
             return;
         }
 

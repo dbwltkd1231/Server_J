@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "network/Client.h"
+
 #include "oneapi/tbb/concurrent_map.h"
 #include "../utility/LockFreeCircleQueue.h"
 

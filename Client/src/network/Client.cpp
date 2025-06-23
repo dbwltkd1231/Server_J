@@ -1,7 +1,7 @@
 #pragma once
 
 #include "network/Client.h"
-#include "../utility/Debug.h"
+
 namespace Network
 {
 	Client::Client()

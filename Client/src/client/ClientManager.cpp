@@ -1,10 +1,7 @@
 #pragma once
-
-
 #include "client/ClientManager.h"
-#include "../utility/Debug.h"
-#include "../utility/ConstValue.h"
 
+#include "../utility/ConstValue.h"
 
 
 

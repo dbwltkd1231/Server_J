@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include "../include/utility/ConstValue.h"
 
 #include "../auth/AuthManager.h"
@@ -24,10 +22,14 @@ namespace Auth
 	void AuthManager::Initialize()
 	{
 		_networkManager.Construct();
+		_networkManager.PrepareSocket(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
+
 		for (int i = 0;i < Utility::ConstValue::GetInstance().ConnectReadyClientCountMax;++i)
 		{
-			_networkManager.ActivateClient();
+			std::shared_ptr<SOCKET> targetSocket = _networkManager.GetPreparedSocket();
+			_networkManager.ActivateClient(targetSocket);
 		}
+
 		std::string clientLog = "Client : " + std::to_string(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Auth", "AuthManager", clientLog);
 

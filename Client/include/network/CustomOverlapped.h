@@ -1,11 +1,14 @@
 #pragma once
+#include <iostream>
 #include <memory>
 
+#define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
+#include "../utility/Debug.h"
 #include <winsock2.h>
 #include <mswsock.h>
 #include <ws2tcpip.h>
-#include <windows.h>
+
 
 namespace Network
 {
@@ -53,6 +56,5 @@ namespace Network
         void SetSocket(std::shared_ptr<SOCKET> socketPtr);
         void SetOperationType(OperationType operation);
         void Clear();
-
     };
 }
