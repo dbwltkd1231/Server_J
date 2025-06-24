@@ -14,7 +14,13 @@ namespace Network
 		~NetworkManager();
 
 	public:
-		void Connect(std::shared_ptr<Network::Client> targetClient, std::string ip, int port);
+		void Initialze(std::string ip, int port);
+		void CallbackSetting(
+			std::function<void(Network::ServerType, ULONG_PTR)>& acceptCallback,
+			std::function<void(Network::ServerType, ULONG_PTR, CustomOverlapped*)>& receiveCallback,
+			std::function<void(Network::ServerType, ULONG_PTR socket, int bytesTransferred, int errorCode)>& disconnectCallback
+		);
+		void ConnectAuthServer(std::shared_ptr<Network::Client> targetClient, Network::CustomOverlapped* overlappedPtr);
 		void Process(int threadCount);
 	private:
 		void Work();

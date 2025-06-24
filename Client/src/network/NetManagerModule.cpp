@@ -30,19 +30,9 @@ namespace Network
 		_isOn = false;
 	}
 
-	void NetManagerModule::Initialize(std::string ip, int port)
+	void NetManagerModule::Initialize(std::string ip, int port, ServerType serverType)
 	{
-		int overlappedCountMax = Utility::ConstValue::GetInstance().OverlappedCountMax;
-		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<CustomOverlapped*>>();
-		_overlappedQueue->Construct(Utility::ConstValue::GetInstance().OverlappedCountMax);
-
-		for (int i = 0;i < overlappedCountMax; ++i)
-		{
-			auto overlapped = new Network::CustomOverlapped();
-			_overlappedQueue->push(std::move(overlapped));
-		}
-		Utility::Log("Network", "NetworkManager", "OverlappedQueue Ready");
-
+		_serverType = serverType;
 		_iocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
 		// Winsock 초기화
@@ -80,7 +70,19 @@ namespace Network
 		_isOn = true;
 	}
 
-	bool NetManagerModule::Connect(std::shared_ptr<Network::Client> targetClient, std::shared_ptr<SOCKET> targetSocket, DWORD concurrentThread)
+	void NetManagerModule::CallbackSetting(
+		std::function<void(Network::ServerType, ULONG_PTR)> acceptCallback,
+		std::function<void(Network::ServerType, ULONG_PTR, CustomOverlapped*)> receiveCallback,
+		std::function<void(Network::ServerType, ULONG_PTR socket, int bytesTransferred, int errorCode)> disconnectCallback
+	)
+	{
+		_acceptCallback = acceptCallback;
+		_receiveCallback = receiveCallback;
+		_disconnectCallback = disconnectCallback;
+
+	}
+
+	bool NetManagerModule::Connect(std::shared_ptr<Network::Client> targetClient, std::shared_ptr<SOCKET> targetSocket, DWORD concurrentThread, Network::CustomOverlapped* overlappedPtr)
 	{
 		if (*targetSocket == INVALID_SOCKET)
 		{
@@ -97,9 +99,6 @@ namespace Network
 
 		auto ulongPtr = (ULONG_PTR)targetSocket.get();
 		CreateIoCompletionPort((HANDLE)*targetSocket, _iocpHandle, ulongPtr, concurrentThread);
-
-		auto overlappedPtr = _overlappedQueue->pop();
-		overlappedPtr->Clear();
 
 		targetClient->ConnectEx(connectEx, serverAddr, *overlappedPtr);
 		_clientMap.insert(std::make_pair(ulongPtr, targetClient));
@@ -152,20 +151,8 @@ namespace Network
 				case Network::OperationType::OP_ACCEPT:
 				{
 					Utility::Log("Client", "ClientManager", "Client Connect !!");
-					targetOverlapped->Clear();
-					_overlappedQueue->push(std::move(targetOverlapped));
 
-					auto newOverlappedPtr = _overlappedQueue->pop();
-					newOverlappedPtr->Clear();
-					client->ReceiveReady(*newOverlappedPtr);
-
-				//	if (_acceptCallback == nullptr)
-				//	{
-				//		Utility::LogError("Client", "ClientManager", "Accept Callback is NULL");
-				//		return;
-				//	}
-				//
-				//	_acceptCallback(completionKey);
+					_acceptCallback(_serverType, completionKey);
 					break;
 				}
 
@@ -173,21 +160,15 @@ namespace Network
 				{
 					Utility::Log("Client", "ClientManager", "Client Received !!");
 
-					//TODO 메세지 처리.
+					_receiveCallback(_serverType, completionKey, targetOverlapped);
 
-					targetOverlapped->Clear();
-					_overlappedQueue->push(std::move(targetOverlapped));
-
-					auto newOverlappedPtr = _overlappedQueue->pop();
-					client->ReceiveReady(*newOverlappedPtr);
 					break;
 				}
 
 				case Network::OperationType::OP_SEND:
 				{
 					Utility::Log("Client", "ClientManager", "Client Send !!");
-					targetOverlapped->Clear();
-					_overlappedQueue->push(std::move(targetOverlapped));
+
 					break;
 				}
 				}

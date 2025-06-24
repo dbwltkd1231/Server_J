@@ -16,16 +16,30 @@ namespace Network
 		Utility::Log("Network", "NetworkManager", "Destruct");
 	}
 
-	void NetworkManager::Connect(std::shared_ptr<Network::Client> targetClient, std::string ip, int port)
+	void NetworkManager::Initialze(std::string ip, int port)
 	{
+		Utility::Log("Network", "NetworkManager", "Initialize");
 		_authModule = std::make_shared<NetManagerModule>();
-		_authModule->Initialize(ip, port);
+		_authModule->Initialize(ip, port, Network::ServerType::Auth);
+	}
 
+	void NetworkManager::CallbackSetting(
+		std::function<void(Network::ServerType, ULONG_PTR)>& acceptCallback,
+		std::function<void(Network::ServerType, ULONG_PTR, CustomOverlapped*)>& receiveCallback,
+		std::function<void(Network::ServerType, ULONG_PTR socket, int bytesTransferred, int errorCode)>& disconnectCallback
+	)
+	{
+		_authModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback);
+	}
+
+
+	void NetworkManager::ConnectAuthServer(std::shared_ptr<Network::Client> targetClient, Network::CustomOverlapped* overlappedPtr)
+	{
 		SOCKET newSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 		auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
 		targetClient->Initialize(socketSharedPtr);
 
-		bool result = _authModule->Connect(targetClient, socketSharedPtr, ClientUtility::ConstValue::GetInstance().ThreadCount);
+		bool result = _authModule->Connect(targetClient, socketSharedPtr, ClientUtility::ConstValue::GetInstance().ThreadCount, overlappedPtr);
 		if (!result)
 		{
 			Utility::LogError("Game", "GameManager", "Socket - IOCP CONNET FAIL");

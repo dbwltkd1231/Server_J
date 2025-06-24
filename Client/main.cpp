@@ -32,7 +32,7 @@ int main()
 	ClientUtility::ConstValue::GetInstance().ThreadCount = config["CLIENT"]["TEST_THREAD_COUNT"];
 
 	Game::GameManager gameManager;
-	gameManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort);
+	gameManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort, ClientUtility::ConstValue::GetInstance().ClientCount);
 	gameManager.Process(ClientUtility::ConstValue::GetInstance().ThreadCount);
 
 //	Network::NetworkManager authManager;
