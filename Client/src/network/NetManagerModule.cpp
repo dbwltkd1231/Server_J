@@ -71,9 +71,9 @@ namespace Network
 	}
 
 	void NetManagerModule::CallbackSetting(
-		std::function<void(Network::ServerType, ULONG_PTR)> acceptCallback,
-		std::function<void(Network::ServerType, ULONG_PTR, CustomOverlapped*)> receiveCallback,
-		std::function<void(Network::ServerType, ULONG_PTR socket, int bytesTransferred, int errorCode)> disconnectCallback
+		std::function<void(Network::ServerType&, ULONG_PTR&, std::shared_ptr<Network::Client>)> acceptCallback,
+		std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)> receiveCallback,
+		std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)> disconnectCallback
 	)
 	{
 		_acceptCallback = acceptCallback;
@@ -103,6 +103,18 @@ namespace Network
 		targetClient->ConnectEx(connectEx, serverAddr, *overlappedPtr);
 		_clientMap.insert(std::make_pair(ulongPtr, targetClient));
 		return true;
+	}
+
+	void NetManagerModule::ReceiveReadyToClient(ULONG_PTR& targetSocket, Network::CustomOverlapped* overlappedPtr)
+	{
+		auto finder = _clientMap.find(targetSocket);
+		if (finder == _clientMap.end())
+		{
+			Utility::LogError("Network", "NetManagerModule", "ReceiveReady - Client Find Fail");
+			return;
+		}
+
+		finder->second->ReceiveReady(*overlappedPtr);
 	}
 
 	void NetManagerModule::Process(int threadCount)
@@ -152,7 +164,7 @@ namespace Network
 				{
 					Utility::Log("Client", "ClientManager", "Client Connect !!");
 
-					_acceptCallback(_serverType, completionKey);
+					_acceptCallback(_serverType, completionKey, client);
 					break;
 				}
 
@@ -161,7 +173,6 @@ namespace Network
 					Utility::Log("Client", "ClientManager", "Client Received !!");
 
 					_receiveCallback(_serverType, completionKey, targetOverlapped);
-
 					break;
 				}
 

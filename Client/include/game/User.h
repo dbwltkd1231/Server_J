@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 
-//#include "network/NetmanagerModule.h"
 #include "network/Client.h"
 
 namespace Game
@@ -14,12 +13,12 @@ namespace Game
 		~User();
 
 	public:
-		void Initialize(std::shared_ptr<SOCKET> targetSocket);
+		void Initialize(std::shared_ptr<Network::Client> client);
 
 	private:
 		//std::shared_ptr<Network::NetManagerModule> _authModule;
 	private:
-		Network::Client _client; 
+		std::shared_ptr<Network::Client> _client;
 		//Network::NetworkManager _authManager;
 		//Network::NetworkManager _lobbyManager;
 	private:

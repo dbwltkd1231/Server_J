@@ -24,9 +24,9 @@ namespace Network
 	}
 
 	void NetworkManager::CallbackSetting(
-		std::function<void(Network::ServerType, ULONG_PTR)>& acceptCallback,
-		std::function<void(Network::ServerType, ULONG_PTR, CustomOverlapped*)>& receiveCallback,
-		std::function<void(Network::ServerType, ULONG_PTR socket, int bytesTransferred, int errorCode)>& disconnectCallback
+		std::function<void(Network::ServerType&, ULONG_PTR&, std::shared_ptr <Network::Client>)>& acceptCallback,
+		std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)>& receiveCallback,
+		std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)>& disconnectCallback
 	)
 	{
 		_authModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback);
@@ -45,6 +45,15 @@ namespace Network
 			Utility::LogError("Game", "GameManager", "Socket - IOCP CONNET FAIL");
 			return;
 		}
+	}
+
+	void NetworkManager::ReceiveReadyToModule(Network::ServerType& serverType, ULONG_PTR& targetSocket, Network::CustomOverlapped* overlappedPtr)
+	{
+		if (serverType == Network::ServerType::Auth)
+		{
+			_authModule->ReceiveReadyToClient(targetSocket, overlappedPtr);
+		}
+
 	}
 
 	void NetworkManager::Process(int threadCount)

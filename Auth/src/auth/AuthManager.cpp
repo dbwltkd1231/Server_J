@@ -63,7 +63,7 @@ namespace Auth
 
 				std::string loginId = requestConnect->login_id()->str();
 				
-				auto task = Auth::CreateRequestConnect(targetSocket, loginId);
+				auto task = Game::CreateRequestConnect(targetSocket, loginId);
 				_userDatabaseWorker.Enqueue(std::move(task));
 
 				break;
@@ -74,7 +74,7 @@ namespace Auth
 	//TODO 콜백연결안되어있음.
 	void AuthManager::DatabaseCallback(ULONG_PTR& targetSocket, uint32_t& contentsType, SQLHSTMT& hstmt)
 	{
-		std::shared_ptr<Game::BasicData> result = Game::ReadReturnData(targetSocket, contentsType, hstmt);
+		std::shared_ptr<Game::BasicData> result = Game::GetSqlData(targetSocket, contentsType, hstmt);
 
 		auto contentsTypeOffset = static_cast<protocol::MessageContent> (result->ContentsType);
 		std::string stringBuffer;
@@ -84,7 +84,7 @@ namespace Auth
 			case protocol::MessageContent_RESPONSE_CONNECT:
 			{
 				auto requestConnectData = std::static_pointer_cast<Game::RequestConnectData>(result);
-				CreateResponseConnect(requestConnectData->IsSuccess, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
+				Game::CreateResponseConnect(requestConnectData->IsSuccess, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:

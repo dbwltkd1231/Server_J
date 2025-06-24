@@ -15,9 +15,9 @@ namespace Game
 		// 정리 코드
 	}
 
-	void User::Initialize(std::shared_ptr<SOCKET> targetSocket)
+	void User::Initialize(std::shared_ptr<Network::Client> client)
 	{
-		_client.Initialize(targetSocket);
+		_client = client;
 	}
 
 //void User::Initialize(int64_t accountNumber, std::string userID, int money)
