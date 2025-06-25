@@ -109,12 +109,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(SolutionDir)Common\include\game;$(SolutionDir)Common\library\hiredis\include;$(ProjectDir)include\lobby;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(SolutionDir)Common\include\game;$(SolutionDir)Common\library\hiredis\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(SolutionDir)Common\src\game;$(SolutionDir)Common\library\hiredis\lib;$(ProjectDir)src\lobby;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(SolutionDir)Common\src\game;$(SolutionDir)Common\library\hiredis\lib;$(ProjectDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;hiredis.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -143,6 +143,7 @@
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
     <ClInclude Include="..\Common\include\utility\StringConverter.h" />
+    <ClInclude Include="include\utility\ConstValue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

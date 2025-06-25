@@ -44,13 +44,17 @@ namespace Network
 		std::function<void(ULONG_PTR&, uint32_t, std::string)> ReadMessage;
 
 	public:
-		void Construct(); //IOCP handle 생성, 컨테이너 생성, 송수신콜백연결, Session 생성 등 초기세팅목적.
+		void Construct(int serverPort, int sessionCount, int overlappedCount, int clientReadyCountMax); //IOCP handle 생성, 컨테이너 생성, 송수신콜백연결, Session 생성 등 초기세팅목적.
 		void ActivateClient(std::shared_ptr<SOCKET> targetSocket); // 클라이언트 Acceptex호출 목적.
+
+	private:
+		int _clientReadyCountMax;
+		int _sessionCount;
 
 	private:
 		tbb::concurrent_queue<std::shared_ptr<SOCKET>> _preparedSocketQueue;
 	public:
-		void PrepareSocket(int count);// 준비된 소켓이 0개일때 소켓을 생성하는 코드.
+		void PrepareSocket();// 준비된 소켓이 0개일때 소켓을 생성하는 코드.
 		std::shared_ptr<SOCKET> GetPreparedSocket();
 
 	private:

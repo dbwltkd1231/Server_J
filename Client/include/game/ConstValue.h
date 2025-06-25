@@ -2,7 +2,7 @@
 #include <string>
 #include <atomic>
 
-namespace ClientUtility
+namespace Game
 {
     class ConstValue
     {
@@ -14,9 +14,12 @@ namespace ClientUtility
         }
 
         // 설정값들
+        std::string IP;
+        int AuthServerPort;
+        int OverlappedCountMax;
         std::string TestUID = "";
         std::atomic<int> CurrentClinetIndex;
-        int ClientCount = 0;
+        int TestClientCount = 0;
         int ThreadCount = 0;
 
     private:

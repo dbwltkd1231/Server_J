@@ -2,10 +2,11 @@
 
 //#define SettingMode  
 
-#include "../Auth/AuthManager.h"
+#include "auth/AuthManager.h"
+#include "auth/ConstValue.h"
+
 #include "../utility/ConfigCreator.h"
 
-#include "../include/utility/ConstValue.h"
 int main()
 {
 #if defined(SettingMode)
@@ -22,19 +23,17 @@ int main()
 	int networkPort = config["NETWORK"]["AUTHPORT"].get<int>();
 	int clientAcceptReadyCountMax = config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"].get<int>();
 	int overlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"].get<int>();
-	int bufferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"].get<int>();
 	int redisPort = config["REDIS"]["PORT"];
 
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
 	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
-	Utility::ConstValue::GetInstance().ServerPort = networkPort;
-	Utility::ConstValue::GetInstance().RedisPort = redisPort;
-	Utility::ConstValue::GetInstance().BuferSizeMax = bufferSizeMax;
-	Utility::ConstValue::GetInstance().ConnectReadyClientCountMax = clientAcceptReadyCountMax;
-	Utility::ConstValue::GetInstance().OverlappedCountMax = overlappedCountMax;
-	Utility::ConstValue::GetInstance().SessionCountMax = sessionCount;
+	Auth::ConstValue::GetInstance().ServerPort = networkPort;
+	Auth::ConstValue::GetInstance().RedisPort = redisPort;
+	Auth::ConstValue::GetInstance().ConnectReadyClientCountMax = clientAcceptReadyCountMax;
+	Auth::ConstValue::GetInstance().OverlappedCountMax = overlappedCountMax;
+	Auth::ConstValue::GetInstance().SessionCountMax = sessionCount;
 
 	std::string databaseName = config["SQL"]["USER_DB_NAME"];
 	std::string sqlServerAddress = config["SQL"]["USER_DB_ADDRESS"];
@@ -42,7 +41,7 @@ int main()
 	Auth::AuthManager authManager;
 	authManager.Initialize();
 	authManager.ConnectDatabase(databaseName, sqlServerAddress);
-	authManager.ConnectRedis(serverIP, Utility::ConstValue::GetInstance().RedisPort);
+	authManager.ConnectRedis(serverIP, Auth::ConstValue::GetInstance().RedisPort);
 
 
 	while (true)

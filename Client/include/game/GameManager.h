@@ -1,13 +1,12 @@
 #pragma once
 #include <string>
 #include <functional>
-
 #include "game/User.h"
 #include "network/NetworkManager.h"
-
 #include "oneapi/tbb/concurrent_map.h"
-
+#include "game/ConstValue.h"
 #include "../utility/LockFreeCircleQueue.h"
+
 namespace Game
 {
 	class GameManager

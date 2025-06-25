@@ -31,9 +31,6 @@
     <Filter Include="헤더 파일\Network">
       <UniqueIdentifier>{2a867c63-9d7a-4bef-8551-2f1cdb5d9b87}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\Utility">
-      <UniqueIdentifier>{ad7cf0e9-fbcf-41d1-a8c6-f8e9fa046c4d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Network">
       <UniqueIdentifier>{69815876-ee6a-4ee4-8eaa-5a6520fdcb00}</UniqueIdentifier>
     </Filter>
@@ -86,17 +83,11 @@
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\utility\ConstValue.h">
-      <Filter>헤더 파일\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="include\network\CustomOverlapped.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
     <ClInclude Include="include\network\Client.h">
       <Filter>헤더 파일\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\utility\ConstValue.h">
-      <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
     <ClInclude Include="include\game\User.h">
       <Filter>헤더 파일\Game</Filter>
@@ -121,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\ConstValue.h">
+      <Filter>헤더 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

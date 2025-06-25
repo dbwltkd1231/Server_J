@@ -150,16 +150,15 @@
     <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h" />
     <ClInclude Include="..\Common\include\game\NetworkProtocol.h" />
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
-    <ClInclude Include="..\Common\include\utility\ConstValue.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
+    <ClInclude Include="include\game\ConstValue.h" />
     <ClInclude Include="include\game\GameManager.h" />
     <ClInclude Include="include\game\User.h" />
     <ClInclude Include="include\network\Client.h" />
     <ClInclude Include="include\network\CustomOverlapped.h" />
     <ClInclude Include="include\network\NetmanagerModule.h" />
     <ClInclude Include="include\network\NetworkManager.h" />
-    <ClInclude Include="include\utility\ConstValue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

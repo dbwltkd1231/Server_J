@@ -2,7 +2,7 @@
 
 #include "NetworkManager.h"
 #include "Debug.h"
-#include "../utility/ConstValue.h"
+
 
 
 namespace Network
@@ -17,8 +17,11 @@ namespace Network
 		Utility::Log("Network", "IOCP", "Destruct");
 	}
 
-	void NetworkManager::Construct()
+	void NetworkManager::Construct(int serverPort, int sessionCount, int overlappedCount, int clientReadyCountMax)
 	{
+		_clientReadyCountMax = clientReadyCountMax;
+		_sessionCount = sessionCount;
+
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 		{
@@ -38,7 +41,7 @@ namespace Network
 		sockaddr_in serverAddr{};
 		serverAddr.sin_family = AF_INET;
 		serverAddr.sin_addr.s_addr = INADDR_ANY;
-		serverAddr.sin_port = htons(Utility::ConstValue::GetInstance().ServerPort);
+		serverAddr.sin_port = htons(serverPort);
 
 		if (bind(_listenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
 		{
@@ -60,7 +63,7 @@ namespace Network
 
 		Utility::Log("Network", "IOCP", "listen success");
 
-		_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, Utility::ConstValue::GetInstance().SessionCountMax);
+		_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, sessionCount);
 		if (_handle == NULL)
 		{
 			Utility::LogError("Network", "IOCP", "CreateIoCompletionPort failed");
@@ -70,7 +73,7 @@ namespace Network
 		}
 		Utility::Log("Network", "IOCP", "IOCP Handle Ready");
 
-		if (!CreateIoCompletionPort((HANDLE)_listenSocket, _handle, 0, Utility::ConstValue::GetInstance().SessionCountMax))
+		if (!CreateIoCompletionPort((HANDLE)_listenSocket, _handle, 0, sessionCount))
 		{
 			Utility::LogError("Network", "IOCP", "CreateIoCompletionPort failed");
 			closesocket(_listenSocket);
@@ -88,9 +91,9 @@ namespace Network
 		}
 
 		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<CustomOverlapped*>>();
-		_overlappedQueue->Construct(Utility::ConstValue::GetInstance().OverlappedCountMax);
+		_overlappedQueue->Construct(overlappedCount);
 
-		for (int i = 0;i < Utility::ConstValue::GetInstance().OverlappedCountMax; ++i)
+		for (int i = 0;i < overlappedCount; ++i)
 		{
 			auto overlapped = new CustomOverlapped();
 			_overlappedQueue->push(std::move(overlapped));
@@ -126,37 +129,32 @@ namespace Network
 				}
 			);
 
-		for (int i = 0;i < Utility::ConstValue::GetInstance().SessionCountMax;++i)
+		for (int i = 0;i < sessionCount;++i)
 		{
 			auto session = std::make_shared<Session>();
 			session->Initialize(_acceptCallback, _receiveCallback, _disconnectCallback);
 			session->Activate(_handle);
 			_sessionSet.insert(std::move(session));
 		}
-		std::string sessionLog = "Session : " + std::to_string(Utility::ConstValue::GetInstance().SessionCountMax) + " Activate Success !!";
+		std::string sessionLog = "Session : " + std::to_string(sessionCount) + " Activate Success !!";
 		Utility::Log("Network", "NetworkManager", sessionLog);
 
 
 		Utility::Log("Network", "NetworkManager", "Construct All Success !!");
 	}
 
-	void NetworkManager::PrepareSocket(int count)
+	void NetworkManager::PrepareSocket()
 	{
-		if (count < 1)
-		{
-			return;
-		}
-
-		for (int index = 0;index < count; ++index)
+		for (int index = 0;index < _clientReadyCountMax; ++index)
 		{
 			SOCKET newSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 			auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
-			CreateIoCompletionPort((HANDLE)newSocket, _handle, (ULONG_PTR)socketSharedPtr.get(), Utility::ConstValue::GetInstance().SessionCountMax);
+			CreateIoCompletionPort((HANDLE)newSocket, _handle, (ULONG_PTR)socketSharedPtr.get(), _sessionCount);
 
 			_preparedSocketQueue.push(socketSharedPtr);
 		}
 
-		std::string log = "家南 IOCP 楷搬 : " + std::to_string(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax);
+		std::string log = "家南 IOCP 楷搬 : " + std::to_string(_clientReadyCountMax);
 		Utility::Log("Network", "NetworkManager", log);
 	}
 
@@ -166,7 +164,7 @@ namespace Network
 		bool result = _preparedSocketQueue.try_pop(prepareSocket);
 		if (result == false)
 		{
-			PrepareSocket(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax);
+			PrepareSocket();
 			result = _preparedSocketQueue.try_pop(prepareSocket);
 		}
 

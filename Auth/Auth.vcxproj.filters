@@ -110,9 +110,6 @@
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\utility\ConstValue.h">
-      <Filter>공용\헤더 파일\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\game\BasicData.h">
       <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
@@ -127,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\auth\ConstValue.h">
+      <Filter>헤더 파일\Auth</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,5 @@
 #pragma once
 #include "Game/GameManager.h"
-#include "../utility/ConstValue.h"
-
 
 
 namespace Game
@@ -27,14 +25,14 @@ namespace Game
 		_networkManager.CallbackSetting(_acceptCallback, _receiveCallback, _disconnectCallback);
 
 		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<Network::CustomOverlapped*>>();
-		_overlappedQueue->Construct(Utility::ConstValue::GetInstance().OverlappedCountMax);
-		for (int i = 0;i < Utility::ConstValue::GetInstance().OverlappedCountMax; ++i)
+		_overlappedQueue->Construct(Game::ConstValue::GetInstance().OverlappedCountMax);
+		for (int i = 0;i < Game::ConstValue::GetInstance().OverlappedCountMax; ++i)
 		{
 			auto overlappedPtr = new Network::CustomOverlapped();
 			_overlappedQueue->push(std::move(overlappedPtr));
 		}
 
-		for (int i = 0;i < 3;++i) //clientCount
+		for (int i = 0;i < Game::ConstValue::GetInstance().TestClientCount;++i)
 		{
 			auto overlappedPtr = _overlappedQueue->pop();
 			overlappedPtr->Clear();

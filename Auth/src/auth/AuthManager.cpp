@@ -1,10 +1,11 @@
 #pragma once
-#include "../include/utility/ConstValue.h"
 
-#include "../auth/AuthManager.h"
+#include "auth/ConstValue.h"
+#include "auth/AuthManager.h"
 #include "../game/NetworkProtocol.h"
 #include "../game/DatabaseProtocol.h"
 #include "../game/BasicData.h"
+#include "../utility/Debug.h"
 
 
 namespace Auth
@@ -21,16 +22,19 @@ namespace Auth
 
 	void AuthManager::Initialize()
 	{
-		_networkManager.Construct();
-		_networkManager.PrepareSocket(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax);
+		_networkManager.Construct(Auth::ConstValue::GetInstance().ServerPort,
+			Auth::ConstValue::GetInstance().SessionCountMax,
+			Auth::ConstValue::GetInstance().OverlappedCountMax,
+			Auth::ConstValue::GetInstance().ConnectReadyClientCountMax);
+		_networkManager.PrepareSocket();
 
-		for (int i = 0;i < Utility::ConstValue::GetInstance().ConnectReadyClientCountMax;++i)
+		for (int i = 0;i < Auth::ConstValue::GetInstance().ConnectReadyClientCountMax;++i)
 		{
 			std::shared_ptr<SOCKET> targetSocket = _networkManager.GetPreparedSocket();
 			_networkManager.ActivateClient(targetSocket);
 		}
 
-		std::string clientLog = "Client : " + std::to_string(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
+		std::string clientLog = "Client : " + std::to_string(Auth::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Auth", "AuthManager", clientLog);
 
 		_networkManager.ReadMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
@@ -120,7 +124,7 @@ namespace Auth
 				//TOKENÃ³¸®
 				CheckLobbyServerState();
 
-				Game::Protocol::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
+				Game::Protocol::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", Auth::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:

@@ -2,7 +2,7 @@
 #include "network/NetworkManager.h"
 #include "../utility/Debug.h"
 
-#include "utility/ConstValue.h"
+#include "game/ConstValue.h"
 
 namespace Network
 {
@@ -39,7 +39,7 @@ namespace Network
 		auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
 		targetClient->Initialize(socketSharedPtr);
 
-		bool result = _authModule->Connect(targetClient, socketSharedPtr, ClientUtility::ConstValue::GetInstance().ThreadCount, overlappedPtr);
+		bool result = _authModule->Connect(targetClient, socketSharedPtr, Game::ConstValue::GetInstance().ThreadCount, overlappedPtr);
 		if (!result)
 		{
 			Utility::LogError("Game", "GameManager", "Socket - IOCP CONNET FAIL");

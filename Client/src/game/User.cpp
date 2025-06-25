@@ -1,7 +1,7 @@
 #pragma once
 #include "game/User.h"
 #include "../utility/Debug.h"
-#include "utility/ConstValue.h"
+#include "game/ConstValue.h"
 
 namespace Game
 {
@@ -23,8 +23,8 @@ namespace Game
 		std::string stringBuffer = "";
 		int bodySize = 0;
 
-		int clientNumber = ClientUtility::ConstValue::GetInstance().CurrentClinetIndex.fetch_add(1, std::memory_order_relaxed);
-		std::string uid = ClientUtility::ConstValue::GetInstance().TestUID + std::to_string(clientNumber);
+		int clientNumber = Game::ConstValue::GetInstance().CurrentClinetIndex.fetch_add(1, std::memory_order_relaxed);
+		std::string uid = Game::ConstValue::GetInstance().TestUID + std::to_string(clientNumber);
 
 		Game::Protocol::CreateRequestConnect(uid, contentsType, stringBuffer, bodySize);
 		Network::MessageHeader newHeader(htonl(bodySize), htonl(contentsType));

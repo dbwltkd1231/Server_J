@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include\auth;$(SolutionDir)Common\include\game;$(SolutionDir)Common\library\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include;$(SolutionDir)Common\include\game;$(SolutionDir)Common\library\hiredis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,11 +156,11 @@
     <ClInclude Include="..\Common\include\network\NetworkManager.h" />
     <ClInclude Include="..\Common\include\network\Session.h" />
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
-    <ClInclude Include="..\Common\include\utility\ConstValue.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
     <ClInclude Include="..\Common\include\utility\StringConverter.h" />
     <ClInclude Include="include\auth\AuthManager.h" />
+    <ClInclude Include="include\auth\ConstValue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

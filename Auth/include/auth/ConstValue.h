@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-namespace Utility
+namespace Auth
 {
     class ConstValue
     {
@@ -16,7 +16,6 @@ namespace Utility
         std::string IP = "";
         int ServerPort = 0;
         int RedisPort = 0;
-        int BuferSizeMax = 0;
         int SessionCountMax = 0;
         int OverlappedCountMax = 0;
         int ConnectReadyClientCountMax = 0;

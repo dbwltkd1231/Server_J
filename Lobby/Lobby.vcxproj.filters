@@ -25,6 +25,9 @@
     <Filter Include="공용\헤더 파일\Utility">
       <UniqueIdentifier>{4814f481-8160-4178-8575-2ca013f25cd3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Utility">
+      <UniqueIdentifier>{d77e32ea-eedd-4313-aabb-b562d7756d47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\utility\StringConverter.h">
       <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utility\ConstValue.h">
+      <Filter>헤더 파일\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
