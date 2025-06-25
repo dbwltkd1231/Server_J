@@ -2,11 +2,14 @@
     "NETWORK": {
         "BUFFER_SIZE_MAX": 1024,
         "CLIENT_ACCEPTREADY_COUNT_MAX": 5,
-        "CLIENT_ACTIVATE_COUNT_MAX": 300,
+        "CLIENT_ACTIVATE_COUNT_MAX": 10,
         "IP": "127.0.0.1",
         "OVERLAPPED_COUNT_MAX": 100,
         "PORT": 9090,
         "SOCKET_ONETIME_PREPARE_COUNT": 3
+    },
+    "REDIS": {
+        "PORT": 6379
     },
     "SQL": {
         "USER_DB_ADDRESS": "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;",

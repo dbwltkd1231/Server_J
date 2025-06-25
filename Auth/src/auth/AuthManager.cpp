@@ -59,6 +59,17 @@ namespace Auth
 		Utility::Log("Auth", "AuthManager", "UserDatabase Worker Process..");
 	}
 
+	void AuthManager::ConnectRedis(std::string ip, int redisPort)
+	{
+		_redis = redisConnect(ip.c_str(), redisPort);
+		if (_redis == NULL || _redis->err)
+		{
+			Utility::Log("Auth", "AuthManager", "Redis Connect Fail");
+			return;
+		}
+		Utility::Log("Auth", "AuthManager", "Redis Connect Success");
+	}
+
 	void AuthManager::ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue)
 	{
 		auto messageType = static_cast<protocol::MessageContent>(contentsType);
@@ -105,7 +116,10 @@ namespace Auth
 			case protocol::MessageContent_REQUEST_CONNECT:
 			{
 				auto requestConnectData = std::static_pointer_cast<Game::RequestConnectData>(result);
+
 				//TOKEN처리
+				CheckLobbyServerState();
+
 				Game::Protocol::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
 				break;
 			}
@@ -116,5 +130,55 @@ namespace Auth
 		_networkManager.SendRequest(targetSocket, contentsType, stringBuffer, bodySize);
 		
 		//success -> 토큰발급
+	}
+
+	void AuthManager::CheckLobbyServerState()
+	{
+		unsigned long long cursor = 0;
+		do {
+			redisReply* reply = (redisReply*)redisCommand(_redis, "SCAN %llu MATCH Lobby:* COUNT 10", cursor);
+
+			if (!reply || reply->type != REDIS_REPLY_ARRAY || reply->elements < 2) // key, element구조이기때문에 최소2개가있어야 데이터1개를 조회할수있다.
+			{
+				std::cerr << "Redis SCAN 실패!" << std::endl;
+				return;
+			}
+
+			cursor = std::stoi(reply->element[0]->str); // 다음 SCAN 커서 업데이트
+			redisReply* keyList = reply->element[1];
+
+			if (keyList->type == REDIS_REPLY_ARRAY)
+			{
+				for (size_t i = 0; i < keyList->elements; i++)
+				{
+					std::string key = keyList->element[i]->str;
+
+					redisReply* replyData = (redisReply*)redisCommand(_redis, "HGETALL %s", key.c_str());
+					if (replyData && replyData->type == REDIS_REPLY_ARRAY)
+					{
+						int connected = -1, capacity = -1, port = -1;
+
+						for (size_t j = 0; j < replyData->elements; j += 2)
+						{
+							std::string field = replyData->element[j]->str;
+							std::string value = replyData->element[j + 1]->str;
+
+							if (field == "connected") connected = std::stoi(value);
+							else if (field == "capacity") capacity = std::stoi(value);
+							else if (field == "port") port = std::stoi(value);
+						}
+
+						// 테스트용 출력
+						std::cout << "[로비 상태] " << key << " - 접속자: " << connected
+							<< " / 최대: " << capacity << " / 포트: " << port << std::endl;
+
+						freeReplyObject(replyData);
+					}
+				}
+			}
+
+
+		freeReplyObject(reply);
+		} while (cursor != 0);
 	}
 }

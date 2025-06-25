@@ -19,6 +19,8 @@ namespace Utility
 		config["NETWORK"]["CLIENT_ACTIVATE_COUNT_MAX"] = 10;
 		config["NETWORK"]["SOCKET_ONETIME_PREPARE_COUNT"] = 3;
 
+		config["REDIS"]["PORT"] = 6379;
+
 		// SQL ¼³Á¤
 		config["SQL"]["USER_DB_NAME"] = "User";
 		config["SQL"]["USER_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;";

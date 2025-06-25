@@ -2,7 +2,7 @@
 #include <string>
 #include <functional>
 
-#include "../library/hiredis/include/hiredis/hiredis.h"
+#include "hiredis/hiredis.h"
 #include "../include/network/NetworkManager.h"
 #include "../include/database/Worker.h"
 
@@ -17,7 +17,7 @@ namespace Auth
 	public:
 		void Initialize();
 		void ConnectDatabase(std::string databaseName, std::string sqlServerAddress);
-
+		void ConnectRedis(std::string ip, int redisPort);
 	public:
 		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue);
 
@@ -39,7 +39,12 @@ namespace Auth
 		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _databaseCallback;
 
 	private:
+		redisContext* _redis;
+
+	private:
 		void DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
 
+	private:
+		void CheckLobbyServerState();
 	};
 }

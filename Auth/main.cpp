@@ -18,6 +18,7 @@ int main()
 		return 0;
 	}
 
+	std::string serverIP = config["NETWORK"]["IP"];
 	int networkPort = config["NETWORK"]["PORT"].get<int>();
 	int socketOnetimePrepareCount = config["NETWORK"]["SOCKET_ONETIME_PREPARE_COUNT"].get<int>();
 	int clientActivateCountMax = config["NETWORK"]["CLIENT_ACTIVATE_COUNT_MAX"].get<int>();
@@ -25,12 +26,14 @@ int main()
 	int overlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"].get<int>();
 	int bufferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"].get<int>();
 
+	int redisPort = config["REDIS"]["PORT"];
+
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
 	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
-
 	Utility::ConstValue::GetInstance().ServerPort = networkPort;
+	Utility::ConstValue::GetInstance().RedisPort = redisPort;
 	Utility::ConstValue::GetInstance().BuferSizeMax = bufferSizeMax;
 	Utility::ConstValue::GetInstance().PreparedSocketCountMax = socketOnetimePrepareCount;
 	Utility::ConstValue::GetInstance().ConnectedClientCountMax = clientActivateCountMax;
@@ -38,13 +41,13 @@ int main()
 	Utility::ConstValue::GetInstance().OverlappedCountMax = overlappedCountMax;
 	Utility::ConstValue::GetInstance().SessionCountMax = sessionCount;
 
-
 	std::string databaseName = config["SQL"]["USER_DB_NAME"];
 	std::string sqlServerAddress = config["SQL"]["USER_DB_ADDRESS"];
 
 	Auth::AuthManager authManager;
 	authManager.Initialize();
 	authManager.ConnectDatabase(databaseName, sqlServerAddress);
+	authManager.ConnectRedis(serverIP, Utility::ConstValue::GetInstance().RedisPort);
 
 
 	while (true)
