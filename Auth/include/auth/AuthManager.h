@@ -2,6 +2,7 @@
 #include <string>
 #include <functional>
 
+#include "../library/hiredis/include/hiredis/hiredis.h"
 #include "../include/network/NetworkManager.h"
 #include "../include/database/Worker.h"
 
