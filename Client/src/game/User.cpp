@@ -1,7 +1,7 @@
 #pragma once
 #include "game/User.h"
-
 #include "../utility/Debug.h"
+#include "utility/ConstValue.h"
 
 namespace Game
 {
@@ -15,16 +15,19 @@ namespace Game
 		// 정리 코드
 	}
 
-	void User::Initialize(std::shared_ptr<Network::Client> client)
+	void User::Initialize(std::shared_ptr<Network::Client> client, Network::CustomOverlapped* sendOverlappedPtr)
 	{
 		_client = client;
-	}
 
-//void User::Initialize(int64_t accountNumber, std::string userID, int money)
-//{
-//	_accountNumber = accountNumber;
-//	_userID = userID;
-//	_money = money;
-//	Utility::Log("Game", "User", "Initialize: " + userID + " with Account Number: " + std::to_string(accountNumber));
-//}
+		uint32_t contentsType = 0;
+		std::string stringBuffer = "";
+		int bodySize = 0;
+
+		int clientNumber = ClientUtility::ConstValue::GetInstance().CurrentClinetIndex.fetch_add(1, std::memory_order_relaxed);
+		std::string uid = ClientUtility::ConstValue::GetInstance().TestUID + std::to_string(clientNumber);
+
+		Game::Protocol::CreateRequestConnect(uid, contentsType, stringBuffer, bodySize);
+		Network::MessageHeader newHeader(htonl(bodySize), htonl(contentsType));
+		_client->Send(sendOverlappedPtr, newHeader, stringBuffer, bodySize);
+	}
 }

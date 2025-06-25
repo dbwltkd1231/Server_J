@@ -14,6 +14,12 @@ namespace Network
 		ClientSocketPtr = nullptr;
 	}
 
+	bool Client::operator==(const Client& other) const
+	{
+		return reinterpret_cast<ULONG_PTR>(ClientSocketPtr.get()) ==
+			reinterpret_cast<ULONG_PTR>(other.ClientSocketPtr.get());
+	}
+
 	void Client::Initialize(std::shared_ptr<SOCKET> clientSocketPtr)
 	{
 		ClientSocketPtr = clientSocketPtr;
@@ -26,6 +32,13 @@ namespace Network
 		Utility::Log("Network", "Client", "Deinitialize");
 	}
 
+	ULONG_PTR Client::GetSocketPtr()
+	{
+		if (ClientSocketPtr == nullptr)
+			return 0;
+
+		return (ULONG_PTR)ClientSocketPtr.get();
+	}
 
 	void Client::ConnectEx(LPFN_CONNECTEX& connectEx, sockaddr_in serverAddr, Network::CustomOverlapped& overlapped)
 	{
@@ -94,5 +107,30 @@ namespace Network
 			log = " Socket Receive Ready";
 			Utility::Log("Network", "Client", log);
 		}
+	}
+
+	void Client::Send(CustomOverlapped* overlappedPtr, const MessageHeader header, std::string& stringBuffer, int& bodySize)
+	{
+		if (ClientSocketPtr == nullptr || *ClientSocketPtr == INVALID_SOCKET)
+		{
+			Utility::Log("Network", "Client", "Invalid Socket Pointer");
+			return;
+		}
+
+		overlappedPtr->SetOperationType(Network::OperationType::OP_SEND);
+		overlappedPtr->SetHeader(header);
+		overlappedPtr->SetBody(stringBuffer.c_str(), bodySize);
+
+		DWORD flags = 0;
+		int result = WSASend(*ClientSocketPtr, overlappedPtr->Wsabuf, 2, nullptr, flags, &*overlappedPtr, nullptr);
+		int errorCode = WSAGetLastError();
+		if (result == SOCKET_ERROR && WSAGetLastError() != WSA_IO_PENDING)
+		{
+			std::string log = "WSASend 실패! 오류 코드: " + std::to_string(errorCode);
+			Utility::Log("Network", "Client", log);
+			return;
+		}
+
+		Utility::Log("Network", "Client", "클라이언트 WSASend 호출");
 	}
 } 

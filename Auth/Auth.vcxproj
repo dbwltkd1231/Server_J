@@ -114,7 +114,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(ProjectDir)src\auth;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(ProjectDir)src\auth;$(SolutionDir)Common\src\game;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\database\Worker.cpp" />
+    <ClCompile Include="..\Common\src\game\NetworkProtocol.cpp" />
     <ClCompile Include="..\Common\src\network\Client.cpp" />
     <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp" />
     <ClCompile Include="..\Common\src\network\NetworkManager.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="..\Common\include\utility\ConstValue.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
+    <ClInclude Include="..\Common\include\utility\StringConverter.h" />
     <ClInclude Include="include\auth\AuthManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

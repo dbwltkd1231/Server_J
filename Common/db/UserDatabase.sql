@@ -133,8 +133,10 @@ BEGIN
 
     IF @Exists > 0
     BEGIN
-        -- 이미 존재하면 1 반환
-        SELECT 1 AS AccountExists;
+        -- 이미 존재하면 1과 함께 AccountUID 반환
+        SELECT 
+            @AccountUID AS AccountUID,
+            1 AS AccountExists;
         RETURN;
     END
 
@@ -142,18 +144,18 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        -- Account 테이블에 추가 (AccountNumber 자동 생성)
         INSERT INTO Account (AccountUID, CreateDate)
         VALUES (@AccountUID, GETDATE());
 
-        -- UserData 테이블에 추가 (GameMoney 기본값 0)
         INSERT INTO UserData (AccountUID, GameMoney, LastUpdate)
         VALUES (@AccountUID, 0, GETDATE());
 
         COMMIT;
 
-        -- 추가 성공 시 0 반환
-        SELECT 0 AS AccountAdded;
+        -- 추가 성공 시 0과 함께 AccountUID 반환
+        SELECT 
+            @AccountUID AS AccountUID,
+            0 AS AccountAdded;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;

@@ -111,26 +111,15 @@ bool VerifyMessageContentVector(::flatbuffers::Verifier &verifier, const ::flatb
 struct REQUEST_CONNECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef REQUEST_CONNECTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_LOGIN_ID = 4,
-    VT_LOGIN_PASSWORD = 6,
-    VT_PORT = 8
+    VT_LOGIN_ID = 4
   };
   const ::flatbuffers::String *login_id() const {
     return GetPointer<const ::flatbuffers::String *>(VT_LOGIN_ID);
-  }
-  const ::flatbuffers::String *login_password() const {
-    return GetPointer<const ::flatbuffers::String *>(VT_LOGIN_PASSWORD);
-  }
-  int32_t port() const {
-    return GetField<int32_t>(VT_PORT, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyOffset(verifier, VT_LOGIN_ID) &&
            verifier.VerifyString(login_id()) &&
-           VerifyOffset(verifier, VT_LOGIN_PASSWORD) &&
-           verifier.VerifyString(login_password()) &&
-           VerifyField<int32_t>(verifier, VT_PORT, 4) &&
            verifier.EndTable();
   }
 };
@@ -141,12 +130,6 @@ struct REQUEST_CONNECTBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_login_id(::flatbuffers::Offset<::flatbuffers::String> login_id) {
     fbb_.AddOffset(REQUEST_CONNECT::VT_LOGIN_ID, login_id);
-  }
-  void add_login_password(::flatbuffers::Offset<::flatbuffers::String> login_password) {
-    fbb_.AddOffset(REQUEST_CONNECT::VT_LOGIN_PASSWORD, login_password);
-  }
-  void add_port(int32_t port) {
-    fbb_.AddElement<int32_t>(REQUEST_CONNECT::VT_PORT, port, 0);
   }
   explicit REQUEST_CONNECTBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -161,39 +144,34 @@ struct REQUEST_CONNECTBuilder {
 
 inline ::flatbuffers::Offset<REQUEST_CONNECT> CreateREQUEST_CONNECT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<::flatbuffers::String> login_id = 0,
-    ::flatbuffers::Offset<::flatbuffers::String> login_password = 0,
-    int32_t port = 0) {
+    ::flatbuffers::Offset<::flatbuffers::String> login_id = 0) {
   REQUEST_CONNECTBuilder builder_(_fbb);
-  builder_.add_port(port);
-  builder_.add_login_password(login_password);
   builder_.add_login_id(login_id);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<REQUEST_CONNECT> CreateREQUEST_CONNECTDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const char *login_id = nullptr,
-    const char *login_password = nullptr,
-    int32_t port = 0) {
+    const char *login_id = nullptr) {
   auto login_id__ = login_id ? _fbb.CreateString(login_id) : 0;
-  auto login_password__ = login_password ? _fbb.CreateString(login_password) : 0;
   return protocol::CreateREQUEST_CONNECT(
       _fbb,
-      login_id__,
-      login_password__,
-      port);
+      login_id__);
 }
 
 struct RESPONSE_CONNECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef RESPONSE_CONNECTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_LOGIN_SUCCESS = 4,
-    VT_AUTH_TOKEN = 6,
-    VT_LOBY_PORT = 8
+    VT_LOGIN_ID = 4,
+    VT_ID_NEW = 6,
+    VT_AUTH_TOKEN = 8,
+    VT_LOBY_PORT = 10
   };
-  bool login_success() const {
-    return GetField<uint8_t>(VT_LOGIN_SUCCESS, 0) != 0;
+  const ::flatbuffers::String *login_id() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_LOGIN_ID);
+  }
+  bool id_new() const {
+    return GetField<uint8_t>(VT_ID_NEW, 0) != 0;
   }
   const ::flatbuffers::String *auth_token() const {
     return GetPointer<const ::flatbuffers::String *>(VT_AUTH_TOKEN);
@@ -203,7 +181,9 @@ struct RESPONSE_CONNECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<uint8_t>(verifier, VT_LOGIN_SUCCESS, 1) &&
+           VerifyOffset(verifier, VT_LOGIN_ID) &&
+           verifier.VerifyString(login_id()) &&
+           VerifyField<uint8_t>(verifier, VT_ID_NEW, 1) &&
            VerifyOffset(verifier, VT_AUTH_TOKEN) &&
            verifier.VerifyString(auth_token()) &&
            VerifyField<int32_t>(verifier, VT_LOBY_PORT, 4) &&
@@ -215,8 +195,11 @@ struct RESPONSE_CONNECTBuilder {
   typedef RESPONSE_CONNECT Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_login_success(bool login_success) {
-    fbb_.AddElement<uint8_t>(RESPONSE_CONNECT::VT_LOGIN_SUCCESS, static_cast<uint8_t>(login_success), 0);
+  void add_login_id(::flatbuffers::Offset<::flatbuffers::String> login_id) {
+    fbb_.AddOffset(RESPONSE_CONNECT::VT_LOGIN_ID, login_id);
+  }
+  void add_id_new(bool id_new) {
+    fbb_.AddElement<uint8_t>(RESPONSE_CONNECT::VT_ID_NEW, static_cast<uint8_t>(id_new), 0);
   }
   void add_auth_token(::flatbuffers::Offset<::flatbuffers::String> auth_token) {
     fbb_.AddOffset(RESPONSE_CONNECT::VT_AUTH_TOKEN, auth_token);
@@ -237,25 +220,30 @@ struct RESPONSE_CONNECTBuilder {
 
 inline ::flatbuffers::Offset<RESPONSE_CONNECT> CreateRESPONSE_CONNECT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    bool login_success = false,
+    ::flatbuffers::Offset<::flatbuffers::String> login_id = 0,
+    bool id_new = false,
     ::flatbuffers::Offset<::flatbuffers::String> auth_token = 0,
     int32_t loby_port = 0) {
   RESPONSE_CONNECTBuilder builder_(_fbb);
   builder_.add_loby_port(loby_port);
   builder_.add_auth_token(auth_token);
-  builder_.add_login_success(login_success);
+  builder_.add_login_id(login_id);
+  builder_.add_id_new(id_new);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<RESPONSE_CONNECT> CreateRESPONSE_CONNECTDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    bool login_success = false,
+    const char *login_id = nullptr,
+    bool id_new = false,
     const char *auth_token = nullptr,
     int32_t loby_port = 0) {
+  auto login_id__ = login_id ? _fbb.CreateString(login_id) : 0;
   auto auth_token__ = auth_token ? _fbb.CreateString(auth_token) : 0;
   return protocol::CreateRESPONSE_CONNECT(
       _fbb,
-      login_success,
+      login_id__,
+      id_new,
       auth_token__,
       loby_port);
 }

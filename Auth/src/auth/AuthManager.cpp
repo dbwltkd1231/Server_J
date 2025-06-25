@@ -41,11 +41,20 @@ namespace Auth
 					this->ReadMessage(targetSocket, contentsType, buffer);
 				}
 			);
+
+		_databaseCallback = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
+			(
+				[this]
+				(ULONG_PTR socketPtr, uint32_t contentsType, SQLHSTMT hstmt)
+				{
+					this->DatabaseCallback(socketPtr, contentsType, hstmt);
+				}
+			);
 	}
 
 	void AuthManager::ConnectDatabase(std::string databaseName, std::string sqlServerAddress)
 	{
-		_userDatabaseWorker.Initialize(databaseName, sqlServerAddress);
+		_userDatabaseWorker.Initialize(databaseName, sqlServerAddress, _databaseCallback);
 		_userDatabaseWorker.Activate(true);
 		Utility::Log("Auth", "AuthManager", "UserDatabase Worker Process..");
 	}
@@ -55,6 +64,8 @@ namespace Auth
 		auto messageType = static_cast<protocol::MessageContent>(contentsType);
 		const char* buffer = stringValue.c_str();
 
+		Database::Task task;
+
 		switch (messageType)
 		{
 			case protocol::MessageContent_REQUEST_CONNECT:
@@ -62,17 +73,27 @@ namespace Auth
 				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_CONNECT>(buffer);
 
 				std::string loginId = requestConnect->login_id()->str();
-				
-				auto task = Game::CreateRequestConnect(targetSocket, loginId);
-				_userDatabaseWorker.Enqueue(std::move(task));
 
+				task = Game::CreateQuerryAccountCheck(targetSocket, loginId);
 				break;
 			}
 		}
+
+		if (task.DatabaseName == Database::DatabaseType::User)
+		{
+			_userDatabaseWorker.Enqueue(std::move(task));
+		}
+		else if (task.DatabaseName == Database::DatabaseType::Game)
+		{
+
+		}
+		else
+		{
+
+		}
 	}
 
-	//TODO 콜백연결안되어있음.
-	void AuthManager::DatabaseCallback(ULONG_PTR& targetSocket, uint32_t& contentsType, SQLHSTMT& hstmt)
+	void AuthManager::DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
 	{
 		std::shared_ptr<Game::BasicData> result = Game::GetSqlData(targetSocket, contentsType, hstmt);
 
@@ -81,10 +102,11 @@ namespace Auth
 		int bodySize = 0;
 		switch (contentsType)
 		{
-			case protocol::MessageContent_RESPONSE_CONNECT:
+			case protocol::MessageContent_REQUEST_CONNECT:
 			{
 				auto requestConnectData = std::static_pointer_cast<Game::RequestConnectData>(result);
-				Game::CreateResponseConnect(requestConnectData->IsSuccess, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
+				//TOKEN처리
+				Game::Protocol::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", Utility::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:
@@ -92,6 +114,7 @@ namespace Auth
 		}
 
 		_networkManager.SendRequest(targetSocket, contentsType, stringBuffer, bodySize);
+		
 		//success -> 토큰발급
 	}
 }

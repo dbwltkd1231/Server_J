@@ -75,6 +75,9 @@
     <ClCompile Include="..\Common\src\database\Worker.cpp">
       <Filter>공용\소스 파일\Database</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\src\game\NetworkProtocol.cpp">
+      <Filter>공용\소스 파일\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\include\network\Client.h">
@@ -110,9 +113,6 @@
     <ClInclude Include="..\Common\include\utility\ConstValue.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Game</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\game\BasicData.h">
       <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
@@ -120,6 +120,12 @@
       <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\include\game\NetworkProtocol.h">
+      <Filter>공용\헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\StringConverter.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>

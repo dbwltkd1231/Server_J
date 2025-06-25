@@ -30,39 +30,11 @@ int main()
 	ClientUtility::ConstValue::GetInstance().TestUID = config["CLIENT"]["CLIENT_TEST_UID"].get<std::string>();
 	ClientUtility::ConstValue::GetInstance().ClientCount = config["CLIENT"]["TEST_CLIENT_COUNT"];
 	ClientUtility::ConstValue::GetInstance().ThreadCount = config["CLIENT"]["TEST_THREAD_COUNT"];
+	ClientUtility::ConstValue::GetInstance().CurrentClinetIndex.store(0, std::memory_order_release);
 
 	Game::GameManager gameManager;
 	gameManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort, ClientUtility::ConstValue::GetInstance().ClientCount);
 	gameManager.Process(ClientUtility::ConstValue::GetInstance().ThreadCount);
-
-//	Network::NetworkManager authManager;
-//	Network::NetworkManager lobbyManager;
-//	Game::UserManager userManager;
-//
-//	authManager.Initialize(Utility::ConstValue::GetInstance().IP, Utility::ConstValue::GetInstance().ServerPort,
-//		Client::ConstValue::GetInstance().ClientCount, Client::ConstValue::GetInstance().ThreadCount);
-//		
-//
-//
-//	std::function<void(ULONG_PTR)> acceptCallback = std::function<void(ULONG_PTR)>(
-//		[&userManager](ULONG_PTR targetSocket)
-//		{
-//			userManager.AcceptCallback(targetSocket);
-//		}
-//	);
-//
-//	authManager.CallbackSetting(acceptCallback);
-
-
-//clientManager.CallbackSetting(
-//	std::function<void(ULONG_PTR)>(
-//		[&clientManager](ULONG_PTR targetSocket)
-//		{
-//			clientManager.AcceptCallback(targetSocket);
-//		}
-//	)
-//);
-
 
 	while (true)
 	{

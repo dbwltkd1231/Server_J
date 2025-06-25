@@ -2,6 +2,7 @@
 
 #include "../include/database/Worker.h"
 #include "../include/utility/Debug.h"
+#include "../include/utility/StringConverter.h"
 
 namespace Database
 {
@@ -25,8 +26,10 @@ namespace Database
 			SQLFreeHandle(SQL_HANDLE_ENV, _henv);
 	}
 
-	void Worker::Initialize(std::string databaseName, std::string sqlServerAddress)
+	void Worker::Initialize(std::string databaseName, std::string sqlServerAddress, std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> procedureCallback)
 	{
+		_procedureCallback = procedureCallback;
+
 		SQLWCHAR sqlState[6], message[256];
 		SQLINTEGER nativeError;
 		SQLSMALLINT messageLength;
@@ -111,35 +114,41 @@ namespace Database
 			{
 				task = _taskQueue.pop();
 
+				auto socketPtr = task.SocketPtr;
 				auto procedureName = task.ProcedureName;
 				auto contentsType = task.MessageType;
 				auto params = task.Parameters;
-				ExecuteStoredProcedure(procedureName, params, contentsType);
+				ExecuteStoredProcedure(procedureName, params, socketPtr, contentsType);
 			}
 		}
 	}
 
-	void Worker::ExecuteStoredProcedure(const std::string& procedureName, const std::string& params, int contentsType)
+	void Worker::ExecuteStoredProcedure(const std::string& procedureName, const std::string& params, ULONG_PTR socketPtr, int contentsType)
 	{
 		SQLAllocHandle(SQL_HANDLE_STMT, _hdbc, &_hstmt);
 
 		// SQL 문 준비
-		std::string query = "EXEC " + procedureName + " " + params;
+		std::string stringQuerry = "EXEC " + procedureName + params;
+		std::wstring wstringquery = Utility::StringConverter::ConvertToSQLWCHAR(stringQuerry);
+		//std::string query = "EXEC " + procedureName + " " + params;
+
 
 		// SQL 문 실행
-		SQLWCHAR* dataQuery = (SQLWCHAR*)query.c_str();
+		SQLWCHAR* dataQuery = (SQLWCHAR*)wstringquery.c_str();
 		SQLRETURN dataRet = SQLExecDirectW(_hstmt, dataQuery, SQL_NTS);
 
 
 		if (dataRet == SQL_SUCCESS || dataRet == SQL_SUCCESS_WITH_INFO)
 		{
-			std::cout << "프로시저 실행 성공: " << procedureName << std::endl;
+			std::string log = "프로시저 실행 성공: " + procedureName;
+			Utility::Log("Database", "Worker", log);
 
-
+			_procedureCallback(socketPtr, contentsType, _hstmt);
 		}
 		else 
 		{
-			std::cerr << "프로시저 실행 실패: " << procedureName << std::endl;
+			std::string log = "프로시저 실행 실패: " + procedureName;
+			Utility::LogError("Database", "Worker", log);
 		}
 
 		SQLFreeHandle(SQL_HANDLE_STMT, _hstmt);

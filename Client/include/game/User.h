@@ -3,6 +3,7 @@
 #include <string>
 
 #include "network/Client.h"
+#include "../game/NetworkProtocol.h"
 
 namespace Game
 {
@@ -13,7 +14,7 @@ namespace Game
 		~User();
 
 	public:
-		void Initialize(std::shared_ptr<Network::Client> client);
+		void Initialize(std::shared_ptr<Network::Client> client, Network::CustomOverlapped* sendOverlappedPtr);
 
 	private:
 		//std::shared_ptr<Network::NetManagerModule> _authModule;

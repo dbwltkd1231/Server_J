@@ -15,7 +15,7 @@ namespace Network
 	public:
 		void Initialze(std::string ip, int port);
 		void CallbackSetting(
-			std::function<void(Network::ServerType&, ULONG_PTR&, std::shared_ptr<Network::Client>)>& acceptCallback,
+			std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)>& acceptCallback,
 			std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)>& receiveCallback,
 			std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)>& disconnectCallback
 		);
@@ -23,7 +23,7 @@ namespace Network
 		void ReceiveReadyToModule(Network::ServerType& serverType, ULONG_PTR& targetSocket, Network::CustomOverlapped* overlappedPtr);
 		void Process(int threadCount);
 	private:
-		void Work();
+		//void Work();
 	private:
 		std::shared_ptr<Network::NetManagerModule> _authModule;
 

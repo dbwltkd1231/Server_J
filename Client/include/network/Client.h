@@ -11,7 +11,7 @@ namespace Network
 	public:
 		Client();
 		~Client();
-
+		bool operator==(const Client& other) const;
 	private:
 		std::shared_ptr<SOCKET> ClientSocketPtr;
 
@@ -20,5 +20,8 @@ namespace Network
 		void Deinitialize();
 		void ConnectEx(LPFN_CONNECTEX& connectEx, sockaddr_in serverAddr, Network::CustomOverlapped& overlapped);
 		void ReceiveReady(CustomOverlapped& overlapped);
+		void Send(CustomOverlapped* overlappedPtr, const MessageHeader header, std::string& stringBuffer, int& bodySize);
+	public:
+		ULONG_PTR GetSocketPtr();
 	};
 }

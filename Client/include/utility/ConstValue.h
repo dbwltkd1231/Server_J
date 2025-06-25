@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <atomic>
 
 namespace ClientUtility
 {
@@ -14,6 +15,7 @@ namespace ClientUtility
 
         // 설정값들
         std::string TestUID = "";
+        std::atomic<int> CurrentClinetIndex;
         int ClientCount = 0;
         int ThreadCount = 0;
 

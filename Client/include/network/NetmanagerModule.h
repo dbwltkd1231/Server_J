@@ -31,7 +31,7 @@ namespace Network
 	public:
 		void Initialize(std::string ip, int port, ServerType serverType);
 		void CallbackSetting(
-			std::function<void(Network::ServerType&, ULONG_PTR&, std::shared_ptr<Network::Client>)> acceptCallback,
+			std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)> acceptCallback,
 			std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)> receiveCallback,
 			std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)> disconnectCallback
 		);
@@ -52,7 +52,7 @@ namespace Network
 		tbb::concurrent_map<ULONG_PTR, std::shared_ptr<Network::Client>> _clientMap;
 
 	private:
-		std::function<void(Network::ServerType&, ULONG_PTR&, std::shared_ptr<Network::Client>)> _acceptCallback;
+		std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)> _acceptCallback;
 		std::function<void(Network::ServerType&, ULONG_PTR&, int, int)> _disconnectCallback;
 		std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)> _receiveCallback;
 

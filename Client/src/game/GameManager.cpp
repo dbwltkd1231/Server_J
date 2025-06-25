@@ -1,8 +1,8 @@
 #pragma once
 #include "Game/GameManager.h"
 #include "../utility/ConstValue.h"
-#include "../game/NetworkProtocol.h"
-#include "../game/BasicData.h"
+
+
 
 namespace Game
 {
@@ -20,7 +20,7 @@ namespace Game
 	{
 		_networkManager.Initialze(ip, port);
 
-		_acceptCallback = std::bind(&GameManager::AcceptCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		_acceptCallback = std::bind(&GameManager::AcceptCallback, this, std::placeholders::_1, std::placeholders::_2);
 		_receiveCallback = std::bind(&GameManager::ReceiveCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		_disconnectCallback = std::bind(&GameManager::DisconnectCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
 		
@@ -34,7 +34,7 @@ namespace Game
 			_overlappedQueue->push(std::move(overlappedPtr));
 		}
 
-		for (int i = 0;i < clientCount;++i)
+		for (int i = 0;i < 3;++i) //clientCount
 		{
 			auto overlappedPtr = _overlappedQueue->pop();
 			overlappedPtr->Clear();
@@ -42,6 +42,7 @@ namespace Game
 			_networkManager.ConnectAuthServer(client, overlappedPtr);
 		}
 
+		_socketUserMap = std::make_shared<tbb::concurrent_map<ULONG_PTR, std::shared_ptr<Game::User>>>();
 		Utility::Log("Game", "GameManager", "Initialize with IP: " + ip + ", Port: " + std::to_string(port) + ", Client Count: " + std::to_string(clientCount));
 	}
 
@@ -51,17 +52,23 @@ namespace Game
 	}
 
 	// Callback functions for network events
-	void GameManager::AcceptCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, std::shared_ptr<Network::Client> client)
+	void GameManager::AcceptCallback(Network::ServerType& targetServer, std::shared_ptr<Network::Client> client)
 	{
-		auto overlappedPtr = _overlappedQueue->pop();
-		overlappedPtr->Clear();
+		auto receiveOverlappedPtr = _overlappedQueue->pop();
+		receiveOverlappedPtr->Clear();
 
-		_networkManager.ReceiveReadyToModule(targetServer, targetSocket, overlappedPtr);
+		ULONG_PTR socketPtr = client->GetSocketPtr();
+		_networkManager.ReceiveReadyToModule(targetServer, socketPtr, receiveOverlappedPtr);
 
 		if (targetServer == Network::ServerType::Auth)
 		{
-			Game::User user;
+			std::shared_ptr<Game::User> newUser = std::make_shared<Game::User>();
+			auto sendOverlappedPtr = _overlappedQueue->pop();
+			sendOverlappedPtr->Clear();
 
+			newUser->Initialize(client, sendOverlappedPtr);
+
+			_socketUserMap->insert({ socketPtr, newUser});
 		}
 		else if (targetServer == Network::ServerType::Lobby)
 		{
@@ -91,20 +98,22 @@ namespace Game
 	{
 		auto messageType = static_cast<protocol::MessageContent>(contentsType);
 		const char* buffer = stringValue.c_str();
-
+		std::string log;
 		switch (messageType)
 		{
 			case protocol::MessageContent_RESPONSE_CONNECT:
 			{
 				auto responseConnect = flatbuffers::GetRoot<protocol::RESPONSE_CONNECT>(buffer);
-				
+				std::string uid = responseConnect->login_id()->str();
 				std::string authToken = responseConnect->auth_token()->str();
-				bool loginSuccess = responseConnect->login_success();
+				bool isNew = responseConnect->id_new();
 				int lobbyPort = responseConnect->loby_port();
-			
-				//User °´Ã¼¸¸µé±â
+				
+				log = " RESPONSE CONNECT [UID : " + uid  + " New USER ? " + (isNew ? "true": "false") + " Token : " + authToken + " Port : " + std::to_string(lobbyPort) + " ]";
 				break;
 			}
 		}
+
+		Utility::Log("Game", "GameManager", log);
 	}
 }

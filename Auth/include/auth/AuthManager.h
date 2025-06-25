@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <functional>
 
 #include "../include/network/NetworkManager.h"
 #include "../include/database/Worker.h"
@@ -33,9 +34,11 @@ namespace Auth
 		Database::Worker _deleteWorker;
 		Database::Worker _updateWorker;
 
+	private:
+		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _databaseCallback;
 
 	private:
-		void DatabaseCallback(ULONG_PTR& targetSocket, uint32_t& contentsType, SQLHSTMT& hstmt);
+		void DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
 
 	};
 }

@@ -2,8 +2,8 @@
 #include <string>
 #include <functional>
 
-#include "network/NetworkManager.h"
 #include "game/User.h"
+#include "network/NetworkManager.h"
 
 #include "oneapi/tbb/concurrent_map.h"
 
@@ -24,7 +24,7 @@ namespace Game
 		void Process(int threadCount);
 
 	private:
-		void AcceptCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, std::shared_ptr<Network::Client> client);
+		void AcceptCallback(Network::ServerType& targetServer, std::shared_ptr<Network::Client> client);
 		void ReceiveCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, Network::CustomOverlapped* overlappedPtr);
 		void DisconnectCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, int bytesTransferred, int errorCode);
 
@@ -32,13 +32,12 @@ namespace Game
 		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string& stringValue);
 		
 	private:
-		std::function<void(Network::ServerType&, ULONG_PTR&, std::shared_ptr<Network::Client>)> _acceptCallback;
+		std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)> _acceptCallback;
 		std::function<void(Network::ServerType&, ULONG_PTR&, Network::CustomOverlapped*)> _receiveCallback;
 		std::function<void(Network::ServerType&, ULONG_PTR&, int, int)> _disconnectCallback;
 
 	private:
 		std::shared_ptr<Utility::LockFreeCircleQueue<Network::CustomOverlapped*>> _overlappedQueue;
-		std::shared_ptr<tbb::concurrent_map<ULONG_PTR, Network::ServerType>> _socketServerMap;
-		std::shared_ptr<tbb::concurrent_map<ULONG_PTR, Game::User>> _socketUserMap;
+		std::shared_ptr<tbb::concurrent_map<ULONG_PTR, std::shared_ptr<Game::User>>> _socketUserMap;
 	};
 }

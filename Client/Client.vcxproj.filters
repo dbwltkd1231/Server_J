@@ -46,6 +46,9 @@
     <Filter Include="공용\헤더 파일\Game">
       <UniqueIdentifier>{8f329191-8ba4-4c0f-aaef-149ca3f8a4cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="공용\소스 파일\Game">
+      <UniqueIdentifier>{eb4c7bd2-a3f6-4a1a-bc69-980cdbd9a5f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="src\game\GameManager.cpp">
       <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\game\NetworkProtocol.cpp">
+      <Filter>공용\소스 파일\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,9 +101,6 @@
     <ClInclude Include="include\game\User.h">
       <Filter>헤더 파일\Game</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Game</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\game\BasicData.h">
       <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="include\game\GameManager.h">
       <Filter>헤더 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
