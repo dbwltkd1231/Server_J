@@ -20,12 +20,9 @@ int main()
 
 	std::string serverIP = config["NETWORK"]["IP"];
 	int networkPort = config["NETWORK"]["AUTHPORT"].get<int>();
-	int socketOnetimePrepareCount = config["NETWORK"]["SOCKET_ONETIME_PREPARE_COUNT"].get<int>();
-	int clientActivateCountMax = config["NETWORK"]["CLIENT_ACTIVATE_COUNT_MAX"].get<int>();
 	int clientAcceptReadyCountMax = config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"].get<int>();
 	int overlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"].get<int>();
 	int bufferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"].get<int>();
-
 	int redisPort = config["REDIS"]["PORT"];
 
 	SYSTEM_INFO sysInfo;
@@ -35,8 +32,6 @@ int main()
 	Utility::ConstValue::GetInstance().ServerPort = networkPort;
 	Utility::ConstValue::GetInstance().RedisPort = redisPort;
 	Utility::ConstValue::GetInstance().BuferSizeMax = bufferSizeMax;
-	Utility::ConstValue::GetInstance().PreparedSocketCountMax = socketOnetimePrepareCount;
-	Utility::ConstValue::GetInstance().ConnectedClientCountMax = clientActivateCountMax;
 	Utility::ConstValue::GetInstance().ConnectReadyClientCountMax = clientAcceptReadyCountMax;
 	Utility::ConstValue::GetInstance().OverlappedCountMax = overlappedCountMax;
 	Utility::ConstValue::GetInstance().SessionCountMax = sessionCount;

@@ -156,7 +156,7 @@ namespace Network
 			_preparedSocketQueue.push(socketSharedPtr);
 		}
 
-		std::string log = "소켓 IOCP 연결 : " + std::to_string(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
+		std::string log = "소켓 IOCP 연결 : " + std::to_string(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax);
 		Utility::Log("Network", "NetworkManager", log);
 	}
 
@@ -166,7 +166,7 @@ namespace Network
 		bool result = _preparedSocketQueue.try_pop(prepareSocket);
 		if (result == false)
 		{
-			PrepareSocket(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
+			PrepareSocket(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax);
 			result = _preparedSocketQueue.try_pop(prepareSocket);
 		}
 
@@ -175,13 +175,6 @@ namespace Network
 
 	void NetworkManager::ActivateClient(std::shared_ptr<SOCKET> targetSocket)
 	{
-		int capacity = Utility::ConstValue::GetInstance().ConnectedClientCountMax - _activatedClientMap.size();
-		if (capacity < 1)
-		{
-			Utility::LogError("Network", "NetworkManager", "수용 가능한 클라이언트 초과 !!");
-			return;
-		}
-
 		if (targetSocket == nullptr)
 		{
 			Utility::LogError("Network", "NetworkManager", "Prepare Socket is NULL");

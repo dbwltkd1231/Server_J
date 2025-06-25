@@ -73,7 +73,7 @@
       <Filter>소스 파일\Game</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\src\game\NetworkProtocol.cpp">
-      <Filter>공용\소스 파일\Game</Filter>
+      <Filter>공용\소스 파일\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

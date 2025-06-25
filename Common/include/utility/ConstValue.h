@@ -20,8 +20,6 @@ namespace Utility
         int SessionCountMax = 0;
         int OverlappedCountMax = 0;
         int ConnectReadyClientCountMax = 0;
-        int ConnectedClientCountMax = 0;
-        int PreparedSocketCountMax = 0;
 
 
     private:

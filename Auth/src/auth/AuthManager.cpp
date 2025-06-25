@@ -22,7 +22,7 @@ namespace Auth
 	void AuthManager::Initialize()
 	{
 		_networkManager.Construct();
-		_networkManager.PrepareSocket(Utility::ConstValue::GetInstance().PreparedSocketCountMax);
+		_networkManager.PrepareSocket(Utility::ConstValue::GetInstance().ConnectReadyClientCountMax);
 
 		for (int i = 0;i < Utility::ConstValue::GetInstance().ConnectReadyClientCountMax;++i)
 		{

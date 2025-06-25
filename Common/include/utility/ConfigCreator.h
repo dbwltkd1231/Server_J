@@ -15,9 +15,7 @@ namespace Utility
 		config["NETWORK"]["AUTHPORT"] = 9090;
 		config["NETWORK"]["OVERLAPPED_COUNT_MAX"] = 100;
 		config["NETWORK"]["BUFFER_SIZE_MAX"] = 1024;
-		config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"] = 5;
-		config["NETWORK"]["CLIENT_ACTIVATE_COUNT_MAX"] = 10;
-		config["NETWORK"]["SOCKET_ONETIME_PREPARE_COUNT"] = 3;
+		config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"] = 10;
 
 		config["REDIS"]["PORT"] = 6379;
 
@@ -53,6 +51,24 @@ namespace Utility
 
 		std::string log = "[Utility] [JsonCreator] File CreateSuccess !";
 		std::cout << log << std::endl;
+	}
+
+	void CreateLobbySettingFiles()
+	{
+		nlohmann::json config;
+
+		/// 네트워크 설정
+		config["NETWORK"]["IP"] = "127.0.0.1";
+		config["NETWORK"]["LobbySTARTPORT"] = 9091;
+		config["NETWORK"]["LobbySTARTCOUNT"] = 2;
+
+
+		config["NETWORK"]["OVERLAPPED_COUNT_MAX"] = 100;
+		config["NETWORK"]["BUFFER_SIZE_MAX"] = 1024;
+		config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"] = 10;
+		config["NETWORK"]["CLIENT_COUNT_MAX"] = 100;
+
+		config["REDIS"]["PORT"] = 6379;
 	}
 
 	nlohmann::json LoadSettingFiles()
