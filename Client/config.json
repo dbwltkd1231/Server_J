@@ -5,9 +5,9 @@
         "TEST_THREAD_COUNT": 5
     },
     "NETWORK": {
+        "AUTHPORT": 9090,
         "BUFFER_SIZE_MAX": 1024,
         "IP": "127.0.0.1",
-        "OVERLAPPED_COUNT_MAX": 100,
-        "PORT": 9090
+        "OVERLAPPED_COUNT_MAX": 100
     }
 }

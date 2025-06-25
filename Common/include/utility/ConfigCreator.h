@@ -12,7 +12,7 @@ namespace Utility
 
 		/// 네트워크 설정
 		config["NETWORK"]["IP"] = "127.0.0.1";
-		config["NETWORK"]["PORT"] = 9090;
+		config["NETWORK"]["AUTHPORT"] = 9090;
 		config["NETWORK"]["OVERLAPPED_COUNT_MAX"] = 100;
 		config["NETWORK"]["BUFFER_SIZE_MAX"] = 1024;
 		config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"] = 5;
@@ -40,7 +40,7 @@ namespace Utility
 		nlohmann::json config;
 
 		config["NETWORK"]["IP"] = "127.0.0.1";
-		config["NETWORK"]["PORT"] = 9090;
+		config["NETWORK"]["AUTHPORT"] = 9090;
 		config["NETWORK"]["BUFFER_SIZE_MAX"] = 1024;
 		config["NETWORK"]["OVERLAPPED_COUNT_MAX"] = 100;
 

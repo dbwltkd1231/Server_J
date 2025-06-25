@@ -23,7 +23,7 @@ int main()
 	}
 
 	Utility::ConstValue::GetInstance().IP = config["NETWORK"]["IP"].get<std::string>();
-	Utility::ConstValue::GetInstance().ServerPort = config["NETWORK"]["PORT"];
+	Utility::ConstValue::GetInstance().ServerPort = config["NETWORK"]["AUTHPORT"];
 	Utility::ConstValue::GetInstance().BuferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"];
 	Utility::ConstValue::GetInstance().OverlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"];
 

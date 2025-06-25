@@ -19,7 +19,7 @@ int main()
 	}
 
 	std::string serverIP = config["NETWORK"]["IP"];
-	int networkPort = config["NETWORK"]["PORT"].get<int>();
+	int networkPort = config["NETWORK"]["AUTHPORT"].get<int>();
 	int socketOnetimePrepareCount = config["NETWORK"]["SOCKET_ONETIME_PREPARE_COUNT"].get<int>();
 	int clientActivateCountMax = config["NETWORK"]["CLIENT_ACTIVATE_COUNT_MAX"].get<int>();
 	int clientAcceptReadyCountMax = config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"].get<int>();

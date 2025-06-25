@@ -22,5 +22,30 @@
     <Filter Include="공용\헤더 파일">
       <UniqueIdentifier>{fa28c329-b2f0-4019-95bd-ba7c5cc6daf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="공용\헤더 파일\Utility">
+      <UniqueIdentifier>{4814f481-8160-4178-8575-2ca013f25cd3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\ConstValue.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\Debug.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\StringConverter.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
