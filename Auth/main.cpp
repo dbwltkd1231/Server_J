@@ -2,8 +2,8 @@
 
 //#define SettingMode  
 
-#include "auth/AuthManager.h"
-#include "auth/ConstValue.h"
+#include "AuthManager.h"
+#include "ConstValue.h"
 
 #include "../utility/ConfigCreator.h"
 

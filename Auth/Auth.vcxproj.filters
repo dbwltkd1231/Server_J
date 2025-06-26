@@ -28,9 +28,6 @@
     <Filter Include="공용\헤더 파일\Network">
       <UniqueIdentifier>{e94bca03-ffe5-462f-9a13-ac95fd1af665}</UniqueIdentifier>
     </Filter>
-    <Filter Include="공용\소스 파일\Utility">
-      <UniqueIdentifier>{96761214-bdb2-46af-bbf0-ca2a4ecdfa07}</UniqueIdentifier>
-    </Filter>
     <Filter Include="공용\헤더 파일\Utility">
       <UniqueIdentifier>{20f2b394-9efb-48d2-95a4-e180354b347a}</UniqueIdentifier>
     </Filter>
@@ -46,11 +43,11 @@
     <Filter Include="공용\소스 파일\Database">
       <UniqueIdentifier>{194fb3e1-4be8-4113-a49e-0205ae8d65b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="공용\소스 파일\Game">
-      <UniqueIdentifier>{cfd49fcf-ff08-4dae-ad60-e0c608aeedf6}</UniqueIdentifier>
+    <Filter Include="공용\헤더 파일\Auth">
+      <UniqueIdentifier>{6e16f444-d250-444e-aee9-cca617934bb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="공용\헤더 파일\Game">
-      <UniqueIdentifier>{2b99436c-2e77-4d4f-9a3e-1f479fd94499}</UniqueIdentifier>
+    <Filter Include="공용\소스 파일\Auth">
+      <UniqueIdentifier>{552e3edd-c578-4140-b103-17e7b04602de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -66,17 +63,17 @@
     <ClCompile Include="..\Common\src\network\Session.cpp">
       <Filter>공용\소스 파일\Network</Filter>
     </ClCompile>
-    <ClCompile Include="src\auth\AuthManager.cpp">
-      <Filter>소스 파일\Auth</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\src\database\Worker.cpp">
       <Filter>공용\소스 파일\Database</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\src\game\NetworkProtocol.cpp">
-      <Filter>공용\소스 파일\Game</Filter>
+    <ClCompile Include="src\AuthManager.cpp">
+      <Filter>소스 파일\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\auth\NetworkProtocol.cpp">
+      <Filter>공용\소스 파일\Auth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,9 +95,6 @@
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\auth\AuthManager.h">
-      <Filter>헤더 파일\Auth</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\database\Task.h">
       <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
@@ -110,23 +104,26 @@
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\game\BasicData.h">
-      <Filter>공용\헤더 파일\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\game\DatabaseProtocol.h">
-      <Filter>공용\헤더 파일\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\game\NetworkProtocol.h">
-      <Filter>공용\헤더 파일\Game</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\utility\StringConverter.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="include\auth\ConstValue.h">
+    <ClInclude Include="include\AuthManager.h">
       <Filter>헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConstValue.h">
+      <Filter>헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\auth\BasicData.h">
+      <Filter>공용\헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\auth\DatabaseProtocol.h">
+      <Filter>공용\헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h">
+      <Filter>공용\헤더 파일\Auth</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

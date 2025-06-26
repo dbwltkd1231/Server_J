@@ -3,7 +3,7 @@
 #include <string>
 
 #include "network/Client.h"
-#include "../game/NetworkProtocol.h"
+#include "../auth/NetworkProtocol.h"
 
 namespace Game
 {
@@ -26,7 +26,7 @@ namespace Game
 		std::string _authToken;
 
 	public:
-		void AuthLogic();
+		//void AuthLogic();
 		//void Initialize(int64_t accountNumber, std::string userID, int money);
 		//void Deinitialize();
 	private:

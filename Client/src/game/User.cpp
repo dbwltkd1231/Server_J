@@ -26,7 +26,7 @@ namespace Game
 		int clientNumber = Game::ConstValue::GetInstance().CurrentClinetIndex.fetch_add(1, std::memory_order_relaxed);
 		std::string uid = Game::ConstValue::GetInstance().TestUID + std::to_string(clientNumber);
 
-		Game::Protocol::CreateRequestConnect(uid, contentsType, stringBuffer, bodySize);
+		Common::Auth::CreateRequestConnect(uid, contentsType, stringBuffer, bodySize);
 		Network::MessageHeader newHeader(htonl(bodySize), htonl(contentsType));
 		_client->Send(sendOverlappedPtr, newHeader, stringBuffer, bodySize);
 	}

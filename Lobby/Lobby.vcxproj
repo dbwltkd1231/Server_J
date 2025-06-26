@@ -135,15 +135,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Common\src\database\Worker.cpp" />
+    <ClCompile Include="..\Common\src\network\Client.cpp" />
+    <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp" />
+    <ClCompile Include="..\Common\src\network\NetworkManager.cpp" />
+    <ClCompile Include="..\Common\src\network\Session.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\LobbyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\include\database\Task.h" />
+    <ClInclude Include="..\Common\include\database\Worker.h" />
+    <ClInclude Include="..\Common\include\network\Client.h" />
+    <ClInclude Include="..\Common\include\network\CustomOverlapped.h" />
+    <ClInclude Include="..\Common\include\network\NetworkManager.h" />
+    <ClInclude Include="..\Common\include\network\Session.h" />
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
     <ClInclude Include="..\Common\include\utility\ConstValue.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
     <ClInclude Include="..\Common\include\utility\StringConverter.h" />
-    <ClInclude Include="include\utility\ConstValue.h" />
+    <ClInclude Include="include\ConstValue.h" />
+    <ClInclude Include="include\LobbyManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

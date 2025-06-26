@@ -25,13 +25,46 @@
     <Filter Include="공용\헤더 파일\Utility">
       <UniqueIdentifier>{4814f481-8160-4178-8575-2ca013f25cd3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일\Utility">
+    <Filter Include="공용\헤더 파일\Network">
+      <UniqueIdentifier>{15453b55-5945-4cf2-81ef-160cbb3af980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\소스 파일\Network">
+      <UniqueIdentifier>{074122d1-c5f7-4936-aa95-48d48757ba02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Lobby">
+      <UniqueIdentifier>{8e64c9fc-d720-4c50-a9eb-da34b8d3e27e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Lobby">
       <UniqueIdentifier>{d77e32ea-eedd-4313-aabb-b562d7756d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Database">
+      <UniqueIdentifier>{72625fc9-7e75-4270-8f92-72d2598c222f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\소스 파일\Database">
+      <UniqueIdentifier>{637502e0-9586-466a-a749-f021b1e18689}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\network\Client.cpp">
+      <Filter>공용\소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp">
+      <Filter>공용\소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\network\NetworkManager.cpp">
+      <Filter>공용\소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\network\Session.cpp">
+      <Filter>공용\소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LobbyManager.cpp">
+      <Filter>소스 파일\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\database\Worker.cpp">
+      <Filter>공용\소스 파일\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,8 +83,29 @@
     <ClInclude Include="..\Common\include\utility\StringConverter.h">
       <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="include\utility\ConstValue.h">
-      <Filter>헤더 파일\Utility</Filter>
+    <ClInclude Include="..\Common\include\network\Client.h">
+      <Filter>공용\헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\network\CustomOverlapped.h">
+      <Filter>공용\헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\network\NetworkManager.h">
+      <Filter>공용\헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\network\Session.h">
+      <Filter>공용\헤더 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LobbyManager.h">
+      <Filter>헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConstValue.h">
+      <Filter>헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\database\Task.h">
+      <Filter>공용\헤더 파일\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\database\Worker.h">
+      <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

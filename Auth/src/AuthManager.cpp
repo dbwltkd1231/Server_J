@@ -1,10 +1,10 @@
 #pragma once
 
-#include "auth/ConstValue.h"
-#include "auth/AuthManager.h"
-#include "../game/NetworkProtocol.h"
-#include "../game/DatabaseProtocol.h"
-#include "../game/BasicData.h"
+#include "ConstValue.h"
+#include "AuthManager.h"
+#include "../auth/NetworkProtocol.h"
+#include "../auth/DatabaseProtocol.h"
+#include "../auth/BasicData.h"
 #include "../utility/Debug.h"
 
 
@@ -89,7 +89,7 @@ namespace Auth
 
 				std::string loginId = requestConnect->login_id()->str();
 
-				task = Game::CreateQuerryAccountCheck(targetSocket, loginId);
+				task = Common::Auth::CreateQuerryAccountCheck(targetSocket, loginId);
 				break;
 			}
 		}
@@ -110,7 +110,7 @@ namespace Auth
 
 	void AuthManager::DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
 	{
-		std::shared_ptr<Game::BasicData> result = Game::GetSqlData(targetSocket, contentsType, hstmt);
+		std::shared_ptr<Common::Auth::BasicData> result = Common::Auth::GetSqlData(targetSocket, contentsType, hstmt);
 
 		auto contentsTypeOffset = static_cast<protocol::MessageContent> (result->ContentsType);
 		std::string stringBuffer;
@@ -119,12 +119,12 @@ namespace Auth
 		{
 			case protocol::MessageContent_REQUEST_CONNECT:
 			{
-				auto requestConnectData = std::static_pointer_cast<Game::RequestConnectData>(result);
+				auto requestConnectData = std::static_pointer_cast<Common::Auth::RequestConnectData>(result);
 
 				//TOKENÃ³¸®
 				CheckLobbyServerState();
 
-				Game::Protocol::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", Auth::ConstValue::GetInstance().ServerPort, contentsType, stringBuffer, bodySize);
+				Common::Auth::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", 6379, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:

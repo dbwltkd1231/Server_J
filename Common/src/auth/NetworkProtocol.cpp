@@ -1,10 +1,9 @@
 #pragma once
-#include "../game/NetworkProtocol.h"
+#include "../auth/NetworkProtocol.h"
 
-
-namespace Game
+namespace Common
 {
-	namespace Protocol
+	namespace Auth
 	{
 		void CreateRequestConnect(const std::string& uid, uint32_t& contentsType, std::string& buffer, int& bodySize)
 		{

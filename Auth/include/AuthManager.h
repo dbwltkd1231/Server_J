@@ -31,9 +31,6 @@ namespace Auth
 
 	private:
 		Database::Worker _userDatabaseWorker;
-		Database::Worker _insertWorker;
-		Database::Worker _deleteWorker;
-		Database::Worker _updateWorker;
 
 	private:
 		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _databaseCallback;

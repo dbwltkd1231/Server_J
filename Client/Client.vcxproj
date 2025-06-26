@@ -109,12 +109,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include;$(SolutionDir)Common\include\game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(ProjectDir)include;$(SolutionDir)Common\include\auth;$(SolutionDir)Common\include\lobby;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\utility;$(ProjectDir)src;$(SolutionDir)Common\src\game;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\utility;$(ProjectDir)src;$(SolutionDir)Common\src\auth;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\src\game\NetworkProtocol.cpp" />
+    <ClCompile Include="..\Common\src\auth\NetworkProtocol.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\game\GameManager.cpp" />
     <ClCompile Include="src\game\User.cpp" />
@@ -145,10 +145,10 @@
     <ClCompile Include="src\network\NetworkManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\include\game\BasicData.h" />
-    <ClInclude Include="..\Common\include\game\DatabaseProtocol.h" />
-    <ClInclude Include="..\Common\include\game\LOGINSERVER_PROTOCOL_generated.h" />
-    <ClInclude Include="..\Common\include\game\NetworkProtocol.h" />
+    <ClInclude Include="..\Common\include\auth\BasicData.h" />
+    <ClInclude Include="..\Common\include\auth\DatabaseProtocol.h" />
+    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h" />
+    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h" />
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
