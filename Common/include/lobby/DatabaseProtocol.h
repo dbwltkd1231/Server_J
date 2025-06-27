@@ -17,25 +17,41 @@ namespace Common
 {
     namespace Lobby
     {
-    //    std::shared_ptr<Common::Auth::BasicData> GetAccountCheckData(ULONG_PTR& targetSocket, SQLHSTMT& hstmt);
-    //
-    //    std::shared_ptr<Auth::BasicData> GetSqlData(ULONG_PTR& targetSocket, int contentsType, SQLHSTMT& hstmt)
-    //    {
-    //        auto messageType = static_cast<protocol::MessageContent>(contentsType);
-    //
-    //        switch (messageType)
-    //        {
-    //        case protocol::MessageContent_REQUEST_CONNECT:
-    //        {
-    //            auto result = GetAccountCheckData(targetSocket, hstmt);
-    //            return result;
-    //        }
-    //        }
-    //
-    //        return nullptr;
-    //    }
-    //
+       std::shared_ptr<Common::Auth::BasicData> UserSignInOut(ULONG_PTR& targetSocket, SQLHSTMT& hstmt);
+    
+       std::shared_ptr<Auth::BasicData> GetSqlData(ULONG_PTR& targetSocket, int contentsType, SQLHSTMT& hstmt)
+       {
+           auto messageType = static_cast<protocol::MessageContent>(contentsType);
+    
+           switch (messageType)
+           {
+           case protocol::MessageContent_REQUEST_CONNECT:
+           {
+               auto result = UserSignInOut(targetSocket, hstmt);
+               return result;
+           }
+           }
+    
+           return nullptr;
+       }
+    
     //    /////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+
+       Database::Task CreateQuerryUserSignInOut(ULONG_PTR targetSocket, long accountNumber)
+       {
+           // 로그인 요청 처리 로직
+           // 예: 데이터베이스에 사용자 정보 조회 요청
+           Database::Task task;
+           task.SocketPtr = targetSocket;
+           task.MessageType = protocol::MessageContent_REQUEST_CONNECT;
+           task.DatabaseName = Database::DatabaseType::User;
+           task.ProcedureName = "UserSignInOut";
+           task.Parameters = " '" + std::to_string(accountNumber) + "'";
+           return task;
+       }
+
+    
     //
     //
     //    // SQL서버에 REQUEST_CONNECT 요청을 위한 Task객체 생성

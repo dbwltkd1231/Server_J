@@ -122,10 +122,10 @@
     <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h">
+    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
+    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
   </ItemGroup>

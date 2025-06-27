@@ -43,6 +43,12 @@
     <Filter Include="공용\소스 파일\Auth">
       <UniqueIdentifier>{2b0762fe-5e6d-4d85-8f66-fecab8f5f519}</UniqueIdentifier>
     </Filter>
+    <Filter Include="공용\헤더 파일\Lobby">
+      <UniqueIdentifier>{ae54a3b5-4919-49aa-858b-af126767776b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\소스 파일\Lobby">
+      <UniqueIdentifier>{abc90a16-0781-4abd-872d-0c811a8173d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="..\Common\src\auth\NetworkProtocol.cpp">
       <Filter>공용\소스 파일\Auth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp">
+      <Filter>공용\소스 파일\Lobby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +121,18 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Auth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\BasicData.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

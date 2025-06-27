@@ -228,19 +228,18 @@ bool VerifyMessageContentVector(::flatbuffers::Verifier &verifier, const ::flatb
 struct REQUEST_CONNECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef REQUEST_CONNECTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_USER_ID = 4,
+    VT_ACCOUNT_NUMBER = 4,
     VT_AUTH_TOKEN = 6
   };
-  const ::flatbuffers::String *user_id() const {
-    return GetPointer<const ::flatbuffers::String *>(VT_USER_ID);
+  int64_t account_number() const {
+    return GetField<int64_t>(VT_ACCOUNT_NUMBER, 0);
   }
   const ::flatbuffers::String *auth_token() const {
     return GetPointer<const ::flatbuffers::String *>(VT_AUTH_TOKEN);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_USER_ID) &&
-           verifier.VerifyString(user_id()) &&
+           VerifyField<int64_t>(verifier, VT_ACCOUNT_NUMBER, 8) &&
            VerifyOffset(verifier, VT_AUTH_TOKEN) &&
            verifier.VerifyString(auth_token()) &&
            verifier.EndTable();
@@ -251,8 +250,8 @@ struct REQUEST_CONNECTBuilder {
   typedef REQUEST_CONNECT Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_user_id(::flatbuffers::Offset<::flatbuffers::String> user_id) {
-    fbb_.AddOffset(REQUEST_CONNECT::VT_USER_ID, user_id);
+  void add_account_number(int64_t account_number) {
+    fbb_.AddElement<int64_t>(REQUEST_CONNECT::VT_ACCOUNT_NUMBER, account_number, 0);
   }
   void add_auth_token(::flatbuffers::Offset<::flatbuffers::String> auth_token) {
     fbb_.AddOffset(REQUEST_CONNECT::VT_AUTH_TOKEN, auth_token);
@@ -270,23 +269,22 @@ struct REQUEST_CONNECTBuilder {
 
 inline ::flatbuffers::Offset<REQUEST_CONNECT> CreateREQUEST_CONNECT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<::flatbuffers::String> user_id = 0,
+    int64_t account_number = 0,
     ::flatbuffers::Offset<::flatbuffers::String> auth_token = 0) {
   REQUEST_CONNECTBuilder builder_(_fbb);
+  builder_.add_account_number(account_number);
   builder_.add_auth_token(auth_token);
-  builder_.add_user_id(user_id);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<REQUEST_CONNECT> CreateREQUEST_CONNECTDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    const char *user_id = nullptr,
+    int64_t account_number = 0,
     const char *auth_token = nullptr) {
-  auto user_id__ = user_id ? _fbb.CreateString(user_id) : 0;
   auto auth_token__ = auth_token ? _fbb.CreateString(auth_token) : 0;
   return protocol::CreateREQUEST_CONNECT(
       _fbb,
-      user_id__,
+      account_number,
       auth_token__);
 }
 

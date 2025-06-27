@@ -2,9 +2,10 @@
 #include "LobbyManager.h"
 #include "ConstValue.h"
 #include "../lobby/NetworkProtocol.h"
+#include "../lobby/DatabaseProtocol.h"
 //#include "../lobby/BasicData.h"
 
-//#include "../auth/DatabaseProtocol.h"
+
 
 
 namespace Lobby
@@ -88,37 +89,27 @@ namespace Lobby
 			case protocol::MessageContent_REQUEST_CONNECT:
 			{
 				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_CONNECT>(buffer);
-				std::string loginId = requestConnect->user_id()->str();
+				long accountNumber = requestConnect->account_number();
 				std::string authToken = requestConnect->auth_token()->str();
+
+				task = Common::Lobby::CreateQuerryUserSignInOut(targetSocket, accountNumber);
+
 				break;
 			}
 		}
-	//
-	//switch (messageType)
-	//{
-	//case protocol::MessageContent_REQUEST_CONNECT:
-	//{
-	//	auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_CONNECT>(buffer);
-	//
-	//	std::string loginId = requestConnect->login_id()->str();
-	//
-	//	task = Game::CreateQuerryAccountCheck(targetSocket, loginId);
-	//	break;
-	//}
-	//}
-	//
-	//if (task.DatabaseName == Database::DatabaseType::User)
-	//{
-	//	_userDatabaseWorker.Enqueue(std::move(task));
-	//}
-	//else if (task.DatabaseName == Database::DatabaseType::Game)
-	//{
-	//
-	//}
-	//else
-	//{
-	//
-	//}
+
+		if (task.DatabaseName == Database::DatabaseType::User)
+		{
+			_userDatabaseWorker.Enqueue(std::move(task));
+		}
+		else if (task.DatabaseName == Database::DatabaseType::Game)
+		{
+
+		}
+		else
+		{
+
+		}
 	}
 
 	void LobbyManager::DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
