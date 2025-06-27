@@ -48,35 +48,38 @@ namespace Common
             task.MessageType = protocol::MessageContent_REQUEST_CONNECT;
             task.DatabaseName = Database::DatabaseType::User;
             task.ProcedureName = "CheckAndAddAccount";
-            task.Parameters = "'" + userId + "'";
+            task.Parameters = " '" + userId + "'";
             return task;
         }
+
         //REQUEST_CONNECT 요청에 대한 SQL 쿼리실행및 결과 반환.
         std::shared_ptr<Auth::BasicData> GetAccountCheckData(ULONG_PTR& targetSocket, SQLHSTMT& hstmt)
         {
             Auth::RequestConnectData requestData;
             requestData.ContentsType = static_cast<uint32_t>(protocol::MessageContent_RESPONSE_CONNECT);
 
+            long accountNumber = 0;
             char accountUIDBuffer[56] = { 0 };  // VARCHAR(55) + null
             int isNew = -1;
 
-            SQLLEN cbResultCode = 0;
+            SQLLEN cbAccountNumber = 0;
             SQLLEN cbAccountUID = 0;
-
-            // 첫 번째 컬럼: AccountUID
-            SQLBindCol(hstmt, 1, SQL_C_CHAR, accountUIDBuffer, sizeof(accountUIDBuffer), &cbAccountUID);
-            // 두 번째 컬럼: AccountExists or AccountAdded (int)
-            SQLBindCol(hstmt, 2, SQL_C_LONG, &isNew, 0, &cbResultCode);
+            SQLLEN cbResultCode = 0;
+   
+            SQLBindCol(hstmt, 1, SQL_C_LONG, &accountNumber, 0, &cbAccountNumber);
+            SQLBindCol(hstmt, 2, SQL_C_CHAR, accountUIDBuffer, sizeof(accountUIDBuffer), &cbAccountUID);
+            SQLBindCol(hstmt, 3, SQL_C_LONG, &isNew, 0, &cbResultCode);
 
             if (SQLFetch(hstmt) == SQL_SUCCESS || SQLFetch(hstmt) == SQL_SUCCESS_WITH_INFO)
             {
-                requestData.UID = std::string(accountUIDBuffer, cbAccountUID);  // 새로 넣어주는 필드라고 가정
+                requestData.Success = true;
+                requestData.AccountNumber = accountNumber;
+                requestData.AccountUID = std::string(accountUIDBuffer, cbAccountUID);  // 새로 넣어주는 필드라고 가정
                 requestData.IsNew = (isNew != 1);  // 1: 이미 존재 (조회 성공), 0: 새로 생성됨
             }
             else
             {
-                requestData.IsNew = false;
-                requestData.UID = "";
+                requestData.Success = false;
             }
 
             std::shared_ptr<Auth::RequestConnectData> requestDataPtr = std::make_shared<Auth::RequestConnectData>(requestData);

@@ -124,7 +124,7 @@ namespace Auth
 				//TOKENÃ³¸®
 				CheckLobbyServerState();
 
-				Common::Auth::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", 6379, contentsType, stringBuffer, bodySize);
+				Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, "TOKEN", 6379, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:

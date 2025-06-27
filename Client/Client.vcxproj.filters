@@ -107,10 +107,10 @@
     <ClInclude Include="..\Common\include\auth\DatabaseProtocol.h">
       <Filter>공용\헤더 파일\Auth</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h">
+    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h">
       <Filter>공용\헤더 파일\Auth</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h">
+    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Auth</Filter>
     </ClInclude>
   </ItemGroup>

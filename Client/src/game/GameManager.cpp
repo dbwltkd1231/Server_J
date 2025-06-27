@@ -102,12 +102,13 @@ namespace Game
 			case protocol::MessageContent_RESPONSE_CONNECT:
 			{
 				auto responseConnect = flatbuffers::GetRoot<protocol::RESPONSE_CONNECT>(buffer);
+				long accountNumber = responseConnect->account_number();
 				std::string uid = responseConnect->login_id()->str();
 				std::string authToken = responseConnect->auth_token()->str();
 				bool isNew = responseConnect->id_new();
 				int lobbyPort = responseConnect->loby_port();
 				
-				log = " RESPONSE CONNECT [UID : " + uid  + " New USER ? " + (isNew ? "true": "false") + " Token : " + authToken + " Port : " + std::to_string(lobbyPort) + " ]";
+				log = " RESPONSE CONNECT [UID : " + uid  + " AccountNumber : " + std::to_string(accountNumber) + " New USER ? " + (isNew ? "true": "false") + " Token : " + authToken + " Port : " + std::to_string(lobbyPort) + " ]";
 				break;
 			}
 		}

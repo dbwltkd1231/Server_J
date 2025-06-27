@@ -162,11 +162,15 @@ inline ::flatbuffers::Offset<REQUEST_CONNECT> CreateREQUEST_CONNECTDirect(
 struct RESPONSE_CONNECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef RESPONSE_CONNECTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_LOGIN_ID = 4,
-    VT_ID_NEW = 6,
-    VT_AUTH_TOKEN = 8,
-    VT_LOBY_PORT = 10
+    VT_ACCOUNT_NUMBER = 4,
+    VT_LOGIN_ID = 6,
+    VT_ID_NEW = 8,
+    VT_AUTH_TOKEN = 10,
+    VT_LOBY_PORT = 12
   };
+  int64_t account_number() const {
+    return GetField<int64_t>(VT_ACCOUNT_NUMBER, 0);
+  }
   const ::flatbuffers::String *login_id() const {
     return GetPointer<const ::flatbuffers::String *>(VT_LOGIN_ID);
   }
@@ -181,6 +185,7 @@ struct RESPONSE_CONNECT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<int64_t>(verifier, VT_ACCOUNT_NUMBER, 8) &&
            VerifyOffset(verifier, VT_LOGIN_ID) &&
            verifier.VerifyString(login_id()) &&
            VerifyField<uint8_t>(verifier, VT_ID_NEW, 1) &&
@@ -195,6 +200,9 @@ struct RESPONSE_CONNECTBuilder {
   typedef RESPONSE_CONNECT Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_account_number(int64_t account_number) {
+    fbb_.AddElement<int64_t>(RESPONSE_CONNECT::VT_ACCOUNT_NUMBER, account_number, 0);
+  }
   void add_login_id(::flatbuffers::Offset<::flatbuffers::String> login_id) {
     fbb_.AddOffset(RESPONSE_CONNECT::VT_LOGIN_ID, login_id);
   }
@@ -220,11 +228,13 @@ struct RESPONSE_CONNECTBuilder {
 
 inline ::flatbuffers::Offset<RESPONSE_CONNECT> CreateRESPONSE_CONNECT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t account_number = 0,
     ::flatbuffers::Offset<::flatbuffers::String> login_id = 0,
     bool id_new = false,
     ::flatbuffers::Offset<::flatbuffers::String> auth_token = 0,
     int32_t loby_port = 0) {
   RESPONSE_CONNECTBuilder builder_(_fbb);
+  builder_.add_account_number(account_number);
   builder_.add_loby_port(loby_port);
   builder_.add_auth_token(auth_token);
   builder_.add_login_id(login_id);
@@ -234,6 +244,7 @@ inline ::flatbuffers::Offset<RESPONSE_CONNECT> CreateRESPONSE_CONNECT(
 
 inline ::flatbuffers::Offset<RESPONSE_CONNECT> CreateRESPONSE_CONNECTDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t account_number = 0,
     const char *login_id = nullptr,
     bool id_new = false,
     const char *auth_token = nullptr,
@@ -242,6 +253,7 @@ inline ::flatbuffers::Offset<RESPONSE_CONNECT> CreateRESPONSE_CONNECTDirect(
   auto auth_token__ = auth_token ? _fbb.CreateString(auth_token) : 0;
   return protocol::CreateRESPONSE_CONNECT(
       _fbb,
+      account_number,
       login_id__,
       id_new,
       auth_token__,

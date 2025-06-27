@@ -50,12 +50,12 @@ ON Account (AccountUID)
 INCLUDE (AccountNumber)
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX IDX_Account_LastSignIndDate
+CREATE NONCLUSTERED INDEX IDX_Account_LastSignIndDate
 ON Account (LastSignIndDate)
 INCLUDE (AccountNumber)
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX IDX_Account_IsActive
+CREATE NONCLUSTERED INDEX IDX_Account_IsActive
 ON Account (IsActive)
 INCLUDE (AccountNumber)
 GO
@@ -181,13 +181,17 @@ BEGIN
     SELECT @Exists = COUNT(*) FROM Account WHERE AccountUID = @AccountUID;
 
     IF @Exists > 0
-    BEGIN
-        SELECT 
+	BEGIN
+		SELECT @AccountNumber = AccountNumber 
+		FROM Account 
+		WHERE AccountUID = @AccountUID;
+
+		SELECT 
 			@AccountNumber AS AccountNumber,
-            @AccountUID AS AccountUID,
-            1 AS AccountExists;
-        RETURN;
-    END
+			@AccountUID AS AccountUID,
+			1 AS AccountExists;
+		RETURN;
+	END
 
     BEGIN TRY
         BEGIN TRANSACTION;

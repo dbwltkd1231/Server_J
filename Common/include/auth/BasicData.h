@@ -13,6 +13,7 @@ namespace Common
 
 		public:
 			uint32_t ContentsType;
+			bool Success;
 		};
 
 		struct RequestConnectData : public BasicData
@@ -20,10 +21,11 @@ namespace Common
 		public:
 			RequestConnectData() = default;
 			~RequestConnectData() = default;
-			RequestConnectData(const RequestConnectData& other) : BasicData(other), UID(other.UID), IsNew(other.IsNew) {}
+			RequestConnectData(const RequestConnectData& other) : BasicData(other), AccountNumber(other.AccountNumber), AccountUID(other.AccountUID), IsNew(other.IsNew) {}
 
 		public:
-			std::string UID;
+			long AccountNumber;
+			std::string AccountUID;
 			bool IsNew;
 		};
 	}
