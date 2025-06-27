@@ -1,0 +1,20 @@
+{
+    "NETWORK": {
+        "BUFFER_SIZE_MAX": 1024,
+        "CLIENT_ACCEPTREADY_COUNT_MAX": 10,
+        "CLIENT_CAPACITY": 100,
+        "IP": "127.0.0.1",
+        "Lobby_START_COUNT": 2,
+        "Lobby_START_PORT": 9091,
+        "OVERLAPPED_COUNT_MAX": 100
+    },
+    "REDIS": {
+        "PORT": 6379
+    },
+    "SQL": {
+        "GAME_DB_ADDRESS": "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;",
+        "GAME_DB_NAME": "Game",
+        "USER_DB_ADDRESS": "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;",
+        "USER_DB_NAME": "User"
+    }
+}

@@ -74,6 +74,9 @@ namespace Utility
 		config["SQL"]["USER_DB_NAME"] = "User";
 		config["SQL"]["USER_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;";
 
+		config["SQL"]["GAME_DB_NAME"] = "Game";
+		config["SQL"]["GAME_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;";
+
 		std::ofstream file("config.json");
 		file << config.dump(4);  // 4는 들여쓰기 수준
 

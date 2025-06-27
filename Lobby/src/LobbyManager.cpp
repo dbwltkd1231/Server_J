@@ -1,9 +1,11 @@
 #pragma once
 #include "LobbyManager.h"
 #include "ConstValue.h"
-//#include "../auth/NetworkProtocol.h"
+#include "../lobby/NetworkProtocol.h"
+//#include "../lobby/BasicData.h"
+
 //#include "../auth/DatabaseProtocol.h"
-//#include "../auth/BasicData.h"
+
 
 namespace Lobby
 {
@@ -77,10 +79,20 @@ namespace Lobby
 
 	void LobbyManager::ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue)
 	{
-	//auto messageType = static_cast<protocol::MessageContent>(contentsType);
-	//const char* buffer = stringValue.c_str();
-	//
-	//Database::Task task;
+		auto messageType = static_cast<protocol::MessageContent>(contentsType);
+		const char* buffer = stringValue.c_str();
+	
+		Database::Task task;
+		switch (messageType)
+		{
+			case protocol::MessageContent_REQUEST_CONNECT:
+			{
+				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_CONNECT>(buffer);
+				std::string loginId = requestConnect->user_id()->str();
+				std::string authToken = requestConnect->auth_token()->str();
+				break;
+			}
+		}
 	//
 	//switch (messageType)
 	//{

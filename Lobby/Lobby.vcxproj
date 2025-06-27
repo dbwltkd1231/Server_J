@@ -109,12 +109,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(SolutionDir)Common\include\game;$(SolutionDir)Common\library\hiredis\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\include\network;$(SolutionDir)Common\include\database;$(SolutionDir)Common\include\utility;$(SolutionDir)Common\library;$(SolutionDir)Common\include\lobby;$(SolutionDir)Common\library\hiredis\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(SolutionDir)Common\src\game;$(SolutionDir)Common\library\hiredis\lib;$(ProjectDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\network;$(SolutionDir)Common\src\database;$(SolutionDir)Common\src\utility;$(SolutionDir)Common\src\lobby;$(SolutionDir)Common\library\hiredis\lib;$(ProjectDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;hiredis.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\database\Worker.cpp" />
+    <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp" />
     <ClCompile Include="..\Common\src\network\Client.cpp" />
     <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp" />
     <ClCompile Include="..\Common\src\network\NetworkManager.cpp" />
@@ -146,6 +147,10 @@
   <ItemGroup>
     <ClInclude Include="..\Common\include\database\Task.h" />
     <ClInclude Include="..\Common\include\database\Worker.h" />
+    <ClInclude Include="..\Common\include\lobby\BasicData.h" />
+    <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h" />
+    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h" />
+    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h" />
     <ClInclude Include="..\Common\include\network\Client.h" />
     <ClInclude Include="..\Common\include\network\CustomOverlapped.h" />
     <ClInclude Include="..\Common\include\network\NetworkManager.h" />

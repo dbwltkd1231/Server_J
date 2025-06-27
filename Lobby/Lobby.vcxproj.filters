@@ -43,6 +43,12 @@
     <Filter Include="공용\소스 파일\Database">
       <UniqueIdentifier>{637502e0-9586-466a-a749-f021b1e18689}</UniqueIdentifier>
     </Filter>
+    <Filter Include="공용\소스 파일\Lobby">
+      <UniqueIdentifier>{cca76d9d-d5b8-427d-b9b0-c3c64a2440fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="공용\헤더 파일\Lobby">
+      <UniqueIdentifier>{d0f62a19-d701-45c0-88cc-09c5bc9ebba4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -65,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="..\Common\src\database\Worker.cpp">
       <Filter>공용\소스 파일\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp">
+      <Filter>공용\소스 파일\Lobby</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,6 +115,18 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\database\Worker.h">
       <Filter>공용\헤더 파일\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\BasicData.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
+      <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
