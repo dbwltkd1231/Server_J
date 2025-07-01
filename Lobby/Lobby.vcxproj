@@ -136,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\database\Worker.cpp" />
-    <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp" />
+    <ClCompile Include="..\Common\src\lobby\LobbyProtocol.cpp" />
     <ClCompile Include="..\Common\src\network\Client.cpp" />
     <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp" />
     <ClCompile Include="..\Common\src\network\NetworkManager.cpp" />
@@ -150,7 +150,7 @@
     <ClInclude Include="..\Common\include\database\Task.h" />
     <ClInclude Include="..\Common\include\database\Worker.h" />
     <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h" />
-    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h" />
+    <ClInclude Include="..\Common\include\lobby\LobbyProtocol.h" />
     <ClInclude Include="..\Common\include\network\Client.h" />
     <ClInclude Include="..\Common\include\network\CustomOverlapped.h" />
     <ClInclude Include="..\Common\include\network\NetworkManager.h" />

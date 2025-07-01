@@ -136,7 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\src\auth\AuthProtocol.cpp" />
-    <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp" />
+    <ClCompile Include="..\Common\src\lobby\LobbyProtocol.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\game\GameManager.cpp" />
     <ClCompile Include="src\game\User.cpp" />
@@ -148,7 +148,7 @@
   <ItemGroup>
     <ClInclude Include="..\Common\include\auth\BasicData.h" />
     <ClInclude Include="..\Common\include\auth\AuthProtocol.h" />
-    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h" />
+    <ClInclude Include="..\Common\include\lobby\LobbyProtocol.h" />
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />

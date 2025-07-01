@@ -1,7 +1,7 @@
 {
     "CLIENT": {
         "CLIENT_TEST_UID": "TESTER",
-        "TEST_CLIENT_COUNT": 1,
+        "TEST_CLIENT_COUNT": 10,
         "TEST_THREAD_COUNT": 5
     },
     "NETWORK": {

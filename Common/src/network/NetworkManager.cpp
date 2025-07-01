@@ -93,6 +93,8 @@ namespace Network
 		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<CustomOverlapped*>>();
 		_overlappedQueue->Construct(overlappedCount);
 
+		Sleep(1000); // 세팅 대기...
+
 		for (int i = 0;i < overlappedCount; ++i)
 		{
 			auto overlapped = new CustomOverlapped();

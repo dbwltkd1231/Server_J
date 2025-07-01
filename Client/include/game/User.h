@@ -4,7 +4,7 @@
 
 #include "network/Client.h"
 #include "../auth/AuthProtocol.h"
-#include "../lobby/NetworkProtocol.h"
+#include "../lobby/LobbyProtocol.h"
 
 namespace Game
 {

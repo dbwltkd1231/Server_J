@@ -32,8 +32,12 @@ namespace Network
 	{
 		if (ClientSocketPtr && *ClientSocketPtr != INVALID_SOCKET)
 		{
+			// 송수신 모두 종료 시도
+			shutdown(*ClientSocketPtr, SD_BOTH);
+
+			// 소켓 닫기
 			closesocket(*ClientSocketPtr);
-			*ClientSocketPtr = INVALID_SOCKET; // 소켓 핸들 무효화
+			*ClientSocketPtr = INVALID_SOCKET;
 		}
 
 		// 안전하게 nullptr로 설정

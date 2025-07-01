@@ -5,7 +5,7 @@
 
 #include "LobbyManager.h"
 #include "ConstValue.h"
-#include "../lobby/NetworkProtocol.h"
+#include "../lobby/LobbyProtocol.h"
 #include "../lobby/DatabaseProtocol.h"
 #include <LobbyProcedureCreator.h>
 

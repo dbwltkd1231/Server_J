@@ -72,7 +72,7 @@
     <ClCompile Include="..\Common\src\database\Worker.cpp">
       <Filter>공용\소스 파일\Database</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp">
+    <ClCompile Include="..\Common\src\lobby\LobbyProtocol.cpp">
       <Filter>공용\소스 파일\Lobby</Filter>
     </ClCompile>
     <ClCompile Include="src\LobbyProcedureCreator.cpp">
@@ -125,7 +125,7 @@
     <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
+    <ClInclude Include="..\Common\include\lobby\LobbyProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
     <ClInclude Include="include\LobbyProcedureCreator.h">

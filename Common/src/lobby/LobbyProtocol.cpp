@@ -1,5 +1,5 @@
 
-#include "../lobby/NetworkProtocol.h"
+#include "../lobby/LobbyProtocol.h"
 
 namespace Common
 {

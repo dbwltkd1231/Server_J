@@ -30,6 +30,9 @@ namespace Game
 
 		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<Network::CustomOverlapped*>>();
 		_overlappedQueue->Construct(Game::ConstValue::GetInstance().OverlappedCountMax);
+
+		Sleep(1000); // 세팅 대기..
+
 		for (int i = 0;i < Game::ConstValue::GetInstance().OverlappedCountMax; ++i)
 		{
 			auto overlappedPtr = new Network::CustomOverlapped();
@@ -94,7 +97,6 @@ namespace Game
 		if (finder == _socketUserMap->end())
 			return;
 
-		finder->second->Deinitialize();
 		if (targetServer == Network::ServerType::Auth)
 		{
 			Utility::Log("Client", "GameManager", " 인증서버 접속해제");
@@ -157,6 +159,8 @@ namespace Game
 				{
 					auto user = finder->second;
 					user->Deinitialize();
+
+					Sleep(1000); // 클라이언트 초기화 대기...(clostsocket이 포함되어있기때문)
 
 					auto client = std::make_shared<Network::Client>();
 					client->Initialize();
