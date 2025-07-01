@@ -72,7 +72,7 @@
     <ClCompile Include="src\game\GameManager.cpp">
       <Filter>소스 파일\Game</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\src\auth\NetworkProtocol.cpp">
+    <ClCompile Include="..\Common\src\auth\AuthProtocol.cpp">
       <Filter>공용\소스 파일\Auth</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp">
@@ -80,15 +80,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\include\utility\Debug.h">
-      <Filter>공용\헤더 파일\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h">
-      <Filter>공용\헤더 파일\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
-      <Filter>공용\헤더 파일\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="include\network\CustomOverlapped.h">
       <Filter>헤더 파일\Network</Filter>
     </ClInclude>
@@ -113,26 +104,26 @@
     <ClInclude Include="..\Common\include\auth\BasicData.h">
       <Filter>공용\헤더 파일\Auth</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\auth\DatabaseProtocol.h">
+    <ClInclude Include="..\Common\include\auth\AuthProtocol.h">
       <Filter>공용\헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h">
-      <Filter>공용\헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Auth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\BasicData.h">
-      <Filter>공용\헤더 파일\Lobby</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h">
-      <Filter>공용\헤더 파일\Lobby</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h">
-      <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\Debug.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\MESSAGE_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\StringConverter.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

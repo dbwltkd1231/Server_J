@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\src\auth\NetworkProtocol.cpp" />
+    <ClCompile Include="..\Common\src\auth\AuthProtocol.cpp" />
     <ClCompile Include="..\Common\src\database\Worker.cpp" />
     <ClCompile Include="..\Common\src\network\Client.cpp" />
     <ClCompile Include="..\Common\src\network\CustomOverlapped.cpp" />
@@ -145,10 +145,9 @@
     <ClCompile Include="src\AuthManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Common\include\auth\AuthProtocol.h" />
     <ClInclude Include="..\Common\include\auth\BasicData.h" />
     <ClInclude Include="..\Common\include\auth\DatabaseProtocol.h" />
-    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h" />
-    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h" />
     <ClInclude Include="..\Common\include\database\Task.h" />
     <ClInclude Include="..\Common\include\database\Worker.h" />
     <ClInclude Include="..\Common\include\network\Client.h" />
@@ -158,6 +157,7 @@
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
+    <ClInclude Include="..\Common\include\utility\MESSAGE_PROTOCOL_generated.h" />
     <ClInclude Include="..\Common\include\utility\StringConverter.h" />
     <ClInclude Include="include\AuthManager.h" />
     <ClInclude Include="include\ConstValue.h" />

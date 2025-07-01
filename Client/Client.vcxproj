@@ -114,7 +114,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\utility;$(ProjectDir)src;$(SolutionDir)Common\src\auth;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Common\src\utility;$(ProjectDir)src;$(SolutionDir)Common\src\auth;$(SolutionDir)Common\src\lobby;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -135,7 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\src\auth\NetworkProtocol.cpp" />
+    <ClCompile Include="..\Common\src\auth\AuthProtocol.cpp" />
     <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\game\GameManager.cpp" />
@@ -147,16 +147,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\include\auth\BasicData.h" />
-    <ClInclude Include="..\Common\include\auth\DatabaseProtocol.h" />
-    <ClInclude Include="..\Common\include\auth\LOGINSERVER_PROTOCOL_generated.h" />
-    <ClInclude Include="..\Common\include\auth\NetworkProtocol.h" />
-    <ClInclude Include="..\Common\include\lobby\BasicData.h" />
-    <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h" />
-    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h" />
+    <ClInclude Include="..\Common\include\auth\AuthProtocol.h" />
     <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h" />
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h" />
     <ClInclude Include="..\Common\include\utility\Debug.h" />
     <ClInclude Include="..\Common\include\utility\LockFreeCircleQueue.h" />
+    <ClInclude Include="..\Common\include\utility\MESSAGE_PROTOCOL_generated.h" />
+    <ClInclude Include="..\Common\include\utility\StringConverter.h" />
     <ClInclude Include="include\game\ConstValue.h" />
     <ClInclude Include="include\game\GameManager.h" />
     <ClInclude Include="include\game\User.h" />

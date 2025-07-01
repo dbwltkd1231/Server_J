@@ -1,10 +1,7 @@
 #pragma once
 #include <string>
-#define NOMINMAX
-#include <winsock2.h>
-
+#include "../utility/MESSAGE_PROTOCOL_generated.h"
 #include "../library/flatbuffers/flatbuffers.h"
-#include "LOBBYSERVER_PROTOCOL_generated.h"
 
 namespace Common
 {
@@ -12,13 +9,13 @@ namespace Common
 	{
 		struct PacketOutput 
 		{
-			uint32_t ContentsType;
 			std::string Buffer;
 			int BodySize;
+			uint32_t ContentsType;
 		};
 
-		void CreateRequestConnect(std::string& uid, std::string& authToken, PacketOutput& outPacket);
-		void CreateResponseConnect(bool feedback, PacketOutput& outPacket);
+		void CreateRequestLogIn(long accountNumber, std::string& authToken, PacketOutput& outPacket);
+		void CreateResponseLogIn(uint32_t detail, bool feedback, PacketOutput& outPacket);
 
 		void NoticeAccount(int64_t& accountNumber, std::string& uid, int64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket);
 

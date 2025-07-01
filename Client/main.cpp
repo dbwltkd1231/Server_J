@@ -22,6 +22,7 @@ int main()
 
 	Game::ConstValue::GetInstance().IP = config["NETWORK"]["IP"].get<std::string>();
 	Game::ConstValue::GetInstance().AuthServerPort = config["NETWORK"]["AUTHPORT"];
+	Game::ConstValue::GetInstance().LobbyServerPort = config["NETWORK"]["Lobby_START_PORT"];
 	Game::ConstValue::GetInstance().OverlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"];
 	Game::ConstValue::GetInstance().TestUID = config["CLIENT"]["CLIENT_TEST_UID"].get<std::string>();
 	Game::ConstValue::GetInstance().TestClientCount = config["CLIENT"]["TEST_CLIENT_COUNT"];
@@ -29,7 +30,7 @@ int main()
 	Game::ConstValue::GetInstance().CurrentClinetIndex.store(0, std::memory_order_release);
 
 	Game::GameManager gameManager;
-	gameManager.Initialize(Game::ConstValue::GetInstance().IP, Game::ConstValue::GetInstance().AuthServerPort, Game::ConstValue::GetInstance().TestClientCount);
+	gameManager.Initialize(Game::ConstValue::GetInstance().TestClientCount);
 	gameManager.Process(Game::ConstValue::GetInstance().ThreadCount);
 
 	while (true)

@@ -39,6 +39,8 @@ namespace Utility
 
 		config["NETWORK"]["IP"] = "127.0.0.1";
 		config["NETWORK"]["AUTHPORT"] = 9090;
+		config["NETWORK"]["Lobby_START_PORT"] = 9091;
+
 		config["NETWORK"]["BUFFER_SIZE_MAX"] = 1024;
 		config["NETWORK"]["OVERLAPPED_COUNT_MAX"] = 100;
 

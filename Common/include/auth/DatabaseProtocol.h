@@ -2,12 +2,13 @@
 #include <winsock2.h>
 #include <memory>
 
+#define NOMINMAX 
 #include <windows.h>
 #include <sql.h>
 #include <sqlext.h>
 
 #include "../library/flatbuffers/flatbuffers.h"
-#include "LOGINSERVER_PROTOCOL_generated.h"
+#include "MESSAGE_PROTOCOL_generated.h"
 
 #include "../database/Task.h"
 #include "../auth/BasicData.h"

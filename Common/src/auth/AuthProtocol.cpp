@@ -1,5 +1,9 @@
-#pragma once
-#include "../auth/NetworkProtocol.h"
+
+#include "../auth/AuthProtocol.h"
+
+#include "../library/flatbuffers/flatbuffers.h"
+#include "../utility/MESSAGE_PROTOCOL_generated.h"
+
 
 namespace Common
 {

@@ -30,9 +30,9 @@ int main()
 
 
 
-	//SYSTEM_INFO sysInfo;
-	//GetSystemInfo(&sysInfo);
-	//int sessionCount = sysInfo.dwNumberOfProcessors * 2;
+	SYSTEM_INFO sysInfo;
+	GetSystemInfo(&sysInfo);
+	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
 	Lobby::ConstValue::GetInstance().IP = serverIP;
 	Lobby::ConstValue::GetInstance().StartPort = networkPort;
@@ -43,7 +43,7 @@ int main()
 	Lobby::ConstValue::GetInstance().ClientCapacity = clientCapacity;
 	Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax = connectReadyClientCountMax;
 
-	//Utility::ConstValue::GetInstance().SessionCountMax = sessionCount;
+	Lobby::ConstValue::GetInstance().SessionCountMax = sessionCount;
 
 	std::string userDatabaseName = config["SQL"]["USER_DB_NAME"];
 	std::string userDatabaseAddress = config["SQL"]["USER_DB_ADDRESS"];

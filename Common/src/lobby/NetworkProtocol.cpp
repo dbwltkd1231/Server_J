@@ -1,31 +1,30 @@
-#pragma once
+
 #include "../lobby/NetworkProtocol.h"
 
 namespace Common
 {
 	namespace Lobby
 	{
-		void CreateRequestConnect(std::string& uid, std::string& authToken, PacketOutput& outPacket)
+		void CreateRequestLogIn(long accountNumber, std::string& authToken, PacketOutput& outPacket)
 		{
 			flatbuffers::FlatBufferBuilder builder;
-			auto uidOffset = builder.CreateString(uid);
 			auto tokenOffset = builder.CreateString(authToken);
 
-			auto requestConnect = protocol::CreateREQUEST_CONNECT(builder, uidOffset, tokenOffset);
+			auto requestConnect = protocol::CreateREQUEST_LOGIN(builder, accountNumber, tokenOffset);
 			builder.Finish(requestConnect);
 
-			outPacket.ContentsType = static_cast<uint32_t>(protocol::MessageContent_REQUEST_CONNECT);
 			outPacket.BodySize = builder.GetSize();
 			outPacket.Buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), outPacket.BodySize);
+			outPacket.ContentsType = protocol::MessageContent_REQUEST_LOGIN;
 
 		}
-		void CreateResponseConnect(bool feedback, PacketOutput& outPacket)
+		void CreateResponseLogIn(uint32_t detail, bool feedback, PacketOutput& outPacket)
 		{
 			flatbuffers::FlatBufferBuilder builder;
-			auto responseConnect = protocol::CreateRESPONSE_CONNECT(builder, feedback);
+			protocol::FEEDBACK_LOGIN detailOffset = static_cast<protocol::FEEDBACK_LOGIN>(detail);
+			auto responseConnect = protocol::CreateRESPONSE_LOGIN(builder, detailOffset, feedback);
 			builder.Finish(responseConnect);
 
-			outPacket.ContentsType = static_cast<uint32_t>(protocol::MessageContent_RESPONSE_CONNECT);
 			outPacket.BodySize = builder.GetSize();
 			outPacket.Buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), outPacket.BodySize);
 		}
@@ -37,7 +36,6 @@ namespace Common
 			auto noticeAccount = protocol::CreateNOTICE_ACCOUNT(builder, accountNumber, uidOffset, money, ranking, inventoryCapacity);
 			builder.Finish(noticeAccount);
 
-			outPacket.ContentsType = static_cast<uint32_t>(protocol::MessageContent_NOTICE_ACCOUNT);
 			outPacket.BodySize = builder.GetSize();
 			outPacket.Buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), outPacket.BodySize);
 
@@ -87,32 +85,5 @@ namespace Common
 
 		}
 
-
-	//void CreateRequestConnect(const std::string& uid, uint32_t& contentsType, std::string& buffer, int& bodySize)
-	//{
-	//	flatbuffers::FlatBufferBuilder builder;
-	//	auto uidOffset = builder.CreateString(uid);
-	//	auto requestConnect = protocol::CreateREQUEST_CONNECT(builder, uidOffset);
-	//	builder.Finish(requestConnect);
-	//
-	//	contentsType = static_cast<uint32_t>(protocol::MessageContent_REQUEST_CONNECT);
-	//	bodySize = builder.GetSize();
-	//	buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), bodySize);
-	//}
-	//
-	//void CreateResponseConnect(std::string uid, bool isNew, const std::string& authToken, int lobbyPort, uint32_t& contentsType, std::string& buffer, int& bodySize)
-	//{
-	//	flatbuffers::FlatBufferBuilder builder;
-	//
-	//	auto authTokenOffset = builder.CreateString(authToken);
-	//	auto uidOffset = builder.CreateString(uid);
-	//	auto responseConnect = protocol::CreateRESPONSE_CONNECT(builder, uidOffset, isNew, authTokenOffset, lobbyPort);
-	//
-	//	builder.Finish(responseConnect);
-	//
-	//	contentsType = static_cast<uint32_t>(protocol::MessageContent_RESPONSE_CONNECT);
-	//	bodySize = builder.GetSize();
-	//	buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), bodySize);
-	//}
 	}
 }

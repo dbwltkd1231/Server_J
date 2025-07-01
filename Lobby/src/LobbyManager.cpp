@@ -1,10 +1,13 @@
 #pragma once
+
+#include "../library/flatbuffers/flatbuffers.h"
+#include "../include/utility/MESSAGE_PROTOCOL_generated.h"
+
 #include "LobbyManager.h"
 #include "ConstValue.h"
 #include "../lobby/NetworkProtocol.h"
 #include "../lobby/DatabaseProtocol.h"
-//#include "../lobby/BasicData.h"
-
+#include <LobbyProcedureCreator.h>
 
 
 
@@ -26,6 +29,7 @@ namespace Lobby
 			Lobby::ConstValue::GetInstance().SessionCountMax,
 			Lobby::ConstValue::GetInstance().OverlappedCountMax,
 			Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax);
+
 		_networkManager.PrepareSocket();
 
 		for (int i = 0;i < Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax;++i)
@@ -84,15 +88,18 @@ namespace Lobby
 		const char* buffer = stringValue.c_str();
 	
 		Database::Task task;
+
 		switch (messageType)
 		{
-			case protocol::MessageContent_REQUEST_CONNECT:
+			case protocol::MessageContent_REQUEST_LOGIN:
 			{
-				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_CONNECT>(buffer);
+				task.DatabaseName == Database::DatabaseType::User;
+
+				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_LOGIN>(buffer);
 				long accountNumber = requestConnect->account_number();
 				std::string authToken = requestConnect->auth_token()->str();
 
-				task = Common::Lobby::CreateQuerryUserSignInOut(targetSocket, accountNumber);
+				task = Common::Lobby::CreateQuerryUserLogIn(targetSocket, accountNumber, protocol::MessageContent_RESPONSE_LOGIN);
 
 				break;
 			}
@@ -114,29 +121,27 @@ namespace Lobby
 
 	void LobbyManager::DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
 	{
-	//std::shared_ptr<Game::BasicData> result = Game::GetSqlData(targetSocket, contentsType, hstmt);
-	//
-	//auto contentsTypeOffset = static_cast<protocol::MessageContent> (result->ContentsType);
-	//std::string stringBuffer;
-	//int bodySize = 0;
-	//switch (contentsType)
-	//{
-	//case protocol::MessageContent_REQUEST_CONNECT:
-	//{
-	//	auto requestConnectData = std::static_pointer_cast<Game::RequestConnectData>(result);
-	//
-	//	//TOKEN처리
-	//	CheckLobbyServerState();
-	//
-	//	Game::Protocol::CreateResponseConnect(requestConnectData->UID, requestConnectData->IsNew, "TOKEN", 6379, contentsType, stringBuffer, bodySize);
-	//	break;
-	//}
-	//default:
-	//	break;
-	//}
-	//
-	//_networkManager.SendRequest(targetSocket, contentsType, stringBuffer, bodySize);
-	//
-	////success -> 토큰발급
+		auto contentsTypeOffset = static_cast<protocol::MessageContent> (contentsType);
+		Common::Lobby::PacketOutput output;
+
+		switch (contentsType)
+		{
+			case protocol::MessageContent_RESPONSE_LOGIN:
+			{
+				Common::Protocol::ResultUserLogIn userLoginResult;
+				userLoginResult.SetProcedureResult(hstmt);
+
+				Common::Lobby::CreateResponseLogIn(userLoginResult.Detail, userLoginResult.Success, output);
+
+				//로비 상태 저장
+				break;
+			}
+			default:
+			{
+				break;
+			}
+		}
+
+		_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
 	}
 }

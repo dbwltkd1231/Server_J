@@ -1,13 +1,14 @@
 {
     "CLIENT": {
         "CLIENT_TEST_UID": "TESTER",
-        "TEST_CLIENT_COUNT": 10,
+        "TEST_CLIENT_COUNT": 1,
         "TEST_THREAD_COUNT": 5
     },
     "NETWORK": {
         "AUTHPORT": 9090,
         "BUFFER_SIZE_MAX": 1024,
         "IP": "127.0.0.1",
+        "Lobby_START_PORT": 9091,
         "OVERLAPPED_COUNT_MAX": 100
     }
 }

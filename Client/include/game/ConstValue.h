@@ -16,6 +16,7 @@ namespace Game
         // 설정값들
         std::string IP;
         int AuthServerPort;
+        int LobbyServerPort;
         int OverlappedCountMax;
         std::string TestUID = "";
         std::atomic<int> CurrentClinetIndex;

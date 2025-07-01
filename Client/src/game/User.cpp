@@ -15,10 +15,27 @@ namespace Game
 		// 정리 코드
 	}
 
-	void User::Initialize(std::shared_ptr<Network::Client> client, Network::CustomOverlapped* sendOverlappedPtr)
+	void User::Initialize(std::shared_ptr<Network::Client> client)
 	{
-		_client = client;
+		ClientPtr = client;
+	}
 
+	void User::Deinitialize()
+	{
+		ClientPtr->Deinitialize();
+
+		ClientPtr = nullptr;
+	}
+
+	void User::SetAccountData(std::string authToken, int64_t accountNumber, std::string userId)
+	{
+		_authToken = authToken;
+		_accountNumber = accountNumber;
+		_userID = userId;
+	}
+
+	void User::RequestConnect(Network::CustomOverlapped* sendOverlappedPtr)
+	{
 		uint32_t contentsType = 0;
 		std::string stringBuffer = "";
 		int bodySize = 0;
@@ -28,6 +45,17 @@ namespace Game
 
 		Common::Auth::CreateRequestConnect(uid, contentsType, stringBuffer, bodySize);
 		Network::MessageHeader newHeader(htonl(bodySize), htonl(contentsType));
-		_client->Send(sendOverlappedPtr, newHeader, stringBuffer, bodySize);
+		ClientPtr->Send(sendOverlappedPtr, newHeader, stringBuffer, bodySize);
 	}
+
+	void User::RequestLogIn(Network::CustomOverlapped* sendOverlappedPtr)
+	{
+		Common::Lobby::PacketOutput output;
+		Common::Lobby::CreateRequestLogIn(_accountNumber, _authToken, output);
+		Network::MessageHeader newHeader(htonl(output.BodySize), htonl(output.ContentsType));
+
+		ClientPtr->Send(sendOverlappedPtr, newHeader, output.Buffer, output.BodySize);
+	}
+
+
 }

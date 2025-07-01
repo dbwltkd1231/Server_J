@@ -75,6 +75,12 @@
     <ClCompile Include="..\Common\src\lobby\NetworkProtocol.cpp">
       <Filter>공용\소스 파일\Lobby</Filter>
     </ClCompile>
+    <ClCompile Include="src\LobbyProcedureCreator.cpp">
+      <Filter>공용\소스 파일\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DatabaseProtocol.cpp">
+      <Filter>공용\소스 파일\Lobby</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
@@ -116,17 +122,17 @@
     <ClInclude Include="..\Common\include\database\Worker.h">
       <Filter>공용\헤더 파일\Database</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\BasicData.h">
-      <Filter>공용\헤더 파일\Lobby</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\include\lobby\DatabaseProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\include\lobby\NetworkProtocol.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\include\lobby\LOBBYSERVER_PROTOCOL_generated.h">
+    <ClInclude Include="include\LobbyProcedureCreator.h">
       <Filter>공용\헤더 파일\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\include\utility\MESSAGE_PROTOCOL_generated.h">
+      <Filter>공용\헤더 파일\Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

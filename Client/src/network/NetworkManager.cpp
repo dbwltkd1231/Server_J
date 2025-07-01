@@ -16,11 +16,14 @@ namespace Network
 		Utility::Log("Network", "NetworkManager", "Destruct");
 	}
 
-	void NetworkManager::Initialze(std::string ip, int port)
+	void NetworkManager::Initialze()
 	{
 		Utility::Log("Network", "NetworkManager", "Initialize");
 		_authModule = std::make_shared<NetManagerModule>();
-		_authModule->Initialize(ip, port, Network::ServerType::Auth);
+		_authModule->Initialize(Game::ConstValue::GetInstance().IP, Game::ConstValue::GetInstance().AuthServerPort, Network::ServerType::Auth);
+
+		_lobbyModule = std::make_shared<NetManagerModule>();
+		_lobbyModule->Initialize(Game::ConstValue::GetInstance().IP, Game::ConstValue::GetInstance().LobbyServerPort, Network::ServerType::Lobby);
 	}
 
 	void NetworkManager::CallbackSetting(
@@ -30,16 +33,23 @@ namespace Network
 	)
 	{
 		_authModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback);
+		_lobbyModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback);
 	}
 
 
 	void NetworkManager::ConnectAuthServer(std::shared_ptr<Network::Client> targetClient, Network::CustomOverlapped* overlappedPtr)
 	{
-		SOCKET newSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-		auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
-		targetClient->Initialize(socketSharedPtr);
+		bool result = _authModule->Connect(targetClient, targetClient->GetSocket(), Game::ConstValue::GetInstance().ThreadCount, overlappedPtr);
+		if (!result)
+		{
+			Utility::LogError("Game", "GameManager", "Socket - IOCP CONNET FAIL");
+			return;
+		}
+	}
 
-		bool result = _authModule->Connect(targetClient, socketSharedPtr, Game::ConstValue::GetInstance().ThreadCount, overlappedPtr);
+	void NetworkManager::ConnectLobbyServer(std::shared_ptr<Network::Client> targetClient, Network::CustomOverlapped* overlappedPtr)
+	{
+		bool result = _lobbyModule->Connect(targetClient, targetClient->GetSocket(), Game::ConstValue::GetInstance().ThreadCount, overlappedPtr);
 		if (!result)
 		{
 			Utility::LogError("Game", "GameManager", "Socket - IOCP CONNET FAIL");
@@ -53,11 +63,15 @@ namespace Network
 		{
 			_authModule->ReceiveReadyToClient(targetSocket, overlappedPtr);
 		}
-
+		else if (serverType == Network::ServerType::Lobby)
+		{
+			_lobbyModule->ReceiveReadyToClient(targetSocket, overlappedPtr);
+		}
 	}
 
 	void NetworkManager::Process(int threadCount)
 	{
 		_authModule->Process(threadCount);
+		_lobbyModule->Process(threadCount);
 	}
 }

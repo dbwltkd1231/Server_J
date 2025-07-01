@@ -1,5 +1,4 @@
 #pragma once
-
 #include "network/Client.h"
 
 namespace Network
@@ -20,24 +19,32 @@ namespace Network
 			reinterpret_cast<ULONG_PTR>(other.ClientSocketPtr.get());
 	}
 
-	void Client::Initialize(std::shared_ptr<SOCKET> clientSocketPtr)
+	void Client::Initialize()
 	{
-		ClientSocketPtr = clientSocketPtr;
+		SOCKET newSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+		auto socketSharedPtr = std::make_shared<SOCKET>(newSocket);
+
+		ClientSocketPtr = socketSharedPtr;
 		Utility::Log("Network", "Client", "Initialize");
 	}
 
 	void Client::Deinitialize()
 	{
+		if (ClientSocketPtr && *ClientSocketPtr != INVALID_SOCKET)
+		{
+			closesocket(*ClientSocketPtr);
+			*ClientSocketPtr = INVALID_SOCKET; // 소켓 핸들 무효화
+		}
+
+		// 안전하게 nullptr로 설정
 		ClientSocketPtr = nullptr;
+
 		Utility::Log("Network", "Client", "Deinitialize");
 	}
 
-	ULONG_PTR Client::GetSocketPtr()
+	std::shared_ptr<SOCKET> Client::GetSocket()
 	{
-		if (ClientSocketPtr == nullptr)
-			return 0;
-
-		return (ULONG_PTR)ClientSocketPtr.get();
+		return ClientSocketPtr;
 	}
 
 	void Client::ConnectEx(LPFN_CONNECTEX& connectEx, sockaddr_in serverAddr, Network::CustomOverlapped& overlapped)

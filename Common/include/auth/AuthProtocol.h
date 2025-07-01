@@ -1,10 +1,9 @@
 #pragma once
 #include <string>
-#define NOMINMAX
+#define NOMINMAX 
 #include <winsock2.h>
 
-#include "../library/flatbuffers/flatbuffers.h"
-#include "LOGINSERVER_PROTOCOL_generated.h"
+
 
 namespace Common
 {

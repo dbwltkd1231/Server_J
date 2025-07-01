@@ -19,7 +19,7 @@ namespace Game
 		Network::NetworkManager _networkManager;
 
 	public:
-		void Initialize(std::string ip, int port, int clientCount);
+		void Initialize(int clientCount);
 		void Process(int threadCount);
 
 	private:
@@ -28,7 +28,8 @@ namespace Game
 		void DisconnectCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, int bytesTransferred, int errorCode);
 
 	private:
-		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string& stringValue);
+		void ReadAuthMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string& stringValue);
+		void ReadLobbyMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string& stringValue);
 		
 	private:
 		std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)> _acceptCallback;

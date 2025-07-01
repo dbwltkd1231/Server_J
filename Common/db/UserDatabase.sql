@@ -269,7 +269,7 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE UserSignInOut
+CREATE PROCEDURE UserLogIn
     @AccountNumber BIGINT
 AS
 BEGIN
@@ -286,7 +286,7 @@ BEGIN
         )
         BEGIN
             COMMIT;  -- 트랜잭션은 열었으니 닫아주기
-            SELECT 2 AS ResultCode;  -- 계정 없음
+            SELECT 3 AS ResultCode;  -- 계정 없음
             RETURN;
         END
 
@@ -297,7 +297,7 @@ BEGIN
         )
         BEGIN
             COMMIT;
-            SELECT 0 AS ResultCode;  -- 이미 로그인 상태
+            SELECT 2 AS ResultCode;  -- 이미 로그인 상태
             RETURN;
         END
 
@@ -313,6 +313,61 @@ BEGIN
 
         COMMIT;
         SELECT 1 AS ResultCode;  -- 로그인 성공
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK;
+
+        DECLARE @ErrMsg NVARCHAR(4000), @ErrSeverity INT;
+        SELECT @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY();
+        RAISERROR(@ErrMsg, @ErrSeverity, 1);
+    END CATCH
+END
+GO
+
+
+CREATE PROCEDURE UserLogOut
+    @AccountNumber BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Now DATETIME = GETDATE();
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- 존재하지 않는 계정
+        IF NOT EXISTS (
+            SELECT 1 FROM Account WHERE AccountNumber = @AccountNumber
+        )
+        BEGIN
+            COMMIT;  -- 트랜잭션은 열었으니 닫아주기
+            SELECT 3 AS ResultCode;  -- 계정 없음
+            RETURN;
+        END
+
+        -- 접속중이지 않은 경우
+        IF EXISTS (
+            SELECT 1 FROM Account
+            WHERE AccountNumber = @AccountNumber AND IsActive = 0
+        )
+        BEGIN
+            COMMIT;
+            SELECT 2 AS ResultCode;  -- 이미 로그아웃 상태
+            RETURN;
+        END
+
+        -- 로그아웃 처리 (IsActive = 0  + 히스토리 기록)
+        UPDATE Account
+        SET
+            IsActive = 0
+        WHERE AccountNumber = @AccountNumber;
+
+        INSERT INTO HistorySignInOut (AccountNumber, CreateDate, SignInOut)
+        VALUES (@AccountNumber, @Now, 1);  -- 1 = sign out
+
+        COMMIT;
+        SELECT 1 AS ResultCode;  -- 로그아웃 성공
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;

@@ -98,10 +98,11 @@ namespace Network
 		}
 
 		auto ulongPtr = (ULONG_PTR)targetSocket.get();
-		CreateIoCompletionPort((HANDLE)*targetSocket, _iocpHandle, ulongPtr, concurrentThread);
-
-		targetClient->ConnectEx(connectEx, serverAddr, *overlappedPtr);
 		_clientMap.insert(std::make_pair(ulongPtr, targetClient));
+
+		CreateIoCompletionPort((HANDLE)*targetSocket, _iocpHandle, ulongPtr, concurrentThread);
+		targetClient->ConnectEx(connectEx, serverAddr, *overlappedPtr);
+
 		return true;
 	}
 
@@ -144,6 +145,31 @@ namespace Network
 			oerlapped = nullptr;
 
 			bool result = GetQueuedCompletionStatus(_iocpHandle, &bytesTransferred, &completionKey, reinterpret_cast<LPOVERLAPPED*>(&oerlapped), INFINITE);
+			if (!result)
+			{
+				int errorCode = WSAGetLastError();
+				Utility::LogError("Network", "Session", "GetQueuedCompletionStatus Failed! Error Code: " + std::to_string(errorCode));
+
+				switch (errorCode)
+				{
+				case WSAECONNRESET:
+				case WSAECONNABORTED:
+				case WSAENETRESET:
+				case WSAETIMEDOUT:
+				case WSAENOTCONN:
+				case WSAESHUTDOWN:
+				case ERROR_NETNAME_DELETED:
+				case ERROR_CONNECTION_ABORTED:
+					_clientMap.unsafe_erase(completionKey);
+					_disconnectCallback(_serverType, completionKey, bytesTransferred, errorCode);
+					break;
+				default:
+					break;
+				}
+
+				continue;
+			}
+
 			if (result)
 			{
 				auto targetOverlapped = static_cast<Network::CustomOverlapped*>(oerlapped);
@@ -170,6 +196,12 @@ namespace Network
 
 				case Network::OperationType::OP_RECV:
 				{
+					if (bytesTransferred <= 0)
+					{
+						_disconnectCallback(_serverType, completionKey, bytesTransferred, 0);
+						continue;
+					}
+
 					Utility::Log("Client", "ClientManager", "Client Received !!");
 
 					_receiveCallback(_serverType, completionKey, targetOverlapped);

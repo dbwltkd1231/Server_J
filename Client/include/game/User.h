@@ -3,7 +3,8 @@
 #include <string>
 
 #include "network/Client.h"
-#include "../auth/NetworkProtocol.h"
+#include "../auth/AuthProtocol.h"
+#include "../lobby/NetworkProtocol.h"
 
 namespace Game
 {
@@ -14,22 +15,21 @@ namespace Game
 		~User();
 
 	public:
-		void Initialize(std::shared_ptr<Network::Client> client, Network::CustomOverlapped* sendOverlappedPtr);
-
-	private:
-		//std::shared_ptr<Network::NetManagerModule> _authModule;
-	private:
-		std::shared_ptr<Network::Client> _client;
-		//Network::NetworkManager _authManager;
-		//Network::NetworkManager _lobbyManager;
-	private:
-		std::string _authToken;
+		void Initialize(std::shared_ptr<Network::Client> client);
+		void Deinitialize();
 
 	public:
-		//void AuthLogic();
-		//void Initialize(int64_t accountNumber, std::string userID, int money);
-		//void Deinitialize();
+		void SetAccountData(std::string authToken, int64_t accountNumber, std::string userId);
+		void RequestConnect(Network::CustomOverlapped* sendOverlappedPtr);
+		void RequestLogIn(Network::CustomOverlapped* sendOverlappedPtr);
+
+	public:
+		std::shared_ptr<Network::Client> ClientPtr;
+		//Network::NetworkManager _authManager;
+		//Network::NetworkManager _lobbyManager;
+
 	private:
+		std::string _authToken;
 		int64_t _accountNumber;
 		std::string _userID;
 		int _money;

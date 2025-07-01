@@ -2,7 +2,7 @@
 
 #include "ConstValue.h"
 #include "AuthManager.h"
-#include "../auth/NetworkProtocol.h"
+#include "../auth/AuthProtocol.h"
 #include "../auth/DatabaseProtocol.h"
 #include "../auth/BasicData.h"
 #include "../utility/Debug.h"
@@ -124,7 +124,7 @@ namespace Auth
 				//TOKENÃ³¸®
 				CheckLobbyServerState();
 
-				Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, "TOKEN", 6379, contentsType, stringBuffer, bodySize);
+				Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, "TOKEN", 9091, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:
