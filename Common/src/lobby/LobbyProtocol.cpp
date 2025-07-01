@@ -29,11 +29,11 @@ namespace Common
 			outPacket.Buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), outPacket.BodySize);
 		}
 
-		void NoticeAccount(int64_t& accountNumber, std::string& uid, int64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket)
+		void NoticeAccount(std::string& uid, uint64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket)
 		{
 			flatbuffers::FlatBufferBuilder builder;
 			auto uidOffset = builder.CreateString(uid);
-			auto noticeAccount = protocol::CreateNOTICE_ACCOUNT(builder, accountNumber, uidOffset, money, ranking, inventoryCapacity);
+			auto noticeAccount = protocol::CreateNOTICE_ACCOUNT(builder, uidOffset, money, ranking, inventoryCapacity);
 			builder.Finish(noticeAccount);
 
 			outPacket.BodySize = builder.GetSize();

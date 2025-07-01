@@ -41,7 +41,7 @@ namespace Lobby
 		std::string clientLog = "Client : " + std::to_string(Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Lobby", "LobbyManager", clientLog);
 
-		_networkManager.ReadMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
+		_networkManager.ProcessMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
 			(
 				[this]
 				(ULONG_PTR& targetSocket, uint32_t contentsType, std::string buffer)
@@ -55,7 +55,7 @@ namespace Lobby
 				[this]
 				(ULONG_PTR socketPtr, uint32_t contentsType, SQLHSTMT hstmt)
 				{
-					this->DatabaseCallback(socketPtr, contentsType, hstmt);
+					this->SendQueryResult(socketPtr, contentsType, hstmt);
 				}
 			);
 	}
@@ -119,7 +119,7 @@ namespace Lobby
 		}
 	}
 
-	void LobbyManager::DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
+	void LobbyManager::SendQueryResult(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
 	{
 		auto contentsTypeOffset = static_cast<protocol::MessageContent> (contentsType);
 		Common::Lobby::PacketOutput output;
@@ -134,6 +134,21 @@ namespace Lobby
 				Common::Lobby::CreateResponseLogIn(userLoginResult.Detail, userLoginResult.Success, output);
 
 				//로비 상태 저장
+
+				if (userLoginResult.Success)
+				{
+					auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_ACCOUNT);
+					_userDatabaseWorker.Enqueue(std::move(accountDataTask));
+				}
+
+				break;
+			}
+			case protocol::MessageContent_NOTICE_ACCOUNT:
+			{
+				Common::Protocol::ResultGetAccountData getAccountDataResult;
+				getAccountDataResult.SetProcedureResult(hstmt);
+
+				Common::Lobby::NoticeAccount(getAccountDataResult.AccountUID, getAccountDataResult.GameMoney, getAccountDataResult.GameMoneyRank, getAccountDataResult.InventoryCapacity, output);
 				break;
 			}
 			default:

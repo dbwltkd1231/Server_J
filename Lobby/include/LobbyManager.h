@@ -29,7 +29,7 @@ namespace Lobby
 
 	private:
 		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue);
-		void DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
+		void SendQueryResult(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
 
 	private:
 		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _databaseCallback;

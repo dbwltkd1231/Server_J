@@ -27,11 +27,11 @@ namespace Game
 		ClientPtr = nullptr;
 	}
 
-	void User::SetAccountData(std::string authToken, int64_t accountNumber, std::string userId)
+	void User::SetAccountData(int64_t accountNumber, std::string userID, std::string authToken)
 	{
+		_userID = userID;
 		_authToken = authToken;
 		_accountNumber = accountNumber;
-		_userID = userId;
 	}
 
 	void User::RequestConnect(Network::CustomOverlapped* sendOverlappedPtr)

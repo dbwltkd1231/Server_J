@@ -158,6 +158,7 @@ namespace Game
 				if (finder != _socketUserMap->end())
 				{
 					auto user = finder->second;
+					user->SetAccountData(accountNumber, uid, authToken);
 					user->Deinitialize();
 
 					Sleep(1000); // 클라이언트 초기화 대기...(clostsocket이 포함되어있기때문)
@@ -188,14 +189,31 @@ namespace Game
 
 		switch (messageType)
 		{
-			case  protocol::MessageContent_RESPONSE_LOGIN:
+			case protocol::MessageContent_RESPONSE_LOGIN:
 			{
-				auto responseLogin = flatbuffers::GetRoot<protocol::RESPONSE_LOGIN>(buffer);
-				auto detail = responseLogin->detail();
-				auto feedback = responseLogin->feedback();
+			auto responseLogin = flatbuffers::GetRoot<protocol::RESPONSE_LOGIN>(buffer);
+			auto detail = responseLogin->detail();
+			auto feedback = responseLogin->feedback();
 
-				log = "RESPONSE LOGIN";
-				Utility::Log("Game", "GameManager", log);
+			log = "RESPONSE_LOGIN | detail: " + std::to_string(detail) + ", feedback: " + std::to_string(feedback);
+			Utility::Log("Game", "GameManager", log);
+			break;
+			}
+
+			case protocol::MessageContent_NOTICE_ACCOUNT:
+			{
+			auto responseLogin = flatbuffers::GetRoot<protocol::NOTICE_ACCOUNT>(buffer);
+			auto accountUID = responseLogin->user_id()->str();
+			auto gameMoney = responseLogin->money();
+			auto gameMoneyRank = responseLogin->ranking();
+			auto inventoryCapacity = responseLogin->inventory_capacity();
+
+			log = "NOTICE_ACCOUNT | UID: " + accountUID + ", Money: " + std::to_string(gameMoney) +
+				", Rank: " + std::to_string(gameMoneyRank) +
+				", Inventory: " + std::to_string(inventoryCapacity);
+
+			Utility::Log("Game", "GameManager", log);
+			break;
 			}
 		}
 	}

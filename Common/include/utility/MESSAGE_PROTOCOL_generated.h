@@ -702,15 +702,11 @@ inline ::flatbuffers::Offset<RESPONSE_LOGOUT> CreateRESPONSE_LOGOUT(
 struct NOTICE_ACCOUNT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef NOTICE_ACCOUNTBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_ACCOUNT_NUMBER = 4,
-    VT_USER_ID = 6,
-    VT_MONEY = 8,
-    VT_RANKING = 10,
-    VT_INVENTORY_CAPACITY = 12
+    VT_USER_ID = 4,
+    VT_MONEY = 6,
+    VT_RANKING = 8,
+    VT_INVENTORY_CAPACITY = 10
   };
-  int64_t account_number() const {
-    return GetField<int64_t>(VT_ACCOUNT_NUMBER, 0);
-  }
   const ::flatbuffers::String *user_id() const {
     return GetPointer<const ::flatbuffers::String *>(VT_USER_ID);
   }
@@ -725,7 +721,6 @@ struct NOTICE_ACCOUNT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int64_t>(verifier, VT_ACCOUNT_NUMBER, 8) &&
            VerifyOffset(verifier, VT_USER_ID) &&
            verifier.VerifyString(user_id()) &&
            VerifyField<int64_t>(verifier, VT_MONEY, 8) &&
@@ -739,9 +734,6 @@ struct NOTICE_ACCOUNTBuilder {
   typedef NOTICE_ACCOUNT Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_account_number(int64_t account_number) {
-    fbb_.AddElement<int64_t>(NOTICE_ACCOUNT::VT_ACCOUNT_NUMBER, account_number, 0);
-  }
   void add_user_id(::flatbuffers::Offset<::flatbuffers::String> user_id) {
     fbb_.AddOffset(NOTICE_ACCOUNT::VT_USER_ID, user_id);
   }
@@ -767,14 +759,12 @@ struct NOTICE_ACCOUNTBuilder {
 
 inline ::flatbuffers::Offset<NOTICE_ACCOUNT> CreateNOTICE_ACCOUNT(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    int64_t account_number = 0,
     ::flatbuffers::Offset<::flatbuffers::String> user_id = 0,
     int64_t money = 0,
     int32_t ranking = 0,
     int32_t inventory_capacity = 0) {
   NOTICE_ACCOUNTBuilder builder_(_fbb);
   builder_.add_money(money);
-  builder_.add_account_number(account_number);
   builder_.add_inventory_capacity(inventory_capacity);
   builder_.add_ranking(ranking);
   builder_.add_user_id(user_id);
@@ -783,7 +773,6 @@ inline ::flatbuffers::Offset<NOTICE_ACCOUNT> CreateNOTICE_ACCOUNT(
 
 inline ::flatbuffers::Offset<NOTICE_ACCOUNT> CreateNOTICE_ACCOUNTDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    int64_t account_number = 0,
     const char *user_id = nullptr,
     int64_t money = 0,
     int32_t ranking = 0,
@@ -791,7 +780,6 @@ inline ::flatbuffers::Offset<NOTICE_ACCOUNT> CreateNOTICE_ACCOUNTDirect(
   auto user_id__ = user_id ? _fbb.CreateString(user_id) : 0;
   return protocol::CreateNOTICE_ACCOUNT(
       _fbb,
-      account_number,
       user_id__,
       money,
       ranking,

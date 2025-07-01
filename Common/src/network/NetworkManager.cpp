@@ -218,7 +218,7 @@ namespace Network
 
 	void NetworkManager::ReceiveCallback(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
 	{
-		if (ReadMessage == nullptr)
+		if (ProcessMessage == nullptr)
 		{
 			Utility::LogError("Network", "NetworkManager", "ReadMessage is NULL");
 			return;
@@ -236,7 +236,7 @@ namespace Network
 		auto requestContentsType = ntohl(receivedHeader->ContentsType);
 
 		auto bufferString = std::string(overlappedPtr->Wsabuf[1].buf, requestBodySize);// string 값복사 전달을 통해 buffer초기화시에도 안정성을 강화.
-		ReadMessage(targetSocket, requestContentsType, bufferString);
+		ProcessMessage(targetSocket, requestContentsType, bufferString);
 
 		overlappedPtr->Clear();
 		_overlappedQueue->push(std::move(overlappedPtr));

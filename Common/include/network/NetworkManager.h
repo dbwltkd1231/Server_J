@@ -41,7 +41,7 @@ namespace Network
 		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectCallback;
 
 	public:
-		std::function<void(ULONG_PTR&, uint32_t, std::string)> ReadMessage;
+		std::function<void(ULONG_PTR&, uint32_t, std::string)> ProcessMessage;
 
 	public:
 		void Construct(int serverPort, int sessionCount, int overlappedCount, int clientReadyCountMax); //IOCP handle 생성, 컨테이너 생성, 송수신콜백연결, Session 생성 등 초기세팅목적.

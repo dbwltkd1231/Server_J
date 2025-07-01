@@ -37,7 +37,7 @@ namespace Auth
 		std::string clientLog = "Client : " + std::to_string(Auth::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Auth", "AuthManager", clientLog);
 
-		_networkManager.ReadMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
+		_networkManager.ProcessMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
 			(
 				[this]
 				(ULONG_PTR& targetSocket, uint32_t contentsType, std::string buffer)

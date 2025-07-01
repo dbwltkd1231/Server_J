@@ -84,6 +84,7 @@ CREATE TABLE [dbo].[UserData]
 	[AccountNumber] [bigint] NOT NULL,
 	[AccountUID] [varchar](55) NOT NULL,
 	[GameMoney] [bigint] NOT NULL,
+	[GameMoneyRank] [int],
 	[InventoryCapacity] [int] NOT NULL,
 	[IsDeletedAccount] [tinyint] NOT NULL,
 	CONSTRAINT [PK_UserData_AccountNumber] PRIMARY KEY CLUSTERED ([AccountNumber] ASC)
@@ -286,7 +287,9 @@ BEGIN
         )
         BEGIN
             COMMIT;  -- 트랜잭션은 열었으니 닫아주기
-            SELECT 3 AS ResultCode;  -- 계정 없음
+			SELECT
+				@AccountNumber AS AccountNumber,
+				3 AS ResultCode;  -- 계정 없음
             RETURN;
         END
 
@@ -297,7 +300,9 @@ BEGIN
         )
         BEGIN
             COMMIT;
-            SELECT 2 AS ResultCode;  -- 이미 로그인 상태
+            SELECT
+				@AccountNumber AS AccountNumber,
+				2 AS ResultCode;  -- 이미 로그인 상태
             RETURN;
         END
 
@@ -312,7 +317,9 @@ BEGIN
         VALUES (@AccountNumber, @Now, 0);  -- 0 = sign in
 
         COMMIT;
-        SELECT 1 AS ResultCode;  -- 로그인 성공
+        SELECT
+			@AccountNumber AS AccountNumber,
+			1 AS ResultCode;  -- 로그인 성공
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;
@@ -376,6 +383,48 @@ BEGIN
         SELECT @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY();
         RAISERROR(@ErrMsg, @ErrSeverity, 1);
     END CATCH
+END
+GO
+
+CREATE PROCEDURE GetAccountData
+    @AccountNumber BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @AccountUID VARCHAR(55);
+    DECLARE @GameMoney BIGINT;
+    DECLARE @GameMoneyRank INT;
+    DECLARE @InventoryCapacity INT;
+
+    IF EXISTS (SELECT 1 FROM UserData WHERE AccountNumber = @AccountNumber)
+    BEGIN
+        SELECT 
+            @AccountUID = AccountUID,
+            @GameMoney = GameMoney,
+            @GameMoneyRank = GameMoneyRank,
+            @InventoryCapacity = InventoryCapacity
+        FROM UserData
+        WHERE AccountNumber = @AccountNumber;
+
+        SELECT
+            @AccountNumber AS AccountNumber,
+            @AccountUID AS AccountUID,
+            @GameMoney AS GameMoney,
+            @GameMoneyRank AS GameMoneyRank,
+            @InventoryCapacity AS InventoryCapacity,
+            1 AS AccountExists;
+    END
+    ELSE
+    BEGIN
+        SELECT 
+            NULL AS AccountNumber,
+            NULL AS AccountUID,
+            NULL AS GameMoney,
+            NULL AS GameMoneyRank,
+            NULL AS InventoryCapacity,
+            0 AS AccountExists;
+    END
 END
 GO
 

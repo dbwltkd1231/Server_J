@@ -17,7 +17,7 @@ namespace Common
 		void CreateRequestLogIn(long accountNumber, std::string& authToken, PacketOutput& outPacket);
 		void CreateResponseLogIn(uint32_t detail, bool feedback, PacketOutput& outPacket);
 
-		void NoticeAccount(int64_t& accountNumber, std::string& uid, int64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket);
+		void NoticeAccount(std::string& uid, uint64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket);
 
 		void NoticeInventory();//TODO
 		void NoticeInventoryUpdate();

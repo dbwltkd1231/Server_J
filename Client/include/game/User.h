@@ -19,7 +19,7 @@ namespace Game
 		void Deinitialize();
 
 	public:
-		void SetAccountData(std::string authToken, int64_t accountNumber, std::string userId);
+		void SetAccountData(int64_t accountNumber, std::string userID, std::string authToken);
 		void RequestConnect(Network::CustomOverlapped* sendOverlappedPtr);
 		void RequestLogIn(Network::CustomOverlapped* sendOverlappedPtr);
 

@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
+
+#define NOMINMAX 
 #include <windows.h>
 #include <nlohmann/json.hpp> 
 

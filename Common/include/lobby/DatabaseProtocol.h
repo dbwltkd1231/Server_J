@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <string>
+
 #define NOMINMAX 
 #include <windows.h>
 #include <sql.h>
@@ -23,7 +25,6 @@ namespace Common
 			virtual void SetProcedureResult(SQLHSTMT& hstmt) = 0;
 		};
 
-
 		class ResultUserLogIn : public BasicData
 		{
 		public:
@@ -32,8 +33,27 @@ namespace Common
 			ResultUserLogIn(const ResultUserLogIn& other);
 
 		public:
+			uint64_t AccountNumber;
 			uint32_t Detail;
 			bool Success;
+		public:
+			void SetProcedureResult(SQLHSTMT& hstmt) override;
+		};
+
+		class ResultGetAccountData : public BasicData
+		{
+		public:
+			ResultGetAccountData();
+			~ResultGetAccountData();
+			ResultGetAccountData(const ResultGetAccountData& other);
+
+		public:
+			uint64_t AccountNumber;
+			std::string AccountUID;
+			uint64_t GameMoney;
+			int GameMoneyRank;
+			int InventoryCapacity;
+			int Success;
 		public:
 			void SetProcedureResult(SQLHSTMT& hstmt) override;
 		};
