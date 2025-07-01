@@ -42,7 +42,7 @@ namespace Network
 
 	public:
 		std::function<void(ULONG_PTR&, uint32_t, std::string)> ProcessMessage;
-
+		std::function<void(ULONG_PTR&, int)> ProcessDisconnect;
 	public:
 		void Construct(int serverPort, int sessionCount, int overlappedCount, int clientReadyCountMax); //IOCP handle 생성, 컨테이너 생성, 송수신콜백연결, Session 생성 등 초기세팅목적.
 		void ActivateClient(std::shared_ptr<SOCKET> targetSocket); // 클라이언트 Acceptex호출 목적.

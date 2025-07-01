@@ -50,6 +50,16 @@ namespace Lobby
 				}
 			);
 
+		_networkManager.ProcessDisconnect = std::function<void(ULONG_PTR&, int)>
+			(
+				[this]
+				(ULONG_PTR& targetSocket, int errorCode)
+				{
+					this->ProcessDisconnect(targetSocket, errorCode);
+				}
+			);
+
+
 		_databaseCallback = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
 			(
 				[this]
@@ -82,6 +92,22 @@ namespace Lobby
 		Utility::Log("Lobby", "LobbyManager", "Redis Connect Success");
 	}
 
+	void LobbyManager::ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode)
+	{
+		auto finder = _socketAccountNumber.find(targetSocket);
+
+		//LogOut처리.
+		if (finder != _socketAccountNumber.end())
+		{
+			auto accountNumber = finder->second;
+			auto userLogOutTask = Common::Lobby::CreateQuerryUserLogOut(targetSocket, accountNumber, -1);
+			_userDatabaseWorker.Enqueue(std::move(userLogOutTask));
+
+			_socketAccountNumber.unsafe_erase(targetSocket);
+			Utility::Log("Lobby", "LobbyManager", std::to_string(accountNumber)+" 로그아웃 완료.");
+		}
+	}
+
 	void LobbyManager::ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue)
 	{
 		auto messageType = static_cast<protocol::MessageContent>(contentsType);
@@ -93,8 +119,6 @@ namespace Lobby
 		{
 			case protocol::MessageContent_REQUEST_LOGIN:
 			{
-				task.DatabaseName == Database::DatabaseType::User;
-
 				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_LOGIN>(buffer);
 				long accountNumber = requestConnect->account_number();
 				std::string authToken = requestConnect->auth_token()->str();
@@ -121,6 +145,9 @@ namespace Lobby
 
 	void LobbyManager::SendQueryResult(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
 	{
+		if (contentsType == -1)
+			return;
+
 		auto contentsTypeOffset = static_cast<protocol::MessageContent> (contentsType);
 		Common::Lobby::PacketOutput output;
 
@@ -139,6 +166,7 @@ namespace Lobby
 				{
 					auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_ACCOUNT);
 					_userDatabaseWorker.Enqueue(std::move(accountDataTask));
+					_socketAccountNumber.insert({ targetSocket, userLoginResult.AccountNumber });
 				}
 
 				break;

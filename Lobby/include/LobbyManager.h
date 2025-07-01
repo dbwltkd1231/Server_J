@@ -28,10 +28,14 @@ namespace Lobby
 		redisContext* _redis;
 
 	private:
+		void ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode);
 		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue);
 		void SendQueryResult(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
 
 	private:
 		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _databaseCallback;
+
+	private:
+		tbb::concurrent_map<ULONG_PTR, uint64_t> _socketAccountNumber;
 	};
 }

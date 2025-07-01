@@ -285,6 +285,7 @@ namespace Network
 		shutdown(*socket, SD_BOTH);
 		client->Deinitialize();
 		Utility::Log("Network", "NetworkManager", "클라이언트 연결 종료 확인.");
+		ProcessDisconnect(targetSocket, errorCode);
 
 		// 동기화객체사용 필요.
 		_activatedClientMap.unsafe_erase((ULONG_PTR)socket.get());

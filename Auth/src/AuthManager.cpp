@@ -46,6 +46,15 @@ namespace Auth
 				}
 			);
 
+		_networkManager.ProcessDisconnect = std::function<void(ULONG_PTR&, int)>
+			(
+				[this]
+				(ULONG_PTR& targetSocket, int errorCode)
+				{
+					this->ProcessDisconnect(targetSocket, errorCode);
+				}
+			);
+
 		_databaseCallback = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
 			(
 				[this]
@@ -72,6 +81,11 @@ namespace Auth
 			return;
 		}
 		Utility::Log("Auth", "AuthManager", "Redis Connect Success");
+	}
+
+	void AuthManager::ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode)
+	{
+		Utility::Log("Auth", "AuthManager", "Client Disconnect");
 	}
 
 	void AuthManager::ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue)

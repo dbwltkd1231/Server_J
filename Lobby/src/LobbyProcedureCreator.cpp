@@ -29,5 +29,16 @@ namespace Common
             task.Parameters = " '" + std::to_string(accountNumber) + "'";
             return task;
         }
+
+        Database::Task CreateQuerryUserLogOut(ULONG_PTR targetSocket, long accountNumber, uint32_t contentsType)
+        {
+            Database::Task task;
+            task.SocketPtr = targetSocket;
+            task.MessageType = contentsType;
+            task.DatabaseName = Database::DatabaseType::User;
+            task.ProcedureName = "UserLogOut";
+            task.Parameters = " '" + std::to_string(accountNumber) + "'";
+            return task;
+        }
     }
 }
