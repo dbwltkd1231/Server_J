@@ -191,29 +191,35 @@ namespace Game
 		{
 			case protocol::MessageContent_RESPONSE_LOGIN:
 			{
-			auto responseLogin = flatbuffers::GetRoot<protocol::RESPONSE_LOGIN>(buffer);
-			auto detail = responseLogin->detail();
-			auto feedback = responseLogin->feedback();
+				auto responseLogin = flatbuffers::GetRoot<protocol::RESPONSE_LOGIN>(buffer);
+				auto detail = responseLogin->detail();
+				auto feedback = responseLogin->feedback();
 
-			log = "RESPONSE_LOGIN | detail: " + std::to_string(detail) + ", feedback: " + std::to_string(feedback);
-			Utility::Log("Game", "GameManager", log);
-			break;
+				log = "RESPONSE_LOGIN | detail: " + std::to_string(detail) + ", feedback: " + std::to_string(feedback);
+				Utility::Log("Game", "GameManager", log);
+				break;
 			}
 
 			case protocol::MessageContent_NOTICE_ACCOUNT:
 			{
-			auto responseLogin = flatbuffers::GetRoot<protocol::NOTICE_ACCOUNT>(buffer);
-			auto accountUID = responseLogin->user_id()->str();
-			auto gameMoney = responseLogin->money();
-			auto gameMoneyRank = responseLogin->ranking();
-			auto inventoryCapacity = responseLogin->inventory_capacity();
+				auto responseLogin = flatbuffers::GetRoot<protocol::NOTICE_ACCOUNT>(buffer);
+				auto accountUID = responseLogin->user_id()->str();
+				auto gameMoney = responseLogin->money();
+				auto gameMoneyRank = responseLogin->ranking();
+				auto inventoryCapacity = responseLogin->inventory_capacity();
 
-			log = "NOTICE_ACCOUNT | UID: " + accountUID + ", Money: " + std::to_string(gameMoney) +
-				", Rank: " + std::to_string(gameMoneyRank) +
-				", Inventory: " + std::to_string(inventoryCapacity);
+				log = "NOTICE_ACCOUNT | UID: " + accountUID + ", Money: " + std::to_string(gameMoney) +
+					", Rank: " + std::to_string(gameMoneyRank) +
+					", Inventory: " + std::to_string(inventoryCapacity);
 
-			Utility::Log("Game", "GameManager", log);
-			break;
+				Utility::Log("Game", "GameManager", log);
+				auto finder = _socketUserMap->find(targetSocket);
+				if (finder != _socketUserMap->end())
+				{
+					auto user = finder->second;
+					user->SetUserData(gameMoney, gameMoneyRank, inventoryCapacity);
+				}
+				break;
 			}
 		}
 	}

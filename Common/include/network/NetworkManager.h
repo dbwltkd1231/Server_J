@@ -35,14 +35,18 @@ namespace Network
 
 		std::set<std::shared_ptr<Session>> _sessionSet;
 
+		//session -> networkmanager callback
 	private:
-		std::function<void(ULONG_PTR)> _acceptCallback;
-		std::function<void(ULONG_PTR, CustomOverlapped*)> _receiveCallback;
-		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectCallback;
+		std::function<void(ULONG_PTR)> _acceptProcess;
+		std::function<void(ULONG_PTR, CustomOverlapped*)> _receiveProcess;
+		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectProcess;
 
+		//networkmanager -> auth,lobbymanager callback
 	public:
-		std::function<void(ULONG_PTR&, uint32_t, std::string)> ProcessMessage;
-		std::function<void(ULONG_PTR&, int)> ProcessDisconnect;
+		std::function<void(ULONG_PTR&)> AcceptCallback;
+		std::function<void(ULONG_PTR&, uint32_t, std::string)> ReceiveCallback;
+		std::function<void(ULONG_PTR&, int)> DisconnectCallback;
+
 	public:
 		void Construct(int serverPort, int sessionCount, int overlappedCount, int clientReadyCountMax); //IOCP handle 생성, 컨테이너 생성, 송수신콜백연결, Session 생성 등 초기세팅목적.
 		void ActivateClient(std::shared_ptr<SOCKET> targetSocket); // 클라이언트 Acceptex호출 목적.
@@ -59,9 +63,9 @@ namespace Network
 
 	private:
 		//Session으로 부터 호출되는 메세시처리 함수들.
-		void AcceptCallback(ULONG_PTR targetSocket);
-		void ReceiveCallback(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr);
-		void DisconnectCallback(ULONG_PTR targetSocket, int bytesTransferred, int errorCode);
+		void Accept(ULONG_PTR targetSocket);
+		void Receive(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr);
+		void Disconnect(ULONG_PTR targetSocket, int bytesTransferred, int errorCode);
 
 	public:
 		void SendRequest(ULONG_PTR& targetSocket, uint32_t& contentType, std::string& stringBuffer, int& bodySize); // auth,lobby logic에서 메세지 송신시 콜백되는 함수.

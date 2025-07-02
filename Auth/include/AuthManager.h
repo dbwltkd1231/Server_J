@@ -19,6 +19,7 @@ namespace Auth
 		void ConnectDatabase(std::string databaseName, std::string sqlServerAddress);
 		void ConnectRedis(std::string ip, int redisPort);
 	public:
+		void ProcessAccept(ULONG_PTR& targetSocket);
 		void ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode);
 		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue);
 

@@ -34,6 +34,13 @@ namespace Game
 		_accountNumber = accountNumber;
 	}
 
+	void User::SetUserData(int64_t money, int ranking, int inventoryCapacity)
+	{
+		_money = money;
+		_ranking = ranking;
+		_inventoryCapacity = inventoryCapacity;
+	}
+
 	void User::RequestConnect(Network::CustomOverlapped* sendOverlappedPtr)
 	{
 		uint32_t contentsType = 0;
@@ -56,6 +63,4 @@ namespace Game
 
 		ClientPtr->Send(sendOverlappedPtr, newHeader, output.Buffer, output.BodySize);
 	}
-
-
 }

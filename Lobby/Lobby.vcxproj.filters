@@ -81,6 +81,9 @@
     <ClCompile Include="src\DatabaseProtocol.cpp">
       <Filter>공용\소스 파일\Lobby</Filter>
     </ClCompile>
+    <ClCompile Include="src\EventWorker.cpp">
+      <Filter>소스 파일\Lobby</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\include\utility\ConfigCreator.h">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="..\Common\include\utility\MESSAGE_PROTOCOL_generated.h">
       <Filter>공용\헤더 파일\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EventWorker.h">
+      <Filter>헤더 파일\Lobby</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

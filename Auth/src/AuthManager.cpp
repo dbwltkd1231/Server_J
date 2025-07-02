@@ -37,7 +37,19 @@ namespace Auth
 		std::string clientLog = "Client : " + std::to_string(Auth::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Auth", "AuthManager", clientLog);
 
-		_networkManager.ProcessMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
+
+
+		_networkManager.AcceptCallback = std::function<void(ULONG_PTR&)>
+			(
+				[this]
+				(ULONG_PTR& targetSocket)
+				{
+					this->ProcessAccept(targetSocket);
+				}
+			);
+
+
+		_networkManager.ReceiveCallback = std::function<void(ULONG_PTR&, uint32_t, std::string)>
 			(
 				[this]
 				(ULONG_PTR& targetSocket, uint32_t contentsType, std::string buffer)
@@ -46,7 +58,7 @@ namespace Auth
 				}
 			);
 
-		_networkManager.ProcessDisconnect = std::function<void(ULONG_PTR&, int)>
+		_networkManager.DisconnectCallback = std::function<void(ULONG_PTR&, int)>
 			(
 				[this]
 				(ULONG_PTR& targetSocket, int errorCode)
@@ -83,9 +95,15 @@ namespace Auth
 		Utility::Log("Auth", "AuthManager", "Redis Connect Success");
 	}
 
+
+	void AuthManager::ProcessAccept(ULONG_PTR& targetSocket)
+	{
+		Utility::Log("Auth", "AuthManager", "ProcessAccept");
+	}
+
 	void AuthManager::ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode)
 	{
-		Utility::Log("Auth", "AuthManager", "Client Disconnect");
+		Utility::Log("Auth", "AuthManager", "ProcessDisconnect");
 	}
 
 	void AuthManager::ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue)

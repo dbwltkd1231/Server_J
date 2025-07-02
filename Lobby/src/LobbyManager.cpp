@@ -41,7 +41,17 @@ namespace Lobby
 		std::string clientLog = "Client : " + std::to_string(Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Lobby", "LobbyManager", clientLog);
 
-		_networkManager.ProcessMessage = std::function<void(ULONG_PTR&, uint32_t, std::string)>
+
+		_networkManager.AcceptCallback = std::function<void(ULONG_PTR&)>
+			(
+				[this]
+				(ULONG_PTR& targetSocket)
+				{
+					this->ProcessAccept(targetSocket);
+				}
+			);
+
+		_networkManager.ReceiveCallback = std::function<void(ULONG_PTR&, uint32_t, std::string)>
 			(
 				[this]
 				(ULONG_PTR& targetSocket, uint32_t contentsType, std::string buffer)
@@ -50,7 +60,7 @@ namespace Lobby
 				}
 			);
 
-		_networkManager.ProcessDisconnect = std::function<void(ULONG_PTR&, int)>
+		_networkManager.DisconnectCallback = std::function<void(ULONG_PTR&, int)>
 			(
 				[this]
 				(ULONG_PTR& targetSocket, int errorCode)
@@ -60,7 +70,7 @@ namespace Lobby
 			);
 
 
-		_databaseCallback = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
+		_callbackProcedureResult = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
 			(
 				[this]
 				(ULONG_PTR socketPtr, uint32_t contentsType, SQLHSTMT hstmt)
@@ -72,11 +82,11 @@ namespace Lobby
 
 	void LobbyManager::ConnectDatabase(std::string userDatabaseName, std::string userSqlServerAddress, std::string gameDatabaseName, std::string gameSqlServerAddress)
 	{
-		_userDatabaseWorker.Initialize(userDatabaseName, userSqlServerAddress, _databaseCallback);
+		_userDatabaseWorker.Initialize(userDatabaseName, userSqlServerAddress, _callbackProcedureResult);
 		_userDatabaseWorker.Activate(true);
 		Utility::Log("Lobby", "LobbyManager", "UserDatabase Worker Process..");
 
-		_gameDatabaseWorker.Initialize(gameDatabaseName, gameSqlServerAddress, _databaseCallback);
+		_gameDatabaseWorker.Initialize(gameDatabaseName, gameSqlServerAddress, _callbackProcedureResult);
 		_gameDatabaseWorker.Activate(true);
 		Utility::Log("Lobby", "LobbyManager", "GameDatabase Worker Process..");
 	}
@@ -90,6 +100,11 @@ namespace Lobby
 			return;
 		}
 		Utility::Log("Lobby", "LobbyManager", "Redis Connect Success");
+	}
+
+	void LobbyManager::ProcessAccept(ULONG_PTR& targetSocket)
+	{
+		Utility::Log("Lobby", "LobbyManager", "ProcessAccept");
 	}
 
 	void LobbyManager::ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode)
@@ -122,6 +137,8 @@ namespace Lobby
 				auto requestConnect = flatbuffers::GetRoot<protocol::REQUEST_LOGIN>(buffer);
 				long accountNumber = requestConnect->account_number();
 				std::string authToken = requestConnect->auth_token()->str();
+
+				//authToken 확인 필요 !!
 
 				task = Common::Lobby::CreateQuerryUserLogIn(targetSocket, accountNumber, protocol::MessageContent_RESPONSE_LOGIN);
 
@@ -187,4 +204,24 @@ namespace Lobby
 
 		_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
 	}
+
+	// main에서 JOIN으로 호출하자
+	void LobbyManager::MainThread()
+	{
+		while (true)
+		{
+			//접속 후 60초 이내 인증 처리되지 않은 클라이언트 접속 끊는 기능 추가
+
+			//유저는 로비 서버 접속 후 60초마다 아이템을 1~3개 랜덤으로 지급받는다. -> 둘다처리할수있는 타이머객체가 하나있으면 좋으려나? 만들수있을까?
+		}
+	}
 }
+
+/*
+* 타이머 기반 이벤트 큐 또는 타임휠 구조
+- 방식: 인증 대기 중인 클라이언트를 타임휠 또는 타임아웃 큐에 등록해두고, 메인 로직의 이벤트 루프에서 주기적으로 체크
+- 장점:
+- 스레드를 많이 만들지 않아도 됨
+- 클라이언트 수가 많아도 퍼포먼스 유지가 쉬움
+
+*/

@@ -14,6 +14,13 @@ namespace Network
 
 	NetworkManager::~NetworkManager()
 	{
+		_acceptProcess = nullptr;
+		_receiveProcess = nullptr;
+		_disconnectProcess = nullptr;
+
+		AcceptCallback = nullptr;
+		ReceiveCallback = nullptr;
+		DisconnectCallback = nullptr;
 		Utility::Log("Network", "IOCP", "Destruct");
 	}
 
@@ -104,37 +111,37 @@ namespace Network
 
 		Utility::Log("Network", "NetworkManager", "Client Create Success");
 
-		_acceptCallback = std::function<void(ULONG_PTR)>
+		_acceptProcess = std::function<void(ULONG_PTR)>
 			(
 				[this]
 				(ULONG_PTR targetSocket)
 				{
-					this->AcceptCallback(targetSocket);
+					this->Accept(targetSocket);
 				}
 			);
 
-		_receiveCallback = std::function<void(ULONG_PTR, CustomOverlapped*)>
+		_receiveProcess = std::function<void(ULONG_PTR, CustomOverlapped*)>
 			(
 				[this]
 				(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
 				{
-					this->ReceiveCallback(targetSocket, overlappedPtr);
+					this->Receive(targetSocket, overlappedPtr);
 				}
 			);
 
-		_disconnectCallback = std::function<void(ULONG_PTR, int, int)>
+		_disconnectProcess = std::function<void(ULONG_PTR, int, int)>
 			(
 				[this]
 				(ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
 				{
-					this->DisconnectCallback(targetSocket, bytesTransferred, errorCode);
+					this->Disconnect(targetSocket, bytesTransferred, errorCode);
 				}
 			);
 
 		for (int i = 0;i < sessionCount;++i)
 		{
 			auto session = std::make_shared<Session>();
-			session->Initialize(_acceptCallback, _receiveCallback, _disconnectCallback);
+			session->Initialize(_acceptProcess, _receiveProcess, _disconnectProcess);
 			session->Activate(_handle);
 			_sessionSet.insert(std::move(session));
 		}
@@ -191,7 +198,7 @@ namespace Network
 		clientSharedPtr->AcceptEx(_listenSocket, _acceptExPointer, overlappedPtr);
 	}
 
-	void NetworkManager::AcceptCallback(ULONG_PTR targetSocket)
+	void NetworkManager::Accept(ULONG_PTR targetSocket)
 	{
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
@@ -214,16 +221,12 @@ namespace Network
 			return;
 		}
 		ActivateClient(prepareSocket);
+
+		AcceptCallback(targetSocket);
 	}
 
-	void NetworkManager::ReceiveCallback(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
+	void NetworkManager::Receive(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
 	{
-		if (ProcessMessage == nullptr)
-		{
-			Utility::LogError("Network", "NetworkManager", "ReadMessage is NULL");
-			return;
-		}
-
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
 		{
@@ -236,7 +239,7 @@ namespace Network
 		auto requestContentsType = ntohl(receivedHeader->ContentsType);
 
 		auto bufferString = std::string(overlappedPtr->Wsabuf[1].buf, requestBodySize);// string 값복사 전달을 통해 buffer초기화시에도 안정성을 강화.
-		ProcessMessage(targetSocket, requestContentsType, bufferString);
+		ReceiveCallback(targetSocket, requestContentsType, bufferString);
 
 		overlappedPtr->Clear();
 		_overlappedQueue->push(std::move(overlappedPtr));
@@ -268,7 +271,7 @@ namespace Network
 		client->Send(newOverlappedPtr, messageHeader, stringBuffer, bodySize);
 	}
 
-	void NetworkManager::DisconnectCallback(ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
+	void NetworkManager::Disconnect(ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
 	{
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
@@ -285,7 +288,7 @@ namespace Network
 		shutdown(*socket, SD_BOTH);
 		client->Deinitialize();
 		Utility::Log("Network", "NetworkManager", "클라이언트 연결 종료 확인.");
-		ProcessDisconnect(targetSocket, errorCode);
+		DisconnectCallback(targetSocket, errorCode);
 
 		// 동기화객체사용 필요.
 		_activatedClientMap.unsafe_erase((ULONG_PTR)socket.get());
@@ -326,14 +329,4 @@ namespace Network
 			break;
 		}
 	}
-
-
-	/*
-	* - 만약 비동기적으로 WSARecv()를 호출하여 IOCP가 데이터 수신을 대기 중인 경우, shutdown(SD_BOTH) 호출 후에도 완료되지 않은 수신 작업은 여전히 진행될 수 있어.
-	* - 하지만 shutdown(SD_BOTH)으로 새 데이터 수신이 차단되므로, 이후 새로운 WSARecv() 요청은 실패할 가능성이 높아 (WSAECONNRESET 또는 WSAESHUTDOWN 오류 발생 가능).
-
-
-	*/
-
-
 }

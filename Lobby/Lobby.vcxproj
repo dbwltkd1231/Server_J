@@ -143,6 +143,7 @@
     <ClCompile Include="..\Common\src\network\Session.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\DatabaseProtocol.cpp" />
+    <ClCompile Include="src\EventWorker.cpp" />
     <ClCompile Include="src\LobbyManager.cpp" />
     <ClCompile Include="src\LobbyProcedureCreator.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="..\Common\include\utility\MESSAGE_PROTOCOL_generated.h" />
     <ClInclude Include="..\Common\include\utility\StringConverter.h" />
     <ClInclude Include="include\ConstValue.h" />
+    <ClInclude Include="include\EventWorker.h" />
     <ClInclude Include="include\LobbyManager.h" />
     <ClInclude Include="include\LobbyProcedureCreator.h" />
   </ItemGroup>
