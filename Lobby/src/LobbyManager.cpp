@@ -1,4 +1,5 @@
 #pragma once
+#include <thread>
 
 #include "../library/flatbuffers/flatbuffers.h"
 #include "../include/utility/MESSAGE_PROTOCOL_generated.h"
@@ -10,17 +11,18 @@
 #include <LobbyProcedureCreator.h>
 
 
-
 namespace Lobby
 {
 	LobbyManager::LobbyManager()
 	{
 		_redis = nullptr;
+		_serverOn = false;
 	}
 
 	LobbyManager::~LobbyManager()
 	{
 		_redis = nullptr;
+		_serverOn = false;
 	}
 
 	void LobbyManager::Initialize()
@@ -41,6 +43,7 @@ namespace Lobby
 		std::string clientLog = "Client : " + std::to_string(Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Lobby", "LobbyManager", clientLog);
 
+		_eventQueue.Construct(200);
 
 		_networkManager.AcceptCallback = std::function<void(ULONG_PTR&)>
 			(
@@ -68,7 +71,6 @@ namespace Lobby
 					this->ProcessDisconnect(targetSocket, errorCode);
 				}
 			);
-
 
 		_callbackProcedureResult = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
 			(
@@ -104,21 +106,34 @@ namespace Lobby
 
 	void LobbyManager::ProcessAccept(ULONG_PTR& targetSocket)
 	{
-		Utility::Log("Lobby", "LobbyManager", "ProcessAccept");
+		_notLoginSocketSet.insert(targetSocket);
+
+		Lobby::EventWorker loginEvent;
+		loginEvent.Initialize(targetSocket, std::chrono::steady_clock::now(), std::chrono::seconds(30), Lobby::EventType::Login);
+
+		_eventQueue.push(std::move(loginEvent));
+		Utility::Log("Lobby", "LobbyManager", "현재 이벤트큐 개수 : " + std::to_string(_eventQueue.size()));
 	}
 
+	//find부분.. 함수로 따로만들면 좋을듯.
 	void LobbyManager::ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode)
 	{
-		auto finder = _socketAccountNumber.find(targetSocket);
+		auto finder2 = _notLoginSocketSet.find(targetSocket);
+		if (finder2 != _notLoginSocketSet.end())
+		{
+			_notLoginSocketSet.unsafe_erase(targetSocket);
+		}
+
+		auto finder = _socketLoginAccountMap.find(targetSocket);
 
 		//LogOut처리.
-		if (finder != _socketAccountNumber.end())
+		if (finder != _socketLoginAccountMap.end())
 		{
 			auto accountNumber = finder->second;
 			auto userLogOutTask = Common::Lobby::CreateQuerryUserLogOut(targetSocket, accountNumber, -1);
-			_userDatabaseWorker.Enqueue(std::move(userLogOutTask));
+			_socketLoginAccountMap.unsafe_erase(targetSocket);
 
-			_socketAccountNumber.unsafe_erase(targetSocket);
+			_userDatabaseWorker.Enqueue(std::move(userLogOutTask));
 			Utility::Log("Lobby", "LobbyManager", std::to_string(accountNumber)+" 로그아웃 완료.");
 		}
 	}
@@ -183,9 +198,20 @@ namespace Lobby
 				{
 					auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_ACCOUNT);
 					_userDatabaseWorker.Enqueue(std::move(accountDataTask));
-					_socketAccountNumber.insert({ targetSocket, userLoginResult.AccountNumber });
-				}
+					_socketLoginAccountMap.insert({ targetSocket, userLoginResult.AccountNumber });
 
+					Utility::Log("Lobby", "LobbyManager", "현재 로그인 성공 인원 : " + std::to_string(_socketLoginAccountMap.size()));
+
+					auto finder = _notLoginSocketSet.find(targetSocket);
+					if (finder != _notLoginSocketSet.end())
+					{
+						_notLoginSocketSet.unsafe_erase(targetSocket);
+					}
+				}
+				else if (!userLoginResult.Success)
+				{
+					Utility::Log("Lobby", "LobbyManager", "로그인 실패 ?");
+				}
 				break;
 			}
 			case protocol::MessageContent_NOTICE_ACCOUNT:
@@ -205,10 +231,74 @@ namespace Lobby
 		_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
 	}
 
-	// main에서 JOIN으로 호출하자
-	void LobbyManager::MainThread()
+	// promise나 condition varaiable등 쓰면 더 좋을듯...
+	void LobbyManager::EventThread()
 	{
-		while (true)
+		ULONG_PTR targetSocket = 0;
+		EventType eventType = Lobby::EventType::Default;
+
+		while (_serverOn)
+		{
+			if (_eventQueue.empty())
+			{
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+				continue;
+			}
+
+			auto event = _eventQueue.pop();
+
+			if (event.TimerCheck(targetSocket, eventType))
+			{
+				EventProcess(targetSocket, eventType);
+				continue;
+			}
+
+			_eventQueue.push(std::move(event));
+		}
+	}
+	
+	void LobbyManager::EventProcess(ULONG_PTR& targetSocket, Lobby::EventType eventType)
+	{
+		switch (eventType)
+		{
+			case Lobby::EventType::Default:
+				break;
+			case Lobby::EventType::Login:
+			{
+				//접속 후 60초 이내 인증 처리되지 않은 클라이언트 접속 끊는 기능.
+				auto finder = _socketLoginAccountMap.find(targetSocket);
+				if (finder != _socketLoginAccountMap.end())
+				{
+					Utility::Log("Lobby", "LobbyManager", "60초 이내 접속 성공확인"+std::to_string(targetSocket));
+					break;
+				}
+
+				_networkManager.DisconnectRequest(targetSocket);
+				Utility::Log("Lobby", "LobbyManager", "60초 이내 접속 실패 -> 연결해제 시도.." + std::to_string(targetSocket));
+				break;
+			}
+			case Lobby::EventType::HeartBeat:
+			{
+				break;
+			}
+			case Lobby::EventType::ItemGive:
+			{
+				break;
+			}
+			case Lobby::EventType::End:
+				break;
+		}
+	}
+	
+	// main에서 JOIN으로 호출하자
+	void LobbyManager::MainProcess()
+	{
+		_serverOn = true;
+
+		std::thread eventThread([this]() { this->EventThread(); });
+		eventThread.detach();
+
+		while (_serverOn)
 		{
 			//접속 후 60초 이내 인증 처리되지 않은 클라이언트 접속 끊는 기능 추가
 

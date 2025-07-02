@@ -271,8 +271,38 @@ namespace Network
 		client->Send(newOverlappedPtr, messageHeader, stringBuffer, bodySize);
 	}
 
+	void NetworkManager::DisconnectRequest(ULONG_PTR targetSocket)
+	{
+		//Disconnect와 중복실행되어도 문제업도록 return
+		auto finder = _activatedClientMap.find(targetSocket);
+		if (finder == _activatedClientMap.end())
+		{
+			Utility::LogError("Network", "NetworkManager", "DisconnectRequest Socket... Not Find");
+			return;
+		}
+
+		UnexpectedDisconnect(targetSocket, 0);
+
+		std::shared_ptr<Client> client = finder->second;
+		std::shared_ptr<SOCKET> socket = client->ClientSocketPtr;
+
+		shutdown(*socket, SD_BOTH);
+		client->Deinitialize();
+		Utility::Log("Network", "NetworkManager", "클라이언트 연결 종료 확인.");
+		DisconnectCallback(targetSocket, 0);
+
+		// 동기화객체사용 필요.
+		_activatedClientMap.unsafe_erase((ULONG_PTR)socket.get());
+
+		_preparedSocketQueue.push(socket);
+
+		std::shared_ptr<SOCKET> prepareSocket = GetPreparedSocket();
+		ActivateClient(prepareSocket);
+	}
+
 	void NetworkManager::Disconnect(ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
 	{
+		//DisconnectRequest와 중복실행되어도 문제업도록 return
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
 		{

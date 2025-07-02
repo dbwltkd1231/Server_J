@@ -68,6 +68,7 @@ namespace Network
 		void Disconnect(ULONG_PTR targetSocket, int bytesTransferred, int errorCode);
 
 	public:
+		void DisconnectRequest(ULONG_PTR targetSocket);
 		void SendRequest(ULONG_PTR& targetSocket, uint32_t& contentType, std::string& stringBuffer, int& bodySize); // auth,lobby logic에서 메세지 송신시 콜백되는 함수.
 
 	private:

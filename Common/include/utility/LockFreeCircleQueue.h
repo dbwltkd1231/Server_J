@@ -108,3 +108,21 @@ namespace Utility
 		}
 	};
 }
+
+/*
+
+shard_ptr타입을 T로 사용시 객체가 일부 유실되는 문제가 발생함.
+
+LockFreeCircleQueue가 shared_ptr<T> 타입을 저장할 때, 내부에서 new T[queueMaxSize]로 배열을 생성하는 구조이기 때문에…
+- shared_ptr<EventWorker> 배열이 전부 nullptr로 초기화됨
+- 이후 push(std::move(shared_ptr))을 해도, 복사/이동이 제대로 되지 않거나
+- pop()으로 꺼낸 객체가 nullptr이어서 사용 중 크래시 발생
+
+
+- 큐를 EventWorker 값 타입으로 변경 (즉, LockFreeCircleQueue<EventWorker>)
+- → new T[]로 생성된 객체들이 올바르게 구성되며
+- → move와 copy가 값 타입으로 확실히 작동함
+- → 객체 수명, 초기화, 안정성 문제 해결
+
+
+*/

@@ -1,10 +1,11 @@
 #pragma once
 #include <functional>
-
 #include "hiredis/hiredis.h"
-
 #include "../network/NetworkManager.h"
 #include "../database/Worker.h"
+#include "EventWorker.h"
+#include "../utility/LockFreeCircleQueue.h"
+#include "oneapi/tbb/concurrent_set.h"
 
 namespace Lobby
 {
@@ -21,7 +22,7 @@ namespace Lobby
 
 	private:
 		Network::NetworkManager _networkManager;
-
+		bool _serverOn;
 	private:
 		Database::Worker _userDatabaseWorker;
 		Database::Worker _gameDatabaseWorker;
@@ -37,9 +38,18 @@ namespace Lobby
 		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _callbackProcedureResult;
 
 	private:
-		tbb::concurrent_map<ULONG_PTR, uint64_t> _socketAccountNumber;
+		tbb::concurrent_set<ULONG_PTR> _notLoginSocketSet;
+		tbb::concurrent_map<ULONG_PTR, uint64_t> _socketLoginAccountMap;
+
+	private:
+		Utility::LockFreeCircleQueue<Lobby::EventWorker> _eventQueue;
+
+	private:
+		void EventThread();
+		void EventProcess(ULONG_PTR& targetSocket, Lobby::EventType eventProtocol);
 
 	public:
-		void MainThread();
+		void MainProcess();
+
 	};
 }

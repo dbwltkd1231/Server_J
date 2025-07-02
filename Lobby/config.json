@@ -1,7 +1,7 @@
 {
     "NETWORK": {
         "BUFFER_SIZE_MAX": 1024,
-        "CLIENT_ACCEPTREADY_COUNT_MAX": 10,
+        "CLIENT_ACCEPTREADY_COUNT_MAX": 20,
         "CLIENT_CAPACITY": 100,
         "IP": "127.0.0.1",
         "Lobby_START_COUNT": 2,

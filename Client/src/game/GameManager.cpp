@@ -46,6 +46,7 @@ namespace Game
 			auto client = std::make_shared<Network::Client>();
 			client->Initialize();
 			_networkManager.ConnectAuthServer(client, overlappedPtr);
+			Sleep(1000); // 1초마다 접속시도..
 		}
 
 		_socketUserMap = std::make_shared<tbb::concurrent_map<ULONG_PTR, std::shared_ptr<Game::User>>>();
@@ -160,6 +161,7 @@ namespace Game
 					auto user = finder->second;
 					user->SetAccountData(accountNumber, uid, authToken);
 					user->Deinitialize();
+					_socketUserMap->unsafe_erase(targetSocket); //User객체가 사용하는 소켓 바꿔주기 전 socket은 맵에서 삭제.
 
 					Sleep(1000); // 클라이언트 초기화 대기...(clostsocket이 포함되어있기때문)
 
@@ -167,14 +169,14 @@ namespace Game
 					client->Initialize();
 					user->Initialize(client);
 
-					auto overlappedPtr = _overlappedQueue->pop();
-					overlappedPtr->Clear();
-					//TODO 포트번호를 여기서 받아야함.
-					_networkManager.ConnectLobbyServer(client, overlappedPtr);
-
 					auto socketPtr = (ULONG_PTR)client->GetSocket().get();
 					_socketUserMap->insert({ socketPtr, user });
-					_socketUserMap->unsafe_erase(targetSocket); //User객체가 사용하는 소켓 바꿔주기 전 socket은 맵에서 삭제.
+					//TODO 포트번호를 여기서 받아야함.
+
+					auto overlappedPtr = _overlappedQueue->pop();
+					overlappedPtr->Clear();
+
+					_networkManager.ConnectLobbyServer(client, overlappedPtr);
 				}
 				break;
 			}

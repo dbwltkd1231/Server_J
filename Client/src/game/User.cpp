@@ -62,5 +62,7 @@ namespace Game
 		Network::MessageHeader newHeader(htonl(output.BodySize), htonl(output.ContentsType));
 
 		ClientPtr->Send(sendOverlappedPtr, newHeader, output.Buffer, output.BodySize);
+
+		Utility::Log("Client", "User", "Request LogIn");
 	}
 }

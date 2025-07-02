@@ -54,10 +54,9 @@ int main()
 	lobbyManager.ConnectDatabase(userDatabaseName, userDatabaseAddress, gameDatabaseame, gameDatabaseAddress);
 	lobbyManager.ConnectRedis(Lobby::ConstValue::GetInstance().IP, Lobby::ConstValue::GetInstance().RedisPort);
 
-	while (true)
-	{
+	std::thread mainThread([&lobbyManager]() { lobbyManager.MainProcess(); });
 
-	}
+	mainThread.join();
 
 #endif
 
