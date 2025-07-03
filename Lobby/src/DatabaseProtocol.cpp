@@ -35,6 +35,31 @@ namespace Common
 			return std::string(buffer);
 		}
 
+		void SetProcedureResult(std::vector<GameItem>& gameItemSet, SQLHSTMT& hstmt)
+		{
+			long itemSeed = 0;
+			int isPile = 0;
+			int pileCountMax = 0;
+			int breakMoneyAmount = 0;
+
+			SQLLEN lenItemSeed = 0;
+			SQLLEN lenIsPile= 0;
+			SQLLEN lenPileCountMax = 0;
+			SQLLEN lenBreakMoneyAmount = 0;
+
+			SQLBindCol(hstmt, 1, SQL_C_LONG, &itemSeed, 0, &lenItemSeed);
+			SQLBindCol(hstmt, 2, SQL_C_LONG, &isPile, 0, &lenIsPile);
+			SQLBindCol(hstmt, 1, SQL_C_LONG, &pileCountMax, 0, &lenPileCountMax);
+			SQLBindCol(hstmt, 2, SQL_C_LONG, &breakMoneyAmount, 0, &lenBreakMoneyAmount);
+
+			while (SQLFetch(hstmt) == SQL_SUCCESS)
+			{
+				bool isPileOffset = (isPile == 1 ? true : false);
+
+				gameItemSet.push_back(Common::Protocol::GameItem{ itemSeed, isPileOffset, pileCountMax, breakMoneyAmount });
+			}
+		}
+
 		void SetProcedureResult(ResultUserLogIn& resultUserLogIn, SQLHSTMT& hstmt)
 		{
 			long accountNumber = 0;

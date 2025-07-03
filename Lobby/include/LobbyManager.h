@@ -1,12 +1,15 @@
 #pragma once
 #include <functional>
+#include <vector>
 #include "hiredis/hiredis.h"
 #include "../network/NetworkManager.h"
+#include "../lobby/DatabaseProtocol.h"
 #include "../database/Worker.h"
 #include "EventWorker.h"
 #include "../utility/LockFreeCircleQueue.h"
 #include "oneapi/tbb/concurrent_set.h"
 #include "oneapi/tbb/concurrent_queue.h"
+
 
 namespace Lobby
 {
@@ -44,6 +47,9 @@ namespace Lobby
 
 	private:
 		tbb::concurrent_queue<Lobby::EventWorker> _eventQueue;
+
+	private:
+		std::vector<Common::Protocol::GameItem> _gameItemVector;
 
 	private:
 		void EventThread();

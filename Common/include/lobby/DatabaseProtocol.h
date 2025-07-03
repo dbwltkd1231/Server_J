@@ -14,12 +14,13 @@ namespace Common
 	{
 		//프로시저 리절트 프로토콜.
 
-		//struct InventoryItem
-		//{
-		//	GUID Guid;
-		//	LONGLONG ItemSeed;
-		//	int ItemCount;
-		//};
+		struct GameItem
+		{
+			long ItemSeed;
+			bool IsPile;
+			int PileCountMax;
+			int BreakMoneyAmount;
+		};
 
 		struct BasicResult
 		{
@@ -55,6 +56,7 @@ namespace Common
 			std::vector<InventorySlotData> InventoryItems;
 		};
 
+		void SetProcedureResult(std::vector<GameItem>& gameItemSet, SQLHSTMT& hstmt);
 		void SetProcedureResult(ResultUserLogIn& resultUserLogIn, SQLHSTMT& hstmt);
 		void SetProcedureResult(ResultGetAccountData& resultGetAccountData, SQLHSTMT& hstmt);
 		void SetProcedureResult(ResultGetInventoryData& resultGetInventoryData, SQLHSTMT& hstmt);

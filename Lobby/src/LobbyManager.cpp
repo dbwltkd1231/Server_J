@@ -7,7 +7,6 @@
 #include "LobbyManager.h"
 #include "ConstValue.h"
 #include "../lobby/LobbyProtocol.h"
-#include "../lobby/DatabaseProtocol.h"
 #include <LobbyProcedureCreator.h>
 
 
@@ -176,6 +175,12 @@ namespace Lobby
 	{
 		switch (queryType)
 		{
+		case Database::DatabaseQueryType::GetItemAllData:
+		{
+			SetProcedureResult(_gameItemVector, hstmt);
+			Utility::Log("Lobby", "LobbyManager", "아이템 데이터 로드 : " + std::to_string(_gameItemVector.size()));
+			break;
+		}
 		case Database::DatabaseQueryType::UserLogIn:
 		{
 			Common::Lobby::PacketOutput output;
@@ -297,6 +302,9 @@ namespace Lobby
 	// main에서 JOIN으로 호출하자
 	void LobbyManager::MainProcess()
 	{
+		auto task = Common::Lobby::CreateQueryGetItemData();
+		_gameDatabaseWorker.Enqueue(task);
+
 		_serverOn = true;
 
 		std::thread eventThread([this]() { this->EventThread(); });
