@@ -1,9 +1,7 @@
 #pragma once
 #include <thread>
-
 #include "../library/flatbuffers/flatbuffers.h"
 #include "../include/utility/MESSAGE_PROTOCOL_generated.h"
-
 #include "LobbyManager.h"
 #include "ConstValue.h"
 #include "../lobby/LobbyProtocol.h"
@@ -16,6 +14,8 @@ namespace Lobby
 	{
 		_redis = nullptr;
 		_serverOn = false;
+
+		_gen.seed(_randomDevice());
 	}
 
 	LobbyManager::~LobbyManager()
@@ -163,7 +163,7 @@ namespace Lobby
 		}
 		else if (task.DatabaseName == Database::DatabaseType::Game)
 		{
-
+			_gameDatabaseWorker.Enqueue(std::move(task));
 		}
 		else
 		{
@@ -208,6 +208,11 @@ namespace Lobby
 
 				auto inventoryByAccountDataTask = Common::Lobby::CreateQuerryInventoryByAccount(targetSocket, userLoginResult.AccountNumber);
 				_gameDatabaseWorker.Enqueue(std::move(inventoryByAccountDataTask));
+
+				Lobby::EventWorker itemGiveEvent;
+				itemGiveEvent.Initialize(targetSocket, std::chrono::steady_clock::now(), std::chrono::seconds(15), Lobby::EventType::ItemGive);
+
+				_eventQueue.push(std::move(itemGiveEvent));
 			}
 			else if (!userLoginResult.Success)
 			{
@@ -235,6 +240,20 @@ namespace Lobby
 			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
 			break;
 		}
+		case Database::DatabaseQueryType::AddInventoryItem:
+		{
+			Common::Lobby::PacketOutput output;
+			Common::Protocol::ResultAddInventoryItem addInventoryItemResult;
+			SetProcedureResult(addInventoryItemResult, hstmt);
+			
+			Common::Lobby::NoticeInventoryUpdate(addInventoryItemResult.UpdateInventoryDataSet, output);
+			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
+
+			Lobby::EventWorker itemGiveEvent;
+			itemGiveEvent.Initialize(targetSocket, std::chrono::steady_clock::now(), std::chrono::seconds(15), Lobby::EventType::ItemGive);
+
+			_eventQueue.push(std::move(itemGiveEvent));
+		}
 		default:
 		{
 			break;
@@ -245,8 +264,6 @@ namespace Lobby
 	// promise나 condition varaiable등 쓰면 더 좋을듯...
 	void LobbyManager::EventThread()
 	{
-		ULONG_PTR targetSocket = 0;
-		EventType eventType = Lobby::EventType::Default;
 		Lobby::EventWorker eventWorker;
 		while (_serverOn)
 		{
@@ -256,9 +273,9 @@ namespace Lobby
 				continue;
 			}
 
-			if (eventWorker.TimerCheck(targetSocket, eventType))
+			if (eventWorker.TimerCheck())
 			{
-				EventProcess(targetSocket, eventType);
+				EventProcess(eventWorker.TargetSocket, eventWorker.Event);
 				continue;
 			}
 
@@ -292,6 +309,20 @@ namespace Lobby
 			}
 			case Lobby::EventType::ItemGive:
 			{
+				auto finder = _socketLoginAccountMap.find(targetSocket);
+				if (finder == _socketLoginAccountMap.end())
+				{
+					Utility::Log("Lobby", "LobbyManager", "접속중이지 않아 ItemGive 이벤트 취소.");
+					break;
+				}
+				std::uniform_int_distribution<int> giveCount(1, 3);
+				int itemGiveCount = giveCount(_gen);
+				
+				std::uniform_int_distribution<int> randomItem(0, _gameItemVector.size() - 1);
+				int randomItemIndex = randomItem(_gen);
+				int randomItemSeed = _gameItemVector[randomItemIndex].ItemSeed;
+				auto addInventoryItemTask = Common::Lobby::CreateQuerryAddInventoryItem(targetSocket, finder->second, randomItemSeed, itemGiveCount);
+				_gameDatabaseWorker.Enqueue(std::move(addInventoryItemTask));
 				break;
 			}
 			case Lobby::EventType::End:

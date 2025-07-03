@@ -49,8 +49,8 @@ namespace Common
 
 			SQLBindCol(hstmt, 1, SQL_C_LONG, &itemSeed, 0, &lenItemSeed);
 			SQLBindCol(hstmt, 2, SQL_C_LONG, &isPile, 0, &lenIsPile);
-			SQLBindCol(hstmt, 1, SQL_C_LONG, &pileCountMax, 0, &lenPileCountMax);
-			SQLBindCol(hstmt, 2, SQL_C_LONG, &breakMoneyAmount, 0, &lenBreakMoneyAmount);
+			SQLBindCol(hstmt, 3, SQL_C_LONG, &pileCountMax, 0, &lenPileCountMax);
+			SQLBindCol(hstmt, 4, SQL_C_LONG, &breakMoneyAmount, 0, &lenBreakMoneyAmount);
 
 			while (SQLFetch(hstmt) == SQL_SUCCESS)
 			{
@@ -122,7 +122,7 @@ namespace Common
 			}
 		}
 
-		void SetProcedureResult(ResultGetInventoryData& result, SQLHSTMT& hstmt)
+		void SetProcedureResult(ResultGetInventoryData& resultGetInventoryData, SQLHSTMT& hstmt)
 		{
 			GUID guid;
 			long itemSeed;
@@ -136,13 +136,36 @@ namespace Common
 			SQLBindCol(hstmt, 2, SQL_C_LONG, &itemSeed, 0, &lenItemSeed);
 			SQLBindCol(hstmt, 3, SQL_C_LONG, &itemCount, 0, &lenItemCount);
 
-			result.InventoryItems.clear();
-
+			resultGetInventoryData.InventoryItems.clear();
 			while (SQLFetch(hstmt) == SQL_SUCCESS)
 			{
 				std::string guidString = GuidToString(guid);
 
-				result.InventoryItems.push_back(InventorySlotData{ guidString, itemSeed, itemCount });
+				resultGetInventoryData.InventoryItems.push_back(InventorySlotData{ guidString, itemSeed, itemCount });
+			}
+		}
+
+		void SetProcedureResult(ResultAddInventoryItem& resultAddInventoryItem, SQLHSTMT& hstmt)
+		{
+			GUID guid;
+			long itemSeed;
+			int itemCount;
+
+
+			SQLLEN lenGuid = 0;
+			SQLLEN lenItemSeed = 0;
+			SQLLEN lenItemCount = 0;
+
+			SQLBindCol(hstmt, 1, SQL_C_GUID, &guid, sizeof(GUID), &lenGuid);
+			SQLBindCol(hstmt, 2, SQL_C_LONG, &itemSeed, 0, &lenItemSeed);
+			SQLBindCol(hstmt, 3, SQL_C_LONG, &itemCount, 0, &lenItemCount);
+
+			resultAddInventoryItem.UpdateInventoryDataSet.clear();
+			while (SQLFetch(hstmt) == SQL_SUCCESS)
+			{
+				std::string guidString = GuidToString(guid);
+
+				resultAddInventoryItem.UpdateInventoryDataSet.push_back(InventorySlotData{ guidString, itemSeed, itemCount });
 			}
 		}
 	}

@@ -928,15 +928,21 @@ inline ::flatbuffers::Offset<NOTICE_INVENTORY> CreateNOTICE_INVENTORYDirect(
 struct NOTICE_INVENTORY_UPDATE FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef NOTICE_INVENTORY_UPDATEBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_INVENTORY_SLOT = 4
+    VT_INVENTORY_SLOTS = 4,
+    VT_INVENTORY_TOTAL_COUNT = 6
   };
-  const protocol::INVENTORY_SLOT *inventory_slot() const {
-    return GetPointer<const protocol::INVENTORY_SLOT *>(VT_INVENTORY_SLOT);
+  const ::flatbuffers::Vector<::flatbuffers::Offset<protocol::INVENTORY_SLOT>> *inventory_slots() const {
+    return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<protocol::INVENTORY_SLOT>> *>(VT_INVENTORY_SLOTS);
+  }
+  int32_t inventory_total_count() const {
+    return GetField<int32_t>(VT_INVENTORY_TOTAL_COUNT, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyOffset(verifier, VT_INVENTORY_SLOT) &&
-           verifier.VerifyTable(inventory_slot()) &&
+           VerifyOffset(verifier, VT_INVENTORY_SLOTS) &&
+           verifier.VerifyVector(inventory_slots()) &&
+           verifier.VerifyVectorOfTables(inventory_slots()) &&
+           VerifyField<int32_t>(verifier, VT_INVENTORY_TOTAL_COUNT, 4) &&
            verifier.EndTable();
   }
 };
@@ -945,8 +951,11 @@ struct NOTICE_INVENTORY_UPDATEBuilder {
   typedef NOTICE_INVENTORY_UPDATE Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_inventory_slot(::flatbuffers::Offset<protocol::INVENTORY_SLOT> inventory_slot) {
-    fbb_.AddOffset(NOTICE_INVENTORY_UPDATE::VT_INVENTORY_SLOT, inventory_slot);
+  void add_inventory_slots(::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<protocol::INVENTORY_SLOT>>> inventory_slots) {
+    fbb_.AddOffset(NOTICE_INVENTORY_UPDATE::VT_INVENTORY_SLOTS, inventory_slots);
+  }
+  void add_inventory_total_count(int32_t inventory_total_count) {
+    fbb_.AddElement<int32_t>(NOTICE_INVENTORY_UPDATE::VT_INVENTORY_TOTAL_COUNT, inventory_total_count, 0);
   }
   explicit NOTICE_INVENTORY_UPDATEBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -961,10 +970,23 @@ struct NOTICE_INVENTORY_UPDATEBuilder {
 
 inline ::flatbuffers::Offset<NOTICE_INVENTORY_UPDATE> CreateNOTICE_INVENTORY_UPDATE(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    ::flatbuffers::Offset<protocol::INVENTORY_SLOT> inventory_slot = 0) {
+    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<protocol::INVENTORY_SLOT>>> inventory_slots = 0,
+    int32_t inventory_total_count = 0) {
   NOTICE_INVENTORY_UPDATEBuilder builder_(_fbb);
-  builder_.add_inventory_slot(inventory_slot);
+  builder_.add_inventory_total_count(inventory_total_count);
+  builder_.add_inventory_slots(inventory_slots);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<NOTICE_INVENTORY_UPDATE> CreateNOTICE_INVENTORY_UPDATEDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const std::vector<::flatbuffers::Offset<protocol::INVENTORY_SLOT>> *inventory_slots = nullptr,
+    int32_t inventory_total_count = 0) {
+  auto inventory_slots__ = inventory_slots ? _fbb.CreateVector<::flatbuffers::Offset<protocol::INVENTORY_SLOT>>(*inventory_slots) : 0;
+  return protocol::CreateNOTICE_INVENTORY_UPDATE(
+      _fbb,
+      inventory_slots__,
+      inventory_total_count);
 }
 
 struct NOTICE_INVENTORY_DELETED FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

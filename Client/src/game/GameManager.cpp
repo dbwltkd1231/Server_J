@@ -205,7 +205,8 @@ namespace Game
 				auto detail = responseLogin->detail();
 				auto feedback = responseLogin->feedback();
 
-				log = "RESPONSE_LOGIN | detail: " + std::to_string(detail) + ", feedback: " + std::to_string(feedback);
+				std::string feedbackStr = (detail == 1 ? "Success" : "Fail");
+				log = "RESPONSE_LOGIN" + feedbackStr;
 				Utility::Log("Game", "GameManager", log);
 				break;
 			}
@@ -233,28 +234,55 @@ namespace Game
 
 				int inventoryTotalCount = noticeInventory->inventory_total_count();
 
-				for (int i = 0;i < inventoryTotalCount;++i)
+				for (int i = 0; i < inventoryTotalCount; ++i)
 				{
-                    for (int i = 0; i < inventoryTotalCount; ++i)  
-                    {  
-                       std::string guid = noticeInventory->inventory_slots()->Get(i)->guid()->str(); 
-					   long itemSeed = noticeInventory->inventory_slots()->Get(i)->item_seed();
-					   int itemCount = noticeInventory->inventory_slots()->Get(i)->count();
+					std::string guid = noticeInventory->inventory_slots()->Get(i)->guid()->str();
+					long itemSeed = noticeInventory->inventory_slots()->Get(i)->item_seed();
+					int itemCount = noticeInventory->inventory_slots()->Get(i)->count();
 
 
-                       targetUser->AddInventoryItem(guid, itemSeed, itemCount);
+					targetUser->AddInventoryItem(guid, itemSeed, itemCount);
 
-					   log = "NOTICE_INVENTORY | UID: " + std::to_string(targetUser->GetAccountNumber()) + ", Guid: " + guid +
-						   ", ItemSeed: " + std::to_string(itemSeed) +
-						   ", ItemCount: " + std::to_string(itemCount);
+					log = "NOTICE_INVENTORY | UID: " + std::to_string(targetUser->GetAccountNumber()) + ", Guid: " + guid +
+						", ItemSeed: " + std::to_string(itemSeed) +
+						", ItemCount: " + std::to_string(itemCount);
 
-					   Utility::Log("Game", "GameManager", log);
-                    }
+					Utility::Log("Game", "GameManager", log);
 				}
 
 				if (inventoryTotalCount < 1)
 				{
 					Utility::Log("Game", "GameManager", "NOTICE_INVENTORY : 0");
+				}
+
+				break;
+			}
+
+			case protocol::MessageContent_NOTICE_INVENTORY_UPDATE:
+			{
+				auto noticeInventoryUpdate = flatbuffers::GetRoot<protocol::NOTICE_INVENTORY_UPDATE>(buffer);
+
+				int inventoryUpdateTotalCount = noticeInventoryUpdate->inventory_total_count();
+
+				for (int i = 0; i < inventoryUpdateTotalCount; ++i)
+				{
+					std::string guid = noticeInventoryUpdate->inventory_slots()->Get(i)->guid()->str();
+					long itemSeed = noticeInventoryUpdate->inventory_slots()->Get(i)->item_seed();
+					int itemCount = noticeInventoryUpdate->inventory_slots()->Get(i)->count();
+
+
+					//targetUser->AddInventoryItem(guid, itemSeed, itemCount);
+
+					log = "NOTICE_INVENTORY_UPDATE | UID: " + std::to_string(targetUser->GetAccountNumber()) + ", Guid: " + guid +
+						", ItemSeed: " + std::to_string(itemSeed) +
+						", ItemCount: " + std::to_string(itemCount);
+
+					Utility::Log("Game", "GameManager", log);
+				}
+
+				if (inventoryUpdateTotalCount < 1)
+				{
+					Utility::Log("Game", "GameManager", "NOTICE_INVENTORY_UPDATE : 0");
 				}
 
 				break;

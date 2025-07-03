@@ -21,7 +21,7 @@ namespace Common
 		void NoticeAccount(std::string& uid, uint64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket);
 
 		void NoticeInventory(std::vector<Common::Protocol::InventorySlotData> inventoryItemDataSet, PacketOutput& outPacket);//TODO
-		void NoticeInventoryUpdate();
+		void NoticeInventoryUpdate(std::vector<Common::Protocol::InventorySlotData> updateInventoryDataSet, PacketOutput& outPacket);
 		void NoticeInventoryDeleted(std::string& guid);
 
 		void RequestItemBreak(std::string& guid, int& count, PacketOutput& outPacket);

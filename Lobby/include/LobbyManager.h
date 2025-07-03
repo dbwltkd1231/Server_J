@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <vector>
+#include <random>
 #include "hiredis/hiredis.h"
 #include "../network/NetworkManager.h"
 #include "../lobby/DatabaseProtocol.h"
@@ -50,6 +51,10 @@ namespace Lobby
 
 	private:
 		std::vector<Common::Protocol::GameItem> _gameItemVector;
+
+	private:
+		std::random_device _randomDevice;
+		std::mt19937 _gen;
 
 	private:
 		void EventThread();

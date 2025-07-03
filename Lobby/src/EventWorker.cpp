@@ -13,28 +13,26 @@ namespace Lobby
 	}
 
     EventWorker::EventWorker(const EventWorker& other)
-        : _targetSocket(other._targetSocket),
+        : TargetSocket(other.TargetSocket),
         _createTime(other._createTime),
         _durationTimeOut(other._durationTimeOut),
-        _eventType(other._eventType)
+		Event(other.Event)
     {
     }
 
 	void EventWorker::Initialize(ULONG_PTR targetSocket, std::chrono::steady_clock::time_point createTime, std::chrono::seconds durationTimeOut, EventType eventType)
 	{
-		_targetSocket = targetSocket;
+		TargetSocket = targetSocket;
 		_createTime = createTime;
 		_durationTimeOut = durationTimeOut;
-		_eventType = eventType;
+		Event = eventType;
 	}
 
-	bool EventWorker::TimerCheck(ULONG_PTR& targetSocket, EventType& eventType)
+	bool EventWorker::TimerCheck()
 	{
 		bool result = false;
 		if (std::chrono::steady_clock::now() - _createTime >= _durationTimeOut) 
 		{
-			targetSocket = _targetSocket;
-			eventType = _eventType;
 			result = true;
 		}
 

@@ -56,9 +56,15 @@ namespace Common
 			std::vector<InventorySlotData> InventoryItems;
 		};
 
+		struct ResultAddInventoryItem : public BasicResult
+		{
+			std::vector<InventorySlotData> UpdateInventoryDataSet;
+		};
+
 		void SetProcedureResult(std::vector<GameItem>& gameItemSet, SQLHSTMT& hstmt);
 		void SetProcedureResult(ResultUserLogIn& resultUserLogIn, SQLHSTMT& hstmt);
 		void SetProcedureResult(ResultGetAccountData& resultGetAccountData, SQLHSTMT& hstmt);
 		void SetProcedureResult(ResultGetInventoryData& resultGetInventoryData, SQLHSTMT& hstmt);
+		void SetProcedureResult(ResultAddInventoryItem& resultAddInventoryItem, SQLHSTMT& hstmt);
 	}
 }

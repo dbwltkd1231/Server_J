@@ -66,5 +66,19 @@ namespace Common
             task.Parameters = " '" + std::to_string(accountNumber) + "'";
             return task;
         }
+
+        Database::Task CreateQuerryAddInventoryItem(ULONG_PTR targetSocket, long accountNumber, long itemSeed, int itemCount)
+        {
+            Database::Task task;
+            task.SocketPtr = targetSocket;
+            task.NetworkType = protocol::MessageContent_NOTICE_INVENTORY_UPDATE;
+            task.QueryType = Database::DatabaseQueryType::AddInventoryItem;
+            task.DatabaseName = Database::DatabaseType::Game;
+            task.ProcedureName = "AddInventoryItem";
+            task.Parameters = " '" + std::to_string(accountNumber) + "', '" +
+                std::to_string(itemSeed) + "', '" +
+                std::to_string(itemCount)+"'";
+            return task;
+        }
     }
 }

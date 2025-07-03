@@ -259,6 +259,7 @@ namespace Network
 			Utility::Log("Network", "NetworkManager", "Socket Send... Not Find");
 			return;
 		}
+
 		auto client = finder->second;
 
 		auto newOverlappedPtr = _overlappedQueue->pop();
