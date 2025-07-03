@@ -41,14 +41,31 @@ namespace Common
 
 		}
 
-		void NoticeInventory()
+		void NoticeInventory(std::vector<Common::Protocol::InventorySlotData> inventoryItemDataSet, PacketOutput& outPacket)
 		{
+			flatbuffers::FlatBufferBuilder builder;
+			std::vector<flatbuffers::Offset<protocol::INVENTORY_SLOT>> slotOffsets;
 
+			for (const auto& item : inventoryItemDataSet)
+			{
+				auto guidOffset = builder.CreateString(item.GuidStr);
+				auto slot = protocol::CreateINVENTORY_SLOT(builder, guidOffset, item.ItemSeed, item.ItemCount);
+				slotOffsets.push_back(slot);
+			}
+
+			auto slotVector = builder.CreateVector(slotOffsets);
+			auto root = protocol::CreateNOTICE_INVENTORY(builder, slotVector, inventoryItemDataSet.size());
+			builder.Finish(root);
+
+			outPacket.BodySize = static_cast<int>(builder.GetSize());
+			outPacket.Buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), outPacket.BodySize);
 		}
+
 		void NoticeInventoryUpdate()
 		{
 
 		}
+
 		void NoticeInventoryDeleted(std::string& guid)
 		{
 

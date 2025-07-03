@@ -2,6 +2,7 @@
 #include <string>
 #include "../utility/MESSAGE_PROTOCOL_generated.h"
 #include "../library/flatbuffers/flatbuffers.h"
+#include "../lobby/DatabaseProtocol.h"
 
 namespace Common
 {
@@ -19,7 +20,7 @@ namespace Common
 
 		void NoticeAccount(std::string& uid, uint64_t& money, int& ranking, int& inventoryCapacity, PacketOutput& outPacket);
 
-		void NoticeInventory();//TODO
+		void NoticeInventory(std::vector<Common::Protocol::InventorySlotData> inventoryItemDataSet, PacketOutput& outPacket);//TODO
 		void NoticeInventoryUpdate();
 		void NoticeInventoryDeleted(std::string& guid);
 

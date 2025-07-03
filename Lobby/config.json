@@ -12,7 +12,7 @@
         "PORT": 6379
     },
     "SQL": {
-        "GAME_DB_ADDRESS": "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;",
+        "GAME_DB_ADDRESS": "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=Game;Trusted_Connection=yes;",
         "GAME_DB_NAME": "Game",
         "USER_DB_ADDRESS": "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;",
         "USER_DB_NAME": "User"

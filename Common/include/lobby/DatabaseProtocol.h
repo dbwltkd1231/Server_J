@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <vector>
 
 #define NOMINMAX 
 #include <windows.h>
@@ -11,51 +12,51 @@ namespace Common
 {
 	namespace Protocol
 	{
-		class BasicData
+		//프로시저 리절트 프로토콜.
+
+		//struct InventoryItem
+		//{
+		//	GUID Guid;
+		//	LONGLONG ItemSeed;
+		//	int ItemCount;
+		//};
+
+		struct BasicResult
 		{
-		public:
-			BasicData() = default;
-			virtual ~BasicData() = default;
-			BasicData(const BasicData& other) : ContentsType(other.ContentsType) {}
-
-		public:
 			uint32_t ContentsType;
-
-		public:
-			virtual void SetProcedureResult(SQLHSTMT& hstmt) = 0;
 		};
 
-		class ResultUserLogIn : public BasicData
+		struct ResultUserLogIn : public BasicResult
 		{
-		public:
-			ResultUserLogIn();
-			~ResultUserLogIn();
-			ResultUserLogIn(const ResultUserLogIn& other);
-
-		public:
 			uint64_t AccountNumber;
 			uint32_t Detail;
 			bool Success;
-		public:
-			void SetProcedureResult(SQLHSTMT& hstmt) override;
 		};
 
-		class ResultGetAccountData : public BasicData
+		struct ResultGetAccountData : public BasicResult
 		{
-		public:
-			ResultGetAccountData();
-			~ResultGetAccountData();
-			ResultGetAccountData(const ResultGetAccountData& other);
-
-		public:
 			uint64_t AccountNumber;
 			std::string AccountUID;
 			uint64_t GameMoney;
 			int GameMoneyRank;
 			int InventoryCapacity;
 			int Success;
-		public:
-			void SetProcedureResult(SQLHSTMT& hstmt) override;
 		};
+
+		struct InventorySlotData 
+		{
+			std::string GuidStr;
+			long ItemSeed;
+			int ItemCount;
+		};
+
+		struct ResultGetInventoryData : public BasicResult
+		{
+			std::vector<InventorySlotData> InventoryItems;
+		};
+
+		void SetProcedureResult(ResultUserLogIn& resultUserLogIn, SQLHSTMT& hstmt);
+		void SetProcedureResult(ResultGetAccountData& resultGetAccountData, SQLHSTMT& hstmt);
+		void SetProcedureResult(ResultGetInventoryData& resultGetInventoryData, SQLHSTMT& hstmt);
 	}
 }

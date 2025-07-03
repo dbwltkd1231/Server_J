@@ -41,6 +41,16 @@ namespace Game
 		_inventoryCapacity = inventoryCapacity;
 	}
 
+	void User::AddInventoryItem(std::string guid, long itemSeed, int itemCount)
+	{
+		_inventoryVector.push_back(InventorySlot{ guid , itemSeed, itemCount});
+	}
+
+	long User::GetAccountNumber()
+	{
+		return _accountNumber;
+	}
+
 	void User::RequestConnect(Network::CustomOverlapped* sendOverlappedPtr)
 	{
 		uint32_t contentsType = 0;

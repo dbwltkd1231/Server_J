@@ -43,8 +43,6 @@ namespace Lobby
 		std::string clientLog = "Client : " + std::to_string(Lobby::ConstValue::GetInstance().ConnectReadyClientCountMax) + " Activate Success !!";
 		Utility::Log("Lobby", "LobbyManager", clientLog);
 
-		_eventQueue.Construct(200);
-
 		_networkManager.AcceptCallback = std::function<void(ULONG_PTR&)>
 			(
 				[this]
@@ -112,7 +110,6 @@ namespace Lobby
 		loginEvent.Initialize(targetSocket, std::chrono::steady_clock::now(), std::chrono::seconds(30), Lobby::EventType::Login);
 
 		_eventQueue.push(std::move(loginEvent));
-		Utility::Log("Lobby", "LobbyManager", "현재 이벤트큐 개수 : " + std::to_string(_eventQueue.size()));
 	}
 
 	//find부분.. 함수로 따로만들면 좋을듯.
@@ -188,7 +185,7 @@ namespace Lobby
 			case protocol::MessageContent_RESPONSE_LOGIN:
 			{
 				Common::Protocol::ResultUserLogIn userLoginResult;
-				userLoginResult.SetProcedureResult(hstmt);
+				SetProcedureResult(userLoginResult, hstmt);
 
 				Common::Lobby::CreateResponseLogIn(userLoginResult.Detail, userLoginResult.Success, output);
 
@@ -196,10 +193,7 @@ namespace Lobby
 
 				if (userLoginResult.Success)
 				{
-					auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_ACCOUNT);
-					_userDatabaseWorker.Enqueue(std::move(accountDataTask));
 					_socketLoginAccountMap.insert({ targetSocket, userLoginResult.AccountNumber });
-
 					Utility::Log("Lobby", "LobbyManager", "현재 로그인 성공 인원 : " + std::to_string(_socketLoginAccountMap.size()));
 
 					auto finder = _notLoginSocketSet.find(targetSocket);
@@ -207,6 +201,12 @@ namespace Lobby
 					{
 						_notLoginSocketSet.unsafe_erase(targetSocket);
 					}
+
+					auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_ACCOUNT);
+					_userDatabaseWorker.Enqueue(std::move(accountDataTask));
+
+					auto inventoryByAccountDataTask = Common::Lobby::CreateQuerryInventoryByAccount(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_INVENTORY);
+					_gameDatabaseWorker.Enqueue(std::move(inventoryByAccountDataTask));
 				}
 				else if (!userLoginResult.Success)
 				{
@@ -217,9 +217,18 @@ namespace Lobby
 			case protocol::MessageContent_NOTICE_ACCOUNT:
 			{
 				Common::Protocol::ResultGetAccountData getAccountDataResult;
-				getAccountDataResult.SetProcedureResult(hstmt);
+				SetProcedureResult(getAccountDataResult, hstmt);
 
 				Common::Lobby::NoticeAccount(getAccountDataResult.AccountUID, getAccountDataResult.GameMoney, getAccountDataResult.GameMoneyRank, getAccountDataResult.InventoryCapacity, output);
+				break;
+			}
+			case protocol::MessageContent_NOTICE_INVENTORY:
+			{
+				Common::Protocol::ResultGetInventoryData getInventoryDataResult;
+				SetProcedureResult(getInventoryDataResult, hstmt);
+
+				Common::Lobby::NoticeInventory(getInventoryDataResult.InventoryItems, output);
+
 				break;
 			}
 			default:
@@ -236,24 +245,22 @@ namespace Lobby
 	{
 		ULONG_PTR targetSocket = 0;
 		EventType eventType = Lobby::EventType::Default;
-
+		Lobby::EventWorker eventWorker;
 		while (_serverOn)
 		{
-			if (_eventQueue.empty())
+			if (!_eventQueue.try_pop(eventWorker))
 			{
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 				continue;
 			}
 
-			auto event = _eventQueue.pop();
-
-			if (event.TimerCheck(targetSocket, eventType))
+			if (eventWorker.TimerCheck(targetSocket, eventType))
 			{
 				EventProcess(targetSocket, eventType);
 				continue;
 			}
 
-			_eventQueue.push(std::move(event));
+			_eventQueue.push(std::move(eventWorker));
 		}
 	}
 	
@@ -306,12 +313,3 @@ namespace Lobby
 		}
 	}
 }
-
-/*
-* 타이머 기반 이벤트 큐 또는 타임휠 구조
-- 방식: 인증 대기 중인 클라이언트를 타임휠 또는 타임아웃 큐에 등록해두고, 메인 로직의 이벤트 루프에서 주기적으로 체크
-- 장점:
-- 스레드를 많이 만들지 않아도 됨
-- 클라이언트 수가 많아도 퍼포먼스 유지가 쉬움
-
-*/

@@ -68,6 +68,24 @@ REFERENCES Item(ItemSeed)
 ON DELETE CASCADE;
 GO
 
+--procedure
+
+CREATE PROCEDURE GetInventoryByAccount
+    @AccountNumber BIGINT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        Guid,
+        ItemSeed,
+        ItemCount
+    FROM dbo.Inventory
+    WHERE AccountNumber = @AccountNumber
+    ORDER BY ItemSeed ASC;
+END
+GO
+
 CREATE PROCEDURE AddInventoryItem
     @AccountNumber BIGINT,
     @ItemSeed BIGINT,
@@ -232,7 +250,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         -- 1. 인벤토리에서 아이템 제거 시도
-        EXEC [Game].dbo.InventoryItemDelete
+        EXEC [Game].dbo.DeleteInventoryItem
             @AccountNumber = @AccountNumber,
             @ItemSeed = @ItemSeed,
             @RemoveCount = @RemoveCount;

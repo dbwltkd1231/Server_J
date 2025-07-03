@@ -185,6 +185,14 @@ namespace Game
 
 	void GameManager::ReadLobbyMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string& stringValue)
 	{
+		std::shared_ptr<Game::User> targetUser = nullptr;
+		auto finder = _socketUserMap->find(targetSocket);
+		if (finder == _socketUserMap->end())
+		{
+			return;
+		}
+		targetUser = finder->second;
+
 		auto messageType = static_cast<protocol::MessageContent>(contentsType);
 		const char* buffer = stringValue.c_str();
 		std::string log;
@@ -215,12 +223,40 @@ namespace Game
 					", Inventory: " + std::to_string(inventoryCapacity);
 
 				Utility::Log("Game", "GameManager", log);
-				auto finder = _socketUserMap->find(targetSocket);
-				if (finder != _socketUserMap->end())
+				targetUser->SetUserData(gameMoney, gameMoneyRank, inventoryCapacity);
+				break;
+			}
+
+			case protocol::MessageContent_NOTICE_INVENTORY:
+			{
+				auto noticeInventory = flatbuffers::GetRoot<protocol::NOTICE_INVENTORY>(buffer);
+
+				int inventoryTotalCount = noticeInventory->inventory_total_count();
+
+				for (int i = 0;i < inventoryTotalCount;++i)
 				{
-					auto user = finder->second;
-					user->SetUserData(gameMoney, gameMoneyRank, inventoryCapacity);
+                    for (int i = 0; i < inventoryTotalCount; ++i)  
+                    {  
+                       std::string guid = noticeInventory->inventory_slots()->Get(i)->guid()->str(); 
+					   long itemSeed = noticeInventory->inventory_slots()->Get(i)->item_seed();
+					   int itemCount = noticeInventory->inventory_slots()->Get(i)->count();
+
+
+                       targetUser->AddInventoryItem(guid, itemSeed, itemCount);
+
+					   log = "NOTICE_INVENTORY | UID: " + std::to_string(targetUser->GetAccountNumber()) + ", Guid: " + guid +
+						   ", ItemSeed: " + std::to_string(itemSeed) +
+						   ", ItemCount: " + std::to_string(itemCount);
+
+					   Utility::Log("Game", "GameManager", log);
+                    }
 				}
+
+				if (inventoryTotalCount < 1)
+				{
+					Utility::Log("Game", "GameManager", "NOTICE_INVENTORY : 0");
+				}
+
 				break;
 			}
 		}

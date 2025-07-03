@@ -6,6 +6,7 @@
 #include "EventWorker.h"
 #include "../utility/LockFreeCircleQueue.h"
 #include "oneapi/tbb/concurrent_set.h"
+#include "oneapi/tbb/concurrent_queue.h"
 
 namespace Lobby
 {
@@ -42,7 +43,7 @@ namespace Lobby
 		tbb::concurrent_map<ULONG_PTR, uint64_t> _socketLoginAccountMap;
 
 	private:
-		Utility::LockFreeCircleQueue<Lobby::EventWorker> _eventQueue;
+		tbb::concurrent_queue<Lobby::EventWorker> _eventQueue;
 
 	private:
 		void EventThread();

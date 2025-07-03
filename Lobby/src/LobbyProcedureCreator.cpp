@@ -40,5 +40,16 @@ namespace Common
             task.Parameters = " '" + std::to_string(accountNumber) + "'";
             return task;
         }
+
+        Database::Task CreateQuerryInventoryByAccount(ULONG_PTR targetSocket, long accountNumber, uint32_t contentsType)
+        {
+            Database::Task task;
+            task.SocketPtr = targetSocket;
+            task.MessageType = contentsType;
+            task.DatabaseName = Database::DatabaseType::Game;
+            task.ProcedureName = "GetInventoryByAccount";
+            task.Parameters = " '" + std::to_string(accountNumber) + "'";
+            return task;
+        }
     }
 }
