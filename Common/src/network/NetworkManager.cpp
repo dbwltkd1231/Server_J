@@ -111,37 +111,46 @@ namespace Network
 
 		Utility::Log("Network", "NetworkManager", "Client Create Success");
 
-		_acceptProcess = std::function<void(ULONG_PTR)>
+		_acceptProcess = std::function<void(CustomOverlapped *, ULONG_PTR)>
 			(
 				[this]
-				(ULONG_PTR targetSocket)
+				(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket)
 				{
-					this->Accept(targetSocket);
+					this->Accept(overlappedPtr, targetSocket);
 				}
 			);
 
-		_receiveProcess = std::function<void(ULONG_PTR, CustomOverlapped*)>
+		_receiveProcess = std::function<void(CustomOverlapped*, ULONG_PTR)>
 			(
 				[this]
-				(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
+				(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket)
 				{
-					this->Receive(targetSocket, overlappedPtr);
+					this->Receive(overlappedPtr, targetSocket);
 				}
 			);
 
-		_disconnectProcess = std::function<void(ULONG_PTR, int, int)>
+		_disconnectProcess = std::function<void(CustomOverlapped *, ULONG_PTR, int, int)>
 			(
 				[this]
-				(ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
+				(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
 				{
-					this->Disconnect(targetSocket, bytesTransferred, errorCode);
+					this->Disconnect(overlappedPtr, targetSocket, bytesTransferred, errorCode);
+				}
+			);
+
+		_sendProcess = std::function<void(CustomOverlapped*)>
+			(
+				[this]
+				(CustomOverlapped* overlappedPtr)
+				{
+					this->Send(overlappedPtr);
 				}
 			);
 
 		for (int i = 0;i < sessionCount;++i)
 		{
 			auto session = std::make_shared<Session>();
-			session->Initialize(_acceptProcess, _receiveProcess, _disconnectProcess);
+			session->Initialize(_acceptProcess, _receiveProcess, _disconnectProcess, _sendProcess);
 			session->Activate(_handle);
 			_sessionSet.insert(std::move(session));
 		}
@@ -198,7 +207,7 @@ namespace Network
 		clientSharedPtr->AcceptEx(_listenSocket, _acceptExPointer, overlappedPtr);
 	}
 
-	void NetworkManager::Accept(ULONG_PTR targetSocket)
+	void NetworkManager::Accept(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket)
 	{
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
@@ -207,11 +216,11 @@ namespace Network
 			return;
 		}
 
-		auto overlappedPtr = _overlappedQueue->pop();
-		overlappedPtr->Clear();
+		auto newOverlapped = _overlappedQueue->pop();
+		newOverlapped->Clear();
 
 		auto client = finder->second;
-		client->ReceiveReady(overlappedPtr);
+		client->ReceiveReady(newOverlapped);
 
 		std::shared_ptr<SOCKET> prepareSocket = GetPreparedSocket();
 
@@ -223,9 +232,12 @@ namespace Network
 		ActivateClient(prepareSocket);
 
 		AcceptCallback(targetSocket);
+
+		overlappedPtr->Clear();
+		_overlappedQueue->push(std::move(overlappedPtr));
 	}
 
-	void NetworkManager::Receive(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr)
+	void NetworkManager::Receive(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket)
 	{
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
@@ -301,13 +313,16 @@ namespace Network
 		ActivateClient(prepareSocket);
 	}
 
-	void NetworkManager::Disconnect(ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
+	void NetworkManager::Disconnect(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket, int bytesTransferred, int errorCode)
 	{
 		//DisconnectRequest와 중복실행되어도 문제업도록 return
 		auto finder = _activatedClientMap.find(targetSocket);
 		if (finder == _activatedClientMap.end())
 		{
 			Utility::LogError("Network", "NetworkManager", "Disconnected Socket... Not Find");
+			overlappedPtr->Clear();
+			_overlappedQueue->push(std::move(overlappedPtr));
+
 			return;
 		}
 
@@ -328,6 +343,17 @@ namespace Network
 
 		std::shared_ptr<SOCKET> prepareSocket = GetPreparedSocket();
 		ActivateClient(prepareSocket);
+
+		overlappedPtr->Clear();
+		_overlappedQueue->push(std::move(overlappedPtr));
+
+	}
+
+	void NetworkManager::Send(CustomOverlapped* overlappedPtr)
+	{
+		overlappedPtr->Clear();
+		_overlappedQueue->push(std::move(overlappedPtr));
+
 	}
 
 	void NetworkManager::UnexpectedDisconnect(ULONG_PTR targetSocket, int errorCode)

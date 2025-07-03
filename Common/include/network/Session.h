@@ -16,9 +16,10 @@ namespace Network
 		~Session();
 		void Initialize
 		(
-			std::function<void(ULONG_PTR socket)> acceptCallback,
-			std::function<void(ULONG_PTR socket, CustomOverlapped* overlappedPtr)> receiveCallback,
-			std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> disconnectCallback
+			std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket)> acceptCallback,
+			std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket)> receiveCallback,
+			std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket, int bytesTransferred, int errorCode)> disconnectCallback,
+			std::function<void(CustomOverlapped* overlappedPtr)> sendCallback
 		);
 	public:
 		void Activate(HANDLE mIocpHandle);
@@ -26,10 +27,10 @@ namespace Network
 		void Deactivate();
 
 	private:
-		std::function<void(ULONG_PTR socket)> _acceptCallback;
-		std::function<void(ULONG_PTR socket, CustomOverlapped* overlappedPtr)> _receiveCallback;
-		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectCallback;
-
+		std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket)> _acceptCallback;
+		std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket)> _receiveCallback;
+		std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectCallback;
+		std::function<void(CustomOverlapped* overlappedPtr)> _sendCallback;
 		bool mActive;
 	};
 }

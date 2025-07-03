@@ -17,14 +17,16 @@ namespace Network
 	}
 
 	void Session::Initialize(
-		std::function<void(ULONG_PTR socket)> acceptCallback,
-		std::function<void(ULONG_PTR socket, CustomOverlapped* overlappedPtr)> receiveCallback,
-		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> disconnectCallback
+		std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket)> acceptCallback,
+		std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket)> receiveCallback,
+		std::function<void(CustomOverlapped* overlappedPtr, ULONG_PTR socket, int bytesTransferred, int errorCode)> disconnectCallback,
+		std::function<void(CustomOverlapped* overlappedPtr)> sendCallback
 	)
 	{
 		_acceptCallback = acceptCallback;
 		_receiveCallback = receiveCallback;
 		_disconnectCallback = disconnectCallback;
+		_sendCallback = sendCallback;
 
 		Utility::Log("Network", "Session", "Initialize !");
 	}
@@ -69,9 +71,10 @@ namespace Network
 				case WSAENOTCONN:
 				case WSAESHUTDOWN:
 				case ERROR_NETNAME_DELETED:
-					_disconnectCallback(completionKey, bytesTransferred, errorCode);
+					_disconnectCallback(overlapped, completionKey, bytesTransferred, errorCode);
 					break;
 				default:
+					_receiveCallback(overlapped, completionKey);
 					break;
 				}
 
@@ -89,23 +92,23 @@ namespace Network
 					continue;
 				}
 
-				_acceptCallback((ULONG_PTR)overlapped->GetSocket().get());
+				_acceptCallback(overlapped, (ULONG_PTR)overlapped->GetSocket().get());
 				break;
 			}
 			case OperationType::OP_RECV:
 			{
 				if (bytesTransferred <= 0)
 				{
-					_disconnectCallback(completionKey, bytesTransferred, 0);
+					_disconnectCallback(overlapped, completionKey, bytesTransferred, 0);
 					continue;
 				}
 
-				_receiveCallback(completionKey, overlapped);
+				_receiveCallback(overlapped, completionKey);
 				break;
 			}
 			case OperationType::OP_SEND:
 			{
-
+				_sendCallback(overlapped);
 				break;
 			}
 			case OperationType::OP_DEFAULT:

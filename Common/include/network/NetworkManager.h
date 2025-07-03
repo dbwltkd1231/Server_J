@@ -37,10 +37,10 @@ namespace Network
 
 		//session -> networkmanager callback
 	private:
-		std::function<void(ULONG_PTR)> _acceptProcess;
-		std::function<void(ULONG_PTR, CustomOverlapped*)> _receiveProcess;
-		std::function<void(ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectProcess;
-
+		std::function<void(CustomOverlapped*, ULONG_PTR)> _acceptProcess;
+		std::function<void(CustomOverlapped*, ULONG_PTR)> _receiveProcess;
+		std::function<void(CustomOverlapped*, ULONG_PTR socket, int bytesTransferred, int errorCode)> _disconnectProcess;
+		std::function<void(CustomOverlapped*)> _sendProcess;
 		//networkmanager -> auth,lobbymanager callback
 	public:
 		std::function<void(ULONG_PTR&)> AcceptCallback;
@@ -63,10 +63,10 @@ namespace Network
 
 	private:
 		//Session으로 부터 호출되는 메세시처리 함수들.
-		void Accept(ULONG_PTR targetSocket);
-		void Receive(ULONG_PTR targetSocket, CustomOverlapped* overlappedPtr);
-		void Disconnect(ULONG_PTR targetSocket, int bytesTransferred, int errorCode);
-
+		void Accept(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket);
+		void Receive(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket);
+		void Disconnect(CustomOverlapped* overlappedPtr, ULONG_PTR targetSocket, int bytesTransferred, int errorCode);
+		void Send(CustomOverlapped* overlappedPtr);
 	public:
 		void DisconnectRequest(ULONG_PTR targetSocket);
 		void SendRequest(ULONG_PTR& targetSocket, uint32_t& contentType, std::string& stringBuffer, int& bodySize); // auth,lobby logic에서 메세지 송신시 콜백되는 함수.
