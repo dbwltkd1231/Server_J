@@ -70,6 +70,21 @@ GO
 
 --procedure
 
+CREATE PROCEDURE GetItemAllData
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        ItemSeed,
+        IsPile,
+        PileCountMax,
+        BreakMoneyAmount
+    FROM Item
+    ORDER BY ItemSeed ASC;
+END
+GO
+
 CREATE PROCEDURE GetInventoryByAccount
     @AccountNumber BIGINT
 AS
@@ -284,3 +299,13 @@ BEGIN
     END CATCH
 END;
 GO
+
+--Sample Data
+
+INSERT INTO [dbo].[Item] (ItemSeed, IsPile, PileCountMax, BreakMoneyAmount) VALUES
+(10001, 1, 2, 500),
+(10002, 1, 5, 2000),
+(10003, 0, 1, 5000),
+(10004, 1, 10, 50),
+(10005, 0, 1, 0);
+

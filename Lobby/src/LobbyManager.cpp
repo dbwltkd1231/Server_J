@@ -70,12 +70,12 @@ namespace Lobby
 				}
 			);
 
-		_callbackProcedureResult = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
+		_callbackProcedureResult = std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT)>
 			(
 				[this]
-				(ULONG_PTR socketPtr, uint32_t contentsType, SQLHSTMT hstmt)
+				(ULONG_PTR socketPtr, Database::DatabaseQueryType queryType, uint32_t contentsType, SQLHSTMT hstmt)
 				{
-					this->SendQueryResult(socketPtr, contentsType, hstmt);
+					this->ProcessQueryResult(socketPtr, queryType, contentsType, hstmt);
 				}
 			);
 	}
@@ -127,7 +127,7 @@ namespace Lobby
 		if (finder != _socketLoginAccountMap.end())
 		{
 			auto accountNumber = finder->second;
-			auto userLogOutTask = Common::Lobby::CreateQuerryUserLogOut(targetSocket, accountNumber, -1);
+			auto userLogOutTask = Common::Lobby::CreateQuerryUserLogOut(targetSocket, accountNumber);
 			_socketLoginAccountMap.unsafe_erase(targetSocket);
 
 			_userDatabaseWorker.Enqueue(std::move(userLogOutTask));
@@ -152,7 +152,7 @@ namespace Lobby
 
 				//authToken 확인 필요 !!
 
-				task = Common::Lobby::CreateQuerryUserLogIn(targetSocket, accountNumber, protocol::MessageContent_RESPONSE_LOGIN);
+				task = Common::Lobby::CreateQuerryUserLogIn(targetSocket, accountNumber);
 
 				break;
 			}
@@ -172,72 +172,69 @@ namespace Lobby
 		}
 	}
 
-	void LobbyManager::SendQueryResult(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt)
+	void LobbyManager::ProcessQueryResult(ULONG_PTR targetSocket, Database::DatabaseQueryType queryType, uint32_t contentsType, SQLHSTMT& hstmt)
 	{
-		if (contentsType == -1)
-			return;
-
-		auto contentsTypeOffset = static_cast<protocol::MessageContent> (contentsType);
-		Common::Lobby::PacketOutput output;
-
-		switch (contentsType)
+		switch (queryType)
 		{
-			case protocol::MessageContent_RESPONSE_LOGIN:
+		case Database::DatabaseQueryType::UserLogIn:
+		{
+			Common::Lobby::PacketOutput output;
+			Common::Protocol::ResultUserLogIn userLoginResult;
+			SetProcedureResult(userLoginResult, hstmt);
+
+			Common::Lobby::CreateResponseLogIn(userLoginResult.Detail, userLoginResult.Success, output);
+			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
+
+			//로비 상태 저장
+
+			if (userLoginResult.Success)
 			{
-				Common::Protocol::ResultUserLogIn userLoginResult;
-				SetProcedureResult(userLoginResult, hstmt);
+				_socketLoginAccountMap.insert({ targetSocket, userLoginResult.AccountNumber });
+				Utility::Log("Lobby", "LobbyManager", "현재 로그인 성공 인원 : " + std::to_string(_socketLoginAccountMap.size()));
 
-				Common::Lobby::CreateResponseLogIn(userLoginResult.Detail, userLoginResult.Success, output);
-
-				//로비 상태 저장
-
-				if (userLoginResult.Success)
+				auto finder = _notLoginSocketSet.find(targetSocket);
+				if (finder != _notLoginSocketSet.end())
 				{
-					_socketLoginAccountMap.insert({ targetSocket, userLoginResult.AccountNumber });
-					Utility::Log("Lobby", "LobbyManager", "현재 로그인 성공 인원 : " + std::to_string(_socketLoginAccountMap.size()));
-
-					auto finder = _notLoginSocketSet.find(targetSocket);
-					if (finder != _notLoginSocketSet.end())
-					{
-						_notLoginSocketSet.unsafe_erase(targetSocket);
-					}
-
-					auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_ACCOUNT);
-					_userDatabaseWorker.Enqueue(std::move(accountDataTask));
-
-					auto inventoryByAccountDataTask = Common::Lobby::CreateQuerryInventoryByAccount(targetSocket, userLoginResult.AccountNumber, protocol::MessageContent_NOTICE_INVENTORY);
-					_gameDatabaseWorker.Enqueue(std::move(inventoryByAccountDataTask));
+					_notLoginSocketSet.unsafe_erase(targetSocket);
 				}
-				else if (!userLoginResult.Success)
-				{
-					Utility::Log("Lobby", "LobbyManager", "로그인 실패 ?");
-				}
-				break;
-			}
-			case protocol::MessageContent_NOTICE_ACCOUNT:
-			{
-				Common::Protocol::ResultGetAccountData getAccountDataResult;
-				SetProcedureResult(getAccountDataResult, hstmt);
 
-				Common::Lobby::NoticeAccount(getAccountDataResult.AccountUID, getAccountDataResult.GameMoney, getAccountDataResult.GameMoneyRank, getAccountDataResult.InventoryCapacity, output);
-				break;
-			}
-			case protocol::MessageContent_NOTICE_INVENTORY:
-			{
-				Common::Protocol::ResultGetInventoryData getInventoryDataResult;
-				SetProcedureResult(getInventoryDataResult, hstmt);
+				auto accountDataTask = Common::Lobby::CreateQuerryAccountData(targetSocket, userLoginResult.AccountNumber);
+				_userDatabaseWorker.Enqueue(std::move(accountDataTask));
 
-				Common::Lobby::NoticeInventory(getInventoryDataResult.InventoryItems, output);
-
-				break;
+				auto inventoryByAccountDataTask = Common::Lobby::CreateQuerryInventoryByAccount(targetSocket, userLoginResult.AccountNumber);
+				_gameDatabaseWorker.Enqueue(std::move(inventoryByAccountDataTask));
 			}
-			default:
+			else if (!userLoginResult.Success)
 			{
-				break;
+				Utility::Log("Lobby", "LobbyManager", "로그인 실패 ?");
 			}
+			break;
 		}
+		case Database::DatabaseQueryType::GetAccountData:
+		{
+			Common::Lobby::PacketOutput output;
+			Common::Protocol::ResultGetAccountData getAccountDataResult;
+			SetProcedureResult(getAccountDataResult, hstmt);
 
-		_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
+			Common::Lobby::NoticeAccount(getAccountDataResult.AccountUID, getAccountDataResult.GameMoney, getAccountDataResult.GameMoneyRank, getAccountDataResult.InventoryCapacity, output);
+			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
+			break;
+		}
+		case Database::DatabaseQueryType::GetInventoryByAccount:
+		{
+			Common::Lobby::PacketOutput output;
+			Common::Protocol::ResultGetInventoryData getInventoryDataResult;
+			SetProcedureResult(getInventoryDataResult, hstmt);
+
+			Common::Lobby::NoticeInventory(getInventoryDataResult.InventoryItems, output);
+			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
 	}
 
 	// promise나 condition varaiable등 쓰면 더 좋을듯...

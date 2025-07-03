@@ -8,9 +8,10 @@ namespace Common
 {
     namespace Lobby
     {
-        Database::Task CreateQuerryUserLogIn(ULONG_PTR targetSocket, long accountNumber, uint32_t contentsType);
-        Database::Task CreateQuerryAccountData(ULONG_PTR targetSocket, long accountNumber, uint32_t contentsType);
-        Database::Task CreateQuerryUserLogOut(ULONG_PTR targetSocket, long accountNumber, uint32_t contentsType);
-        Database::Task CreateQuerryInventoryByAccount(ULONG_PTR targetSocket, long accountNumber, uint32_t contentsType);
+        Database::Task CreateQueryGetItemData();
+        Database::Task CreateQuerryUserLogIn(ULONG_PTR targetSocket, long accountNumber);
+        Database::Task CreateQuerryAccountData(ULONG_PTR targetSocket, long accountNumber);
+        Database::Task CreateQuerryUserLogOut(ULONG_PTR targetSocket, long accountNumber);
+        Database::Task CreateQuerryInventoryByAccount(ULONG_PTR targetSocket, long accountNumber);
     }
 }

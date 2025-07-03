@@ -35,7 +35,7 @@ namespace Auth
 		Database::Worker _userDatabaseWorker;
 
 	private:
-		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _databaseCallback;
+		std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT&)> _databaseCallback;
 
 	private:
 		redisContext* _redis;

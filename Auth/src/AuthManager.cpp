@@ -67,10 +67,10 @@ namespace Auth
 				}
 			);
 
-		_databaseCallback = std::function<void(ULONG_PTR, uint32_t, SQLHSTMT)>
+		_databaseCallback = std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT)>
 			(
 				[this]
-				(ULONG_PTR socketPtr, uint32_t contentsType, SQLHSTMT hstmt)
+				(ULONG_PTR socketPtr, Database::DatabaseQueryType queryType, uint32_t contentsType, SQLHSTMT hstmt)
 				{
 					this->DatabaseCallback(socketPtr, contentsType, hstmt);
 				}

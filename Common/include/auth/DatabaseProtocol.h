@@ -46,7 +46,8 @@ namespace Common
             // 예: 데이터베이스에 사용자 정보 조회 요청
             Database::Task task;
             task.SocketPtr = targetSocket;
-            task.MessageType = protocol::MessageContent_REQUEST_CONNECT;
+            task.QueryType = Database::DatabaseQueryType::CheckAndAddAccount;
+            task.NetworkType = protocol::MessageContent_REQUEST_CONNECT;
             task.DatabaseName = Database::DatabaseType::User;
             task.ProcedureName = "CheckAndAddAccount";
             task.Parameters = " '" + userId + "'";

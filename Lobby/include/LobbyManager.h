@@ -33,10 +33,10 @@ namespace Lobby
 		void ProcessAccept(ULONG_PTR& targetSocket);
 		void ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode);
 		void ReadMessage(ULONG_PTR& targetSocket, uint32_t contentsType, std::string stringValue);
-		void SendQueryResult(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
+		void ProcessQueryResult(ULONG_PTR targetSocket, Database::DatabaseQueryType queryType, uint32_t contentsType, SQLHSTMT& hstmt);
 
 	private:
-		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _callbackProcedureResult;
+		std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT&)> _callbackProcedureResult;
 
 	private:
 		tbb::concurrent_set<ULONG_PTR> _notLoginSocketSet;

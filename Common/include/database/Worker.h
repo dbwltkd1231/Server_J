@@ -24,18 +24,18 @@ namespace Database
 		SQLHSTMT _hstmt;
 
 	public:
-		void Initialize(std::string databaseName, std::string sqlServerAddress, std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> procedureCallback);
+		void Initialize(std::string databaseName, std::string sqlServerAddress, std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT&)> procedureCallback);
 		void Activate(bool isOn);
 		void Enqueue(Database::Task task);
 	private:
 		void Process();
-		void ExecuteStoredProcedure(const std::string& procedureName, const std::string& params, ULONG_PTR socketPtr, int contentsType);
+		void ExecuteStoredProcedure(const std::string& procedureName, const std::string& params, ULONG_PTR socketPtr, DatabaseQueryType Querytype, int contentsType);
 	private:
 		bool _isOn;
 	private:
 		Utility::LockFreeCircleQueue<Database::Task> _taskQueue;
 	private:
-		std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> _procedureCallback;
+		std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT&)> _procedureCallback;
 
 	};
 

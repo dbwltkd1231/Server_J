@@ -11,10 +11,32 @@ namespace Database
 		Game
 	};
 
+	enum DatabaseQueryType
+	{
+		//User
+	
+		CheckAndAddAccount,
+		DeleteAccount,
+		UserLogIn,
+		UserLogOut,
+		GetAccountData,
+		UpdateUserMoney,
+
+
+		//Game
+		GetItemAllData,
+		GetInventoryByAccount,
+		AddInventoryItem,
+		DeleteInventoryItem,
+		BreakInventoryItem
+
+	};
+
 	struct Task
 	{
 		ULONG_PTR SocketPtr;
-		uint32_t MessageType;
+		DatabaseQueryType QueryType;
+		uint32_t NetworkType;
 		DatabaseType DatabaseName = DatabaseType::Default;
 		std::string ProcedureName;
 		std::string Parameters;

@@ -26,7 +26,7 @@ namespace Database
 			SQLFreeHandle(SQL_HANDLE_ENV, _henv);
 	}
 
-	void Worker::Initialize(std::string databaseName, std::string sqlServerAddress, std::function<void(ULONG_PTR, uint32_t, SQLHSTMT&)> procedureCallback)
+	void Worker::Initialize(std::string databaseName, std::string sqlServerAddress, std::function<void(ULONG_PTR, Database::DatabaseQueryType, uint32_t, SQLHSTMT&)> procedureCallback)
 	{
 		_procedureCallback = procedureCallback;
 
@@ -116,14 +116,15 @@ namespace Database
 
 				auto socketPtr = task.SocketPtr;
 				auto procedureName = task.ProcedureName;
-				auto contentsType = task.MessageType;
+				auto queryType = task.QueryType;
+				auto contentsType = task.NetworkType;
 				auto params = task.Parameters;
-				ExecuteStoredProcedure(procedureName, params, socketPtr, contentsType);
+				ExecuteStoredProcedure(procedureName, params, socketPtr, queryType, contentsType);
 			}
 		}
 	}
 
-	void Worker::ExecuteStoredProcedure(const std::string& procedureName, const std::string& params, ULONG_PTR socketPtr, int contentsType)
+	void Worker::ExecuteStoredProcedure(const std::string& procedureName, const std::string& params, ULONG_PTR socketPtr, DatabaseQueryType QueryType, int contentsType)
 	{
 		SQLAllocHandle(SQL_HANDLE_STMT, _hdbc, &_hstmt);
 
@@ -143,7 +144,7 @@ namespace Database
 			std::string log = "프로시저 실행 성공: " + procedureName;
 			Utility::Log("Database", "Worker", log);
 
-			_procedureCallback(socketPtr, contentsType, _hstmt);
+			_procedureCallback(socketPtr, QueryType, contentsType, _hstmt);
 		}
 		else 
 		{
