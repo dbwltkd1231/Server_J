@@ -15,8 +15,48 @@ vcpkg integrate install
 
 
 ---
+<br>
+<br>
+<br>
+
+<br>
+인증서버가 로비서버정보 확인후 클라이언트 연결이 끊어지는 사진
+<br>
+![인증서버가 로비서버정보화인후 클라이언트연결끊는부분](https://github.com/user-attachments/assets/c4ff39df-792c-4c37-b25e-a9a69c68f402)
+<br>
 
 
+클라이언트가 로비서버연결을 위해 인증서버연결이 해제되는 사진
+<br>
+![클라이언트가 로비서버연결을위해 인증서버연결해제하는부분](https://github.com/user-attachments/assets/68a18eb3-77df-4ad6-b9e8-a9c44fc3f9ea)
+<br>
+
+로비서버가 유저로그인을 받는사진
+<br>
+![로비서버가 유저로그인받는부분](https://github.com/user-attachments/assets/db35dd89-c381-4ba4-881b-4380becd1d84)
+<br>
+
+클라이언트가 로그인요청성공후 로비서버로부터 유저정보를 받는 사진
+<br>
+![클라이언트가 로그인요청성공후 유저정보받는부분](https://github.com/user-attachments/assets/d1055d70-cd58-4a1c-aa0e-c31134793e6a)
+<br>
+
+
+60초마다 유저가 아이템을 지급받고 아이템분해 요청
+<br>
+![60초마다 아이템을받고 아이템분해](https://github.com/user-attachments/assets/7f5afc71-f012-47c8-981c-a7e372e16037)
+<br>
+
+
+로비서버가 유저로그아웃을 처리하는 사진
+<br>
+![로그아웃처리](https://github.com/user-attachments/assets/ab2238d7-1361-4d05-8534-db987a0de021)
+<br>
+
+<br>
+<br>
+<br>
+<br>
 
 프로젝트 관리   
 <br>
@@ -124,6 +164,10 @@ Lobby서버에 연결된 소켓중 로그인이 안된 소켓은 60초이후 연
 계정정보
 <br>
 ![Account](https://github.com/user-attachments/assets/4deb237d-305b-4273-97af-06ff7f0d0fd4)
+
+
+
+
 
 
 
