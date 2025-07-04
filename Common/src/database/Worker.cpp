@@ -144,6 +144,7 @@ namespace Database
 			std::string log = "프로시저 실행 성공: " + procedureName;
 			Utility::Log("Database", "Worker", log);
 
+			Utility::Log("SQL DEBUG", "Query", stringQuerry);  // 최종 EXEC문 로그 출력
 			_procedureCallback(socketPtr, QueryType, contentsType, _hstmt);
 		}
 		else 

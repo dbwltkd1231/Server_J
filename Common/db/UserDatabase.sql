@@ -448,7 +448,6 @@ BEGIN
         )
         BEGIN
             ROLLBACK;
-            SELECT 0 AS ResultCode;  -- 계정 없음
             RETURN;
         END
 
@@ -483,7 +482,6 @@ BEGIN
         VALUES (@AccountNumber, @ChangedAmount, @Before, @Result, @Reason);
 
         COMMIT;
-        SELECT 1 AS ResultCode;  -- 성공
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;

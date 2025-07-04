@@ -14,5 +14,6 @@ namespace Common
         Database::Task CreateQuerryUserLogOut(ULONG_PTR targetSocket, long accountNumber);
         Database::Task CreateQuerryInventoryByAccount(ULONG_PTR targetSocket, long accountNumber);
         Database::Task CreateQuerryAddInventoryItem(ULONG_PTR targetSocket, long accountNumber, long itemSeed, int itemCount);
+        Database::Task CreateQuerryBreakInventoryItem(ULONG_PTR targetSocket, long accountNumber, std::string guid, int removeCount);
     }
 }

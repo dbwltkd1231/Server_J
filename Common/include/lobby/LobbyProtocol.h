@@ -24,8 +24,8 @@ namespace Common
 		void NoticeInventoryUpdate(std::vector<Common::Protocol::InventorySlotData> updateInventoryDataSet, PacketOutput& outPacket);
 		void NoticeInventoryDeleted(std::string& guid);
 
-		void RequestItemBreak(std::string& guid, int& count, PacketOutput& outPacket);
-		void ResponseItemBreak(bool feedback, PacketOutput& outPacket);
+		void RequestItemBreak(long accountNumber, std::string guid, int& removeCount, PacketOutput& outPacket);
+		void ResponseItemBreak(bool feedback, std::string guid, int moneyReward, int removeCount, PacketOutput& outPacket);
 
 		void RequestHeartbeat(PacketOutput& outPacket);
 		void ResponseHeartbeat(PacketOutput& outPacket);

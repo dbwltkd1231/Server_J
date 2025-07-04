@@ -80,5 +80,19 @@ namespace Common
                 std::to_string(itemCount)+"'";
             return task;
         }
+
+        Database::Task CreateQuerryBreakInventoryItem(ULONG_PTR targetSocket, long accountNumber, std::string guid, int removeCount)
+        {
+            Database::Task task;
+            task.SocketPtr = targetSocket;
+            task.NetworkType = protocol::MessageContent_RESPONSE_ITEM_BREAK;
+            task.QueryType = Database::DatabaseQueryType::BreakInventoryItem;
+            task.DatabaseName = Database::DatabaseType::Game;
+            task.ProcedureName = "BreakInventoryItem";
+            task.Parameters = " '" + std::to_string(accountNumber) + "', '" +
+                guid + "', '" +
+                std::to_string(removeCount) + "'";
+            return task;
+        }
     }
 }

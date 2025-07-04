@@ -1,9 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <vector>
-
-#include "network/Client.h"
+#include "network/NetworkManager.h"
+#include "oneapi/tbb/concurrent_map.h"
 #include "../auth/AuthProtocol.h"
 #include "../lobby/LobbyProtocol.h"
 
@@ -31,14 +30,20 @@ namespace Game
 		void RequestLogIn(Network::CustomOverlapped* sendOverlappedPtr);
 
 	public:
+		void Login();
+		void Logout();
 		void SetAccountData(int64_t accountNumber, std::string userID, std::string authToken);
 		void SetUserData(int64_t money, int ranking, int inventoryCapacity);
-		void AddInventoryItem(std::string guid, long itemSeed, int itemCount);
+		void UpdateInventory(std::string guid, long itemSeed, int itemCount);
+		void ItemBreak(std::string guid, int removeCount, int moneyReward);
 		long GetAccountNumber();
+		void BreakRandomItem(Network::CustomOverlapped* sendOverlappedPtr);
+		
 	public:
 		std::shared_ptr<Network::Client> ClientPtr;
-		//Network::NetworkManager _authManager;
-		//Network::NetworkManager _lobbyManager;
+
+	private:
+		bool _isLogin;
 
 	private:
 		std::string _authToken;
@@ -47,6 +52,6 @@ namespace Game
 		int64_t _money;
 		int _ranking;//선택사항 -> 후순위로
 		int _inventoryCapacity;
-		std::vector<InventorySlot> _inventoryVector;
+		tbb::concurrent_map<std::string, InventorySlot> _inventoryMap;
 	};
 }

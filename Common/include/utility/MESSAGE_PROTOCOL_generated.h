@@ -1043,20 +1043,25 @@ inline ::flatbuffers::Offset<NOTICE_INVENTORY_DELETED> CreateNOTICE_INVENTORY_DE
 struct REQUEST_ITEM_BREAK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef REQUEST_ITEM_BREAKBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_GUID = 4,
-    VT_COUNT = 6
+    VT_ACCOUNT_NUMBER = 4,
+    VT_GUID = 6,
+    VT_REMOVE_COUNT = 8
   };
+  int64_t account_number() const {
+    return GetField<int64_t>(VT_ACCOUNT_NUMBER, 0);
+  }
   const ::flatbuffers::String *guid() const {
     return GetPointer<const ::flatbuffers::String *>(VT_GUID);
   }
-  int32_t count() const {
-    return GetField<int32_t>(VT_COUNT, 0);
+  int32_t remove_count() const {
+    return GetField<int32_t>(VT_REMOVE_COUNT, 0);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
+           VerifyField<int64_t>(verifier, VT_ACCOUNT_NUMBER, 8) &&
            VerifyOffset(verifier, VT_GUID) &&
            verifier.VerifyString(guid()) &&
-           VerifyField<int32_t>(verifier, VT_COUNT, 4) &&
+           VerifyField<int32_t>(verifier, VT_REMOVE_COUNT, 4) &&
            verifier.EndTable();
   }
 };
@@ -1065,11 +1070,14 @@ struct REQUEST_ITEM_BREAKBuilder {
   typedef REQUEST_ITEM_BREAK Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
+  void add_account_number(int64_t account_number) {
+    fbb_.AddElement<int64_t>(REQUEST_ITEM_BREAK::VT_ACCOUNT_NUMBER, account_number, 0);
+  }
   void add_guid(::flatbuffers::Offset<::flatbuffers::String> guid) {
     fbb_.AddOffset(REQUEST_ITEM_BREAK::VT_GUID, guid);
   }
-  void add_count(int32_t count) {
-    fbb_.AddElement<int32_t>(REQUEST_ITEM_BREAK::VT_COUNT, count, 0);
+  void add_remove_count(int32_t remove_count) {
+    fbb_.AddElement<int32_t>(REQUEST_ITEM_BREAK::VT_REMOVE_COUNT, remove_count, 0);
   }
   explicit REQUEST_ITEM_BREAKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1084,36 +1092,56 @@ struct REQUEST_ITEM_BREAKBuilder {
 
 inline ::flatbuffers::Offset<REQUEST_ITEM_BREAK> CreateREQUEST_ITEM_BREAK(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t account_number = 0,
     ::flatbuffers::Offset<::flatbuffers::String> guid = 0,
-    int32_t count = 0) {
+    int32_t remove_count = 0) {
   REQUEST_ITEM_BREAKBuilder builder_(_fbb);
-  builder_.add_count(count);
+  builder_.add_account_number(account_number);
+  builder_.add_remove_count(remove_count);
   builder_.add_guid(guid);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<REQUEST_ITEM_BREAK> CreateREQUEST_ITEM_BREAKDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t account_number = 0,
     const char *guid = nullptr,
-    int32_t count = 0) {
+    int32_t remove_count = 0) {
   auto guid__ = guid ? _fbb.CreateString(guid) : 0;
   return protocol::CreateREQUEST_ITEM_BREAK(
       _fbb,
+      account_number,
       guid__,
-      count);
+      remove_count);
 }
 
 struct RESPONSE_ITEM_BREAK FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef RESPONSE_ITEM_BREAKBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_FEEDBACK = 4
+    VT_FEEDBACK = 4,
+    VT_GUID = 6,
+    VT_MONEY_REWARD = 8,
+    VT_REMOVE_COUNT = 10
   };
   bool feedback() const {
     return GetField<uint8_t>(VT_FEEDBACK, 0) != 0;
   }
+  const ::flatbuffers::String *guid() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_GUID);
+  }
+  int32_t money_reward() const {
+    return GetField<int32_t>(VT_MONEY_REWARD, 0);
+  }
+  int32_t remove_count() const {
+    return GetField<int32_t>(VT_REMOVE_COUNT, 0);
+  }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<uint8_t>(verifier, VT_FEEDBACK, 1) &&
+           VerifyOffset(verifier, VT_GUID) &&
+           verifier.VerifyString(guid()) &&
+           VerifyField<int32_t>(verifier, VT_MONEY_REWARD, 4) &&
+           VerifyField<int32_t>(verifier, VT_REMOVE_COUNT, 4) &&
            verifier.EndTable();
   }
 };
@@ -1124,6 +1152,15 @@ struct RESPONSE_ITEM_BREAKBuilder {
   ::flatbuffers::uoffset_t start_;
   void add_feedback(bool feedback) {
     fbb_.AddElement<uint8_t>(RESPONSE_ITEM_BREAK::VT_FEEDBACK, static_cast<uint8_t>(feedback), 0);
+  }
+  void add_guid(::flatbuffers::Offset<::flatbuffers::String> guid) {
+    fbb_.AddOffset(RESPONSE_ITEM_BREAK::VT_GUID, guid);
+  }
+  void add_money_reward(int32_t money_reward) {
+    fbb_.AddElement<int32_t>(RESPONSE_ITEM_BREAK::VT_MONEY_REWARD, money_reward, 0);
+  }
+  void add_remove_count(int32_t remove_count) {
+    fbb_.AddElement<int32_t>(RESPONSE_ITEM_BREAK::VT_REMOVE_COUNT, remove_count, 0);
   }
   explicit RESPONSE_ITEM_BREAKBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -1138,10 +1175,31 @@ struct RESPONSE_ITEM_BREAKBuilder {
 
 inline ::flatbuffers::Offset<RESPONSE_ITEM_BREAK> CreateRESPONSE_ITEM_BREAK(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    bool feedback = false) {
+    bool feedback = false,
+    ::flatbuffers::Offset<::flatbuffers::String> guid = 0,
+    int32_t money_reward = 0,
+    int32_t remove_count = 0) {
   RESPONSE_ITEM_BREAKBuilder builder_(_fbb);
+  builder_.add_remove_count(remove_count);
+  builder_.add_money_reward(money_reward);
+  builder_.add_guid(guid);
   builder_.add_feedback(feedback);
   return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<RESPONSE_ITEM_BREAK> CreateRESPONSE_ITEM_BREAKDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    bool feedback = false,
+    const char *guid = nullptr,
+    int32_t money_reward = 0,
+    int32_t remove_count = 0) {
+  auto guid__ = guid ? _fbb.CreateString(guid) : 0;
+  return protocol::CreateRESPONSE_ITEM_BREAK(
+      _fbb,
+      feedback,
+      guid__,
+      money_reward,
+      remove_count);
 }
 
 struct REQUEST_HEARTBEAT FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {

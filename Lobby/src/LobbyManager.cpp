@@ -155,6 +155,16 @@ namespace Lobby
 
 				break;
 			}
+
+			case protocol::MessageContent_REQUEST_ITEM_BREAK:
+			{
+				auto requestItemBreak = flatbuffers::GetRoot<protocol::REQUEST_ITEM_BREAK>(buffer);
+				long accountNumber = requestItemBreak->account_number();
+				std::string guid = requestItemBreak->guid()->str();
+				int removeCount = requestItemBreak->remove_count();
+
+				task = Common::Lobby::CreateQuerryBreakInventoryItem(targetSocket, accountNumber, guid, removeCount);
+			}
 		}
 
 		if (task.DatabaseName == Database::DatabaseType::User)
@@ -253,6 +263,17 @@ namespace Lobby
 			itemGiveEvent.Initialize(targetSocket, std::chrono::steady_clock::now(), std::chrono::seconds(15), Lobby::EventType::ItemGive);
 
 			_eventQueue.push(std::move(itemGiveEvent));
+			break;
+		}
+		case Database::DatabaseQueryType::BreakInventoryItem:
+		{
+			Common::Lobby::PacketOutput output;
+			Common::Protocol::ResultBreakInventoryItem resultBreakInventoryItem;
+			SetProcedureResult(resultBreakInventoryItem, hstmt);
+			bool success = (resultBreakInventoryItem.Success == 1 ? true : false);
+			Common::Lobby::ResponseItemBreak(success, resultBreakInventoryItem.GuidStr, resultBreakInventoryItem.MoneyReward, resultBreakInventoryItem.RemoveCount, output);
+			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
+			break;
 		}
 		default:
 		{

@@ -64,6 +64,10 @@ REFERENCES Item(ItemSeed)
 ON DELETE CASCADE;
 GO
 
+CREATE NONCLUSTERED INDEX IX_Inventory_Account_Item
+ON [dbo].[Inventory] ([AccountNumber], [ItemSeed]);
+GO
+
 --procedure
 
 CREATE PROCEDURE GetItemAllData
@@ -194,9 +198,9 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE DeleteInventoryItem
+CREATE PROCEDURE BreakInventoryItem
     @AccountNumber BIGINT,
-    @ItemSeed BIGINT,
+    @Guid UNIQUEIDENTIFIER,
     @RemoveCount INT
 AS
 BEGIN
@@ -205,49 +209,75 @@ BEGIN
     BEGIN TRY
         BEGIN TRANSACTION;
 
-        DECLARE @Remaining INT = @RemoveCount;
+        DECLARE @ItemSeed BIGINT;
+        DECLARE @ItemCount INT;
 
-        WHILE @Remaining > 0
+        -- 대상 인벤토리 슬롯 조회
+        SELECT @ItemSeed = ItemSeed, @ItemCount = ItemCount
+        FROM [dbo].[Inventory] WITH (UPDLOCK, ROWLOCK)
+        WHERE [Guid] = @Guid;
+
+        -- 슬롯이 없거나 수량 부족일 경우 실패
+        IF @ItemSeed IS NULL OR @ItemCount < @RemoveCount
         BEGIN
-            DECLARE @TargetGuid UNIQUEIDENTIFIER;
-            DECLARE @CurrentCount INT;
-
-            -- 제거 가능한 슬롯 탐색
-            SELECT TOP 1
-                @TargetGuid = Guid,
-                @CurrentCount = ItemCount
-            FROM Inventory WITH (UPDLOCK, ROWLOCK)
-            WHERE AccountNumber = @AccountNumber
-              AND ItemSeed = @ItemSeed
-            ORDER BY ItemCount ASC;
-
-            -- 슬롯이 없는데 남은 수량이 있다면 실패로 롤백
-            IF @TargetGuid IS NULL
-            BEGIN
-                ROLLBACK;
-                SELECT 0 AS ResultCode;  -- 제거 실패
-                RETURN;
-            END
-
-            -- 슬롯 수량보다 많이 빼야 하면 해당 슬롯 삭제
-            IF @CurrentCount <= @Remaining
-            BEGIN
-                DELETE FROM Inventory WHERE Guid = @TargetGuid;
-                SET @Remaining = @Remaining - @CurrentCount;
-            END
-            ELSE
-            BEGIN
-                -- 일부만 차감
-                UPDATE Inventory
-                SET ItemCount = ItemCount - @Remaining
-                WHERE Guid = @TargetGuid;
-
-                SET @Remaining = 0;
-            END
+            ROLLBACK;
+            SELECT 
+                0 AS ResultCode,
+                @Guid AS Guid,
+                0 AS MoneyReward,
+                0 AS RemoveCount;
+            RETURN;
         END
 
+        -- 계정 불일치일 경우 실패
+        IF EXISTS (
+            SELECT 1 FROM [dbo].[Inventory]
+            WHERE [Guid] = @Guid AND [AccountNumber] <> @AccountNumber
+        )
+        BEGIN
+            ROLLBACK;
+            SELECT 
+                0 AS ResultCode,
+                @Guid AS Guid,
+                0 AS MoneyReward,
+                0 AS RemoveCount;
+            RETURN;
+        END
+
+        -- 수량 차감 또는 행 삭제
+        IF @ItemCount = @RemoveCount
+        BEGIN
+            DELETE FROM [dbo].[Inventory] WHERE [Guid] = @Guid;
+        END
+        ELSE
+        BEGIN
+            UPDATE [dbo].[Inventory]
+            SET [ItemCount] = [ItemCount] - @RemoveCount
+            WHERE [Guid] = @Guid;
+        END
+
+        -- 아이템 보상 계산
+        DECLARE @BreakMoneyAmount INT;
+
+        SELECT @BreakMoneyAmount = BreakMoneyAmount
+        FROM [dbo].[Item]
+        WHERE [ItemSeed] = @ItemSeed;
+
+        DECLARE @MoneyReward BIGINT = @RemoveCount * @BreakMoneyAmount;
+
+        EXEC [User].dbo.UpdateUserMoney
+            @AccountNumber = @AccountNumber,
+            @ChangedAmount = @MoneyReward,
+            @Sign = 1,
+            @Reason = N'아이템 해체 보상';
+
         COMMIT;
-        SELECT 1 AS ResultCode;  -- 성공
+
+        SELECT 
+            1 AS ResultCode,
+            @Guid AS Guid,
+            @MoneyReward AS MoneyReward,
+            @RemoveCount AS RemoveCount;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;
@@ -257,53 +287,6 @@ BEGIN
         RAISERROR(@ErrMsg, @ErrSeverity, 1);
     END CATCH
 END
-GO
-
-CREATE PROCEDURE BreakInventoryItem
-    @AccountNumber BIGINT,
-    @ItemSeed BIGINT,
-    @RemoveCount INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    BEGIN TRY
-        BEGIN TRANSACTION;
-
-        -- 1. 인벤토리에서 아이템 제거 시도
-        EXEC [Game].dbo.DeleteInventoryItem
-            @AccountNumber = @AccountNumber,
-            @ItemSeed = @ItemSeed,
-            @RemoveCount = @RemoveCount;
-
-        -- 제거 실패 시 (슬롯 부족)
-        IF @@ROWCOUNT = 0
-        BEGIN
-            ROLLBACK;
-            SELECT 0 AS ResultCode; -- 해체 실패
-            RETURN;
-        END
-
-        -- 2. 해체 수만큼 게임머니 100원씩 지급
-        DECLARE @MoneyReward BIGINT = @RemoveCount * 100;
-
-        EXEC [User].dbo.UpdateUserMoney
-            @AccountNumber = @AccountNumber,
-            @ChangedAmount = @MoneyReward,
-            @Sign = 1,  -- 증가
-            @Reason = N'아이템 해체 보상';
-
-        COMMIT;
-        SELECT 1 AS ResultCode; -- 성공
-    END TRY
-    BEGIN CATCH
-        IF @@TRANCOUNT > 0 ROLLBACK;
-
-        DECLARE @ErrMsg NVARCHAR(4000), @ErrSeverity INT;
-        SELECT @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY();
-        RAISERROR(@ErrMsg, @ErrSeverity, 1);
-    END CATCH
-END;
 GO
 
 --Sample Data

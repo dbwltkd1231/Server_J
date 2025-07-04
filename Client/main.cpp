@@ -31,12 +31,9 @@ int main()
 
 	Game::GameManager gameManager;
 	gameManager.Initialize(Game::ConstValue::GetInstance().TestClientCount);
-	gameManager.Process(Game::ConstValue::GetInstance().ThreadCount);
 
-	while (true)
-	{
-
-	}
+	std::thread mainThread([&gameManager]() { gameManager.Process(Game::ConstValue::GetInstance().ThreadCount); });
+	mainThread.join();
 
 #endif
 

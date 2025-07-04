@@ -43,7 +43,7 @@ namespace Common
 			int breakMoneyAmount = 0;
 
 			SQLLEN lenItemSeed = 0;
-			SQLLEN lenIsPile= 0;
+			SQLLEN lenIsPile = 0;
 			SQLLEN lenPileCountMax = 0;
 			SQLLEN lenBreakMoneyAmount = 0;
 
@@ -166,6 +166,38 @@ namespace Common
 				std::string guidString = GuidToString(guid);
 
 				resultAddInventoryItem.UpdateInventoryDataSet.push_back(InventorySlotData{ guidString, itemSeed, itemCount });
+			}
+		}
+
+		void SetProcedureResult(ResultBreakInventoryItem& result, SQLHSTMT& hstmt)
+		{
+			// 1) 컬럼 바인딩
+			int         success = 0;
+			GUID        guid = {};
+			long long   moneyReward = 0;
+			int         removeCount = 0;
+			SQLLEN      lenSuccess = 0, lenGuid = 0, lenMoneyReward = 0, lenRemoveCount = 0;
+
+			SQLBindCol(hstmt, 1, SQL_C_LONG, &success, 0, &lenSuccess);
+			SQLBindCol(hstmt, 2, SQL_C_GUID, &guid, sizeof(GUID), &lenGuid);
+			SQLBindCol(hstmt, 3, SQL_C_SBIGINT, &moneyReward, 0, &lenMoneyReward);
+			SQLBindCol(hstmt, 4, SQL_C_LONG, &removeCount, 0, &lenRemoveCount);
+
+			if (SQLFetch(hstmt) == SQL_SUCCESS || SQLFetch(hstmt) == SQL_SUCCESS_WITH_INFO)
+			{
+				result.Success = success;
+
+				if (lenGuid == SQL_NULL_DATA)
+					result.GuidStr = "";
+				else
+					result.GuidStr = GuidToString(guid);
+
+				result.MoneyReward = moneyReward;
+				result.RemoveCount = removeCount;
+			}
+			else
+			{
+				result.Success = 0;
 			}
 		}
 	}

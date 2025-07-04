@@ -2,10 +2,10 @@
 #include <string>
 #include <functional>
 #include "game/User.h"
-#include "network/NetworkManager.h"
 #include "oneapi/tbb/concurrent_map.h"
 #include "game/ConstValue.h"
 #include "../utility/LockFreeCircleQueue.h"
+
 
 namespace Game
 {
@@ -39,5 +39,8 @@ namespace Game
 	private:
 		std::shared_ptr<Utility::LockFreeCircleQueue<Network::CustomOverlapped*>> _overlappedQueue;
 		std::shared_ptr<tbb::concurrent_map<ULONG_PTR, std::shared_ptr<Game::User>>> _socketUserMap;
+
+	private:
+		bool _isOn;
 	};
 }

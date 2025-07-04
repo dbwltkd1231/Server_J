@@ -10,11 +10,13 @@ namespace Game
 {
 	GameManager::GameManager()
 	{
+		_isOn = false;
 		Utility::Log("Game", "GameManager", "Construct");
 	}
 
 	GameManager::~GameManager()
 	{
+		_isOn = false;
 		Utility::Log("Game", "GameManager", "Destruct");
 	}
 
@@ -46,7 +48,6 @@ namespace Game
 			auto client = std::make_shared<Network::Client>();
 			client->Initialize();
 			_networkManager.ConnectAuthServer(client, overlappedPtr);
-			Sleep(1000); // 1초마다 접속시도..
 		}
 
 		_socketUserMap = std::make_shared<tbb::concurrent_map<ULONG_PTR, std::shared_ptr<Game::User>>>();
@@ -55,7 +56,13 @@ namespace Game
 
 	void GameManager::Process(int threadCount)
 	{
+		_isOn = true;
 		_networkManager.Process(threadCount);
+
+		while (_isOn)
+		{
+
+		}
 	}
 
 	// Callback functions for network events
@@ -208,6 +215,8 @@ namespace Game
 				std::string feedbackStr = (detail == 1 ? "Success" : "Fail");
 				log = "RESPONSE_LOGIN" + feedbackStr;
 				Utility::Log("Game", "GameManager", log);
+
+				targetUser->Login();
 				break;
 			}
 
@@ -241,7 +250,7 @@ namespace Game
 					int itemCount = noticeInventory->inventory_slots()->Get(i)->count();
 
 
-					targetUser->AddInventoryItem(guid, itemSeed, itemCount);
+					targetUser->UpdateInventory(guid, itemSeed, itemCount);
 
 					log = "NOTICE_INVENTORY | UID: " + std::to_string(targetUser->GetAccountNumber()) + ", Guid: " + guid +
 						", ItemSeed: " + std::to_string(itemSeed) +
@@ -271,13 +280,16 @@ namespace Game
 					int itemCount = noticeInventoryUpdate->inventory_slots()->Get(i)->count();
 
 
-					//targetUser->AddInventoryItem(guid, itemSeed, itemCount);
-
+					targetUser->UpdateInventory(guid, itemSeed, itemCount);
+				
 					log = "NOTICE_INVENTORY_UPDATE | UID: " + std::to_string(targetUser->GetAccountNumber()) + ", Guid: " + guid +
 						", ItemSeed: " + std::to_string(itemSeed) +
 						", ItemCount: " + std::to_string(itemCount);
 
 					Utility::Log("Game", "GameManager", log);
+					auto overlappedPtr = _overlappedQueue->pop();
+					overlappedPtr->Clear();
+					targetUser->BreakRandomItem(overlappedPtr);
 				}
 
 				if (inventoryUpdateTotalCount < 1)
@@ -286,6 +298,24 @@ namespace Game
 				}
 
 				break;
+			}
+
+			case protocol::MessageContent_RESPONSE_ITEM_BREAK:
+			{
+				auto responseItemBreak = flatbuffers::GetRoot<protocol::RESPONSE_ITEM_BREAK>(buffer);
+
+				std::string successStr = (responseItemBreak->feedback() == true ? "TRUE" : "FALSE");
+				std::string guid = responseItemBreak->guid()->str();
+				int moneyReward = responseItemBreak->money_reward();
+				int removeCount = responseItemBreak->remove_count();
+
+				//TODO seed기반 업데이트요청필요...
+				Utility::Log("Game", "GameManager", "RESPONSE_ITEM_BREAK " + successStr);
+
+				if (responseItemBreak->feedback() == true)
+				{
+					targetUser->ItemBreak(guid, moneyReward, removeCount);
+				}
 			}
 		}
 	}

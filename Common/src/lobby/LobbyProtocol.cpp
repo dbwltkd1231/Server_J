@@ -86,21 +86,23 @@ namespace Common
 
 		}
 
-		void RequestItemBreak(std::string& guid, int& count, PacketOutput& outPacket)
+		void RequestItemBreak(long accountNumber, std::string guid, int& removeCount, PacketOutput& outPacket)
 		{
 			flatbuffers::FlatBufferBuilder builder;
 			auto guidOffset = builder.CreateString(guid);
-			auto requestItemBreak = protocol::CreateREQUEST_ITEM_BREAK(builder, guidOffset, count);
+			auto requestItemBreak = protocol::CreateREQUEST_ITEM_BREAK(builder, accountNumber, guidOffset, removeCount);
 			builder.Finish(requestItemBreak);
 
 			outPacket.ContentsType = static_cast<uint32_t>(protocol::MessageContent_REQUEST_ITEM_BREAK);
 			outPacket.BodySize = builder.GetSize();
 			outPacket.Buffer.assign(reinterpret_cast<const char*>(builder.GetBufferPointer()), outPacket.BodySize);
 		}
-		void ResponseItemBreak(bool feedback, PacketOutput& outPacket)
+
+		void ResponseItemBreak(bool feedback, std::string guid, int moneyReward, int removeCount, PacketOutput& outPacket)
 		{
 			flatbuffers::FlatBufferBuilder builder;
-			auto responseItemBreak = protocol::CreateRESPONSE_ITEM_BREAK(builder, feedback);
+			auto guidOffset = builder.CreateString(guid);
+			auto responseItemBreak = protocol::CreateRESPONSE_ITEM_BREAK(builder, feedback, guidOffset, moneyReward, removeCount);
 			builder.Finish(responseItemBreak);
 
 			outPacket.ContentsType = static_cast<uint32_t>(protocol::MessageContent_RESPONSE_ITEM_BREAK);
