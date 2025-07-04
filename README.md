@@ -27,35 +27,42 @@ vcpkg integrate install
 
 *유저접속기준이 아닌 로그인성공기준으로 로비서버정보를 저장하고있어, 접속인원100이 바로 99로 줄지않는 문제가 있습니다.
 <br>
-
+<br>
+<br>
 로비서버시작
 <br>
 ![로비서버 시작](https://github.com/user-attachments/assets/2b028db0-90fb-4c39-9750-8a963d78ad78)
 <br>
-
+<br>
+<br>
 
 클라이언트가 로비서버연결을 위해 인증서버연결이 해제되는 사진
 <br>
 ![클라이언트가 로비서버연결을위해 인증서버연결해제하는부분](https://github.com/user-attachments/assets/68a18eb3-77df-4ad6-b9e8-a9c44fc3f9ea)
 <br>
-
+<br>
+<br>
 
 로비서버가 유저로그인을 받는사진
 <br>
 ![로비서버가 유저로그인받는부분](https://github.com/user-attachments/assets/db35dd89-c381-4ba4-881b-4380becd1d84)
+<br>
+<br>
 <br>
 
 클라이언트가 로그인요청성공후 로비서버로부터 유저정보를 받는 사진
 <br>
 ![클라이언트가 로그인요청성공후 유저정보받는부분](https://github.com/user-attachments/assets/d1055d70-cd58-4a1c-aa0e-c31134793e6a)
 <br>
-
+<br>
+<br>
 
 60초마다 유저가 아이템을 지급받고 아이템분해 요청
 <br>
 ![60초마다 아이템을받고 아이템분해](https://github.com/user-attachments/assets/7f5afc71-f012-47c8-981c-a7e372e16037)
 <br>
-
+<br>
+<br>
 
 로비서버가 유저로그아웃을 처리하는 사진
 <br>
