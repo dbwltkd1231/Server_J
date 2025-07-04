@@ -86,8 +86,38 @@ Lobby서버에 연결된 소켓중 로그인이 안된 소켓은 60초이후 연
 -> 유저는 아이템을 지급받았을때 랜덤한 확률로 로비서버에 아이템분해요청을 한다.<br>
 -> 로비서버는 분해요청 처리후 바뀐 아이템정보, 유저의 게임머니정보를 유저에게 전송.
 <br>
+<br>
+<br>
+<br>
+테스트했던 데이터베이스 예시 이미지
+<br>
 
+아이템
+![Item](https://github.com/user-attachments/assets/bb454d79-350a-4d9a-bcf7-c7ef67ad4e2f)
+<br>
+<br>
 
+인벤토리
+![Inventory](https://github.com/user-attachments/assets/b768c22f-a005-4888-9d93-6f22c9a462b3)
+<br>
+<br>
+
+유저정보
+![AccountData](https://github.com/user-attachments/assets/78bda250-c6ca-43ef-b87c-138168ee88ba)
+<br>
+<br>
+
+아이템 분해 히스토리
+![ItemBreakHistory](https://github.com/user-attachments/assets/30742ce6-0ad8-4204-895a-1bcd2259f300)
+<br>
+<br>
+유저 접속기록
+![SignInHistory](https://github.com/user-attachments/assets/f5d53c3a-914a-4809-8ed5-9dff13b1d749)
+<br>
+<br>
+
+계정정보
+![Account](https://github.com/user-attachments/assets/4deb237d-305b-4273-97af-06ff7f0d0fd4)
 
 
 
