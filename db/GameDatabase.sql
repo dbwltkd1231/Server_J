@@ -103,48 +103,70 @@ GO
 
 CREATE PROCEDURE AddInventoryItem
     @AccountNumber BIGINT,
-    @ItemSeed BIGINT,
-    @AddCount INT
+    @ItemSeed      BIGINT,
+    @AddCount      INT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @PileMax INT;
-    DECLARE @IsPile BIT;
-    DECLARE @Remaining INT = @AddCount;
+    DECLARE 
+        @PileMax       INT,
+        @IsPile        BIT,
+        @Remaining     INT = @AddCount,
+        @CurrentTotal  BIGINT,
+        @Capacity      INT;
 
-    --  변경된 슬롯들을 추적할 테이블 변수
+    -- 변경된 슬롯들을 추적할 테이블 변수
     DECLARE @ChangedSlots TABLE (
-        Guid UNIQUEIDENTIFIER,
-        ItemSeed BIGINT,
+        Guid      UNIQUEIDENTIFIER,
+        ItemSeed  BIGINT,
         ItemCount INT
     );
 
     BEGIN TRY
         BEGIN TRANSACTION;
 
+        -- 0. 현재 인벤토리 총합과 용량 조회
+        SELECT
+            @CurrentTotal = COALESCE(SUM(ItemCount), 0)
+        FROM Inventory
+        WHERE AccountNumber = @AccountNumber;
+
+        SELECT
+            @Capacity = InventoryCapacity
+        FROM [User].dbo.UserData
+        WHERE AccountNumber = @AccountNumber;
+
+        -- 인벤토리 용량 초과 시
+        IF (@CurrentTotal + @AddCount > @Capacity)
+        BEGIN
+            -- 남은 개수를 0으로 만들어서 루프를 건너뜀
+            SET @Remaining = 0;
+        END
+
         -- 1. 아이템 적재 정보 로드
-        SELECT 
-            @IsPile = IsPile,
+        SELECT  
+            @IsPile  = IsPile,
             @PileMax = CASE WHEN IsPile = 0 THEN 1 ELSE PileCountMax END
         FROM Item
         WHERE ItemSeed = @ItemSeed;
 
-        -- 2. 적재 루프
+        -- 2. 적재 루프 (Remaining이 0이면 종료)
         WHILE @Remaining > 0
         BEGIN
-            DECLARE @SlotGuid UNIQUEIDENTIFIER;
-            DECLARE @CurrentCount INT;
+            DECLARE 
+                @SlotGuid UNIQUEIDENTIFIER,
+                @CurrentCount INT;
 
             IF @IsPile = 1
             BEGIN
                 SELECT TOP 1
-                    @SlotGuid = Guid,
+                    @SlotGuid     = Guid,
                     @CurrentCount = ItemCount
                 FROM Inventory WITH (UPDLOCK, ROWLOCK)
                 WHERE AccountNumber = @AccountNumber
-                  AND ItemSeed = @ItemSeed
-                  AND ItemCount < @PileMax
+                  AND ItemSeed      = @ItemSeed
+                  AND ItemCount     < @PileMax
                 ORDER BY ItemCount ASC;
             END
             ELSE
@@ -154,7 +176,10 @@ BEGIN
 
             IF @SlotGuid IS NOT NULL
             BEGIN
-                DECLARE @AddNow INT = IIF(@Remaining > (@PileMax - @CurrentCount), @PileMax - @CurrentCount, @Remaining);
+                DECLARE @AddNow INT 
+                    = IIF(@Remaining > (@PileMax - @CurrentCount),
+                          @PileMax - @CurrentCount,
+                          @Remaining);
 
                 UPDATE Inventory
                 SET ItemCount = ItemCount + @AddNow
@@ -162,13 +187,17 @@ BEGIN
 
                 SET @Remaining -= @AddNow;
 
-                -- 수정된 슬롯을 기록
+                -- 수정된 슬롯 기록
                 INSERT INTO @ChangedSlots
-                SELECT Guid, ItemSeed, ItemCount FROM Inventory WHERE Guid = @SlotGuid;
+                SELECT Guid, ItemSeed, ItemCount
+                FROM Inventory
+                WHERE Guid = @SlotGuid;
             END
             ELSE
             BEGIN
-                DECLARE @NewCount INT = IIF(@Remaining >= @PileMax, @PileMax, @Remaining);
+                DECLARE @NewCount INT 
+                    = IIF(@Remaining >= @PileMax, @PileMax, @Remaining);
+
                 SET @Remaining -= @NewCount;
 
                 DECLARE @NewGuid UNIQUEIDENTIFIER = NEWID();
@@ -182,13 +211,13 @@ BEGIN
 
         COMMIT;
 
-        -- 최종적으로 모든 변경된 슬롯 반환
+        -- 변경된 슬롯 반환
         SELECT * FROM @ChangedSlots;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK;
 
-        -- 에러 시 NULL 행 반환
+        -- 에러 시 NULL 반환
         SELECT NULL AS Guid, @ItemSeed AS ItemSeed, NULL AS ItemCount;
 
         DECLARE @ErrMsg NVARCHAR(4000), @ErrSeverity INT;
