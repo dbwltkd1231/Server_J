@@ -28,8 +28,7 @@ vcpkg integrate install
 <br>
 인증서버가 로비서버정보 확인후 클라이언트 연결이 끊어지는 사진
 <br>
-![인증서버가 로비서버정보화인후 클라이언트연결끊는부분](https://github.com/user-attachments/assets/69e5dff1-d0ee-4c0a-a56e-6b3b997c5a1c)
-
+![인증서버가 로비서버정보화인후 클라이언트연결끊는부분](https://github.com/user-attachments/assets/2780adf7-c8df-4b74-abf0-c389b437ca97)
 <br>
 
 
