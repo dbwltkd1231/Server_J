@@ -19,6 +19,12 @@ vcpkg integrate install
 <br>
 <br>
 
+인증서버가 로비서버정보를 확인하고 클라이언트에 포트전달 및 연결해제되는 사진
+<br>
+![인증서버가 로비서버정보화인후 클라이언트연결끊는부분](https://github.com/user-attachments/assets/f970d261-a5c3-4737-806e-ba1f7948d43f)
+<br>
+
+
 
 로비서버시작
 <br>
