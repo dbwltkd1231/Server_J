@@ -1,3 +1,14 @@
+OpenSSL설치방법
+cmd창에서
+
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+vcpkg install openssl
+vcpkg integrate install
+
+이후 비주얼스튜디오 켜져있었으면 껏다키면 끝.
+
+
 프로젝트 관리 
 클라이언트와 서버프로젝트를 개별 솔루션으로 각각 관리하던 방식 -> 클라이언트와 서버 프로젝트를 단일솔루션에서 관리.
 프로젝트가 동시에 사용하는 코드들은 SolutionDIr 경로에서 참조하도록 구성.
