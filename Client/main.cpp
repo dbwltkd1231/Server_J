@@ -11,10 +11,10 @@ int main()
 {
 
 #if defined(SettingMode)
-	Utility::CreateClientSettingFiles();
+	Utility::CreateClientSettingFiles("client_config.json");
 #else
 
-	auto config = Utility::LoadSettingFiles();
+	auto config = Utility::LoadSettingFiles("client_config.json");
 	if (config == NULL)
 	{
 		return 0;

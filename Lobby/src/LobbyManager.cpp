@@ -126,6 +126,29 @@ namespace Lobby
 		return (signature == encodedExpectedSig); 
 	}
 
+	void LobbyManager::UpdateLobbyStateToRedis(const std::string& lobbyName, int connected, int capacity, int port)
+	{
+		std::string key = "Lobby:" + lobbyName;
+
+		redisReply* reply = (redisReply*)redisCommand(_redis,
+			"HMSET %s connected %d capacity %d port %d",
+			key.c_str(), connected, capacity, port);
+
+		if (!reply || reply->type == REDIS_REPLY_ERROR)
+		{
+			std::cerr << "[Redis 저장 실패] " << key << std::endl;
+		}
+		else
+		{
+			std::cout << "[Redis 업데이트 완료] " << key
+				<< " - 서버상태: " << connected
+				<< " / 수용가능인원: " << capacity
+				<< " / 포트: " << port << std::endl;
+		}
+
+		if (reply) freeReplyObject(reply);
+	}
+
 	void LobbyManager::ProcessAccept(ULONG_PTR& targetSocket)
 	{
 		_notLoginSocketSet.insert(targetSocket);
@@ -174,7 +197,7 @@ namespace Lobby
 				long accountNumber = requestConnect->account_number();
 				std::string authToken = requestConnect->auth_token()->str();
 
-				bool tokenBerify = verifyJWT(authToken, "YJS");
+				bool tokenBerify = verifyJWT(authToken, Lobby::ConstValue::GetInstance().SecretKey);
 
 				if (tokenBerify)
 				{
@@ -229,10 +252,12 @@ namespace Lobby
 			Common::Lobby::CreateResponseLogIn(userLoginResult.Detail, userLoginResult.Success, output);
 			_networkManager.SendRequest(targetSocket, contentsType, output.Buffer, output.BodySize);
 
-			//로비 상태 저장
-
 			if (userLoginResult.Success)
-			{
+			{		
+				//로비 상태 저장
+				int remainCapacity = Lobby::ConstValue::GetInstance().ClientCapacity - _socketLoginAccountMap.size();
+				UpdateLobbyStateToRedis("asd", _serverOn, remainCapacity, Lobby::ConstValue::GetInstance().StartPort);
+
 				_socketLoginAccountMap.insert({ targetSocket, userLoginResult.AccountNumber });
 				Utility::Log("Lobby", "LobbyManager", "현재 로그인 성공 인원 : " + std::to_string(_socketLoginAccountMap.size()));
 
@@ -380,13 +405,17 @@ namespace Lobby
 		}
 	}
 	
-	// main에서 JOIN으로 호출하자
 	void LobbyManager::MainProcess()
 	{
+		_serverOn = true;
+
+		//로비 상태 저장
+		int remainCapacity = Lobby::ConstValue::GetInstance().ClientCapacity - _socketLoginAccountMap.size();
+		UpdateLobbyStateToRedis(Lobby::ConstValue::GetInstance().ServerName, _serverOn, remainCapacity, Lobby::ConstValue::GetInstance().StartPort);
+
+		//아이템 로드
 		auto task = Common::Lobby::CreateQueryGetItemData();
 		_gameDatabaseWorker.Enqueue(task);
-
-		_serverOn = true;
 
 		std::thread eventThread([this]() { this->EventThread(); });
 		eventThread.detach();

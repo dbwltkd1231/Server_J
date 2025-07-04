@@ -53,7 +53,7 @@ namespace Auth
 		void DatabaseCallback(ULONG_PTR targetSocket, uint32_t contentsType, SQLHSTMT& hstmt);
 
 	private:
-		void CheckLobbyServerState();
+		int CheckLobbyServerState();
 
 	private:
 		std::string createJWT(const std::string& userId, const std::string& secret);

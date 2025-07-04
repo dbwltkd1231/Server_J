@@ -13,10 +13,10 @@ namespace Lobby
         }
 
         // 설정값들
+        std::string ServerName = "";
         std::string SecretKey = "";
         std::string IP = "";
         int StartPort = 0;
-        int StartCount = 0;
         int RedisPort = 0;
 
         int OverlappedCountMax = 0;

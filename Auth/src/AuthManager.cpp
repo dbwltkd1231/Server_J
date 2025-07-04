@@ -141,7 +141,7 @@ namespace Auth
 		}
 		else if (task.DatabaseName == Database::DatabaseType::Game)
 		{
-
+			//Auth서버는 user데이터베이스만 사용중..
 		}
 		else
 		{
@@ -162,12 +162,17 @@ namespace Auth
 			{
 				auto requestConnectData = std::static_pointer_cast<Common::Auth::RequestConnectData>(result);
 
-				//TOKEN처리
 				std::string accountNumberStr = std::to_string(requestConnectData->AccountNumber);
-				auto token = createJWT(accountNumberStr, "YJS");
-				CheckLobbyServerState();
-
-				Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, token, 9091, contentsType, stringBuffer, bodySize);
+				auto token = createJWT(accountNumberStr, Auth::ConstValue::GetInstance().SecretKey);
+				int targetPort = CheckLobbyServerState();
+				if (targetPort == -1)
+				{
+					Utility::Log("Auth", "AuthManager", "유효한 로비서버 포트번호 조회 실패");
+				}
+				else
+				{
+					Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, token, targetPort, contentsType, stringBuffer, bodySize);
+				}
 				break;
 			}
 			default:
@@ -175,20 +180,20 @@ namespace Auth
 		}
 
 		_networkManager.SendRequest(targetSocket, contentsType, stringBuffer, bodySize);
-		
-		//success -> 토큰발급
 	}
 
-	void AuthManager::CheckLobbyServerState()
+	int AuthManager::CheckLobbyServerState()
 	{
+		int currentTargetLobbyPort = -1;
+		int targetLobbyServerRemain = 0;
+
 		unsigned long long cursor = 0;
 		do {
 			redisReply* reply = (redisReply*)redisCommand(_redis, "SCAN %llu MATCH Lobby:* COUNT 10", cursor);
 
 			if (!reply || reply->type != REDIS_REPLY_ARRAY || reply->elements < 2) // key, element구조이기때문에 최소2개가있어야 데이터1개를 조회할수있다.
 			{
-				std::cerr << "Redis SCAN 실패!" << std::endl;
-				return;
+				continue;
 			}
 
 			cursor = std::stoi(reply->element[0]->str); // 다음 SCAN 커서 업데이트
@@ -213,19 +218,27 @@ namespace Auth
 							if (field == "connected") connected = std::stoi(value);
 							else if (field == "capacity") capacity = std::stoi(value);
 							else if (field == "port") port = std::stoi(value);
+
 						}
 
-						std::cout << "[로비 상태] " << key << " - 접속자: " << connected
-							<< " / 최대: " << capacity << " / 포트: " << port << std::endl;
+						if (connected && capacity > targetLobbyServerRemain)
+						{
+							currentTargetLobbyPort = port;
+							targetLobbyServerRemain = capacity;
+						}
+
+						std::cout << "[로비 이름] " << key << " - 상태: " << connected
+							<< " / 수용가능량: " << capacity << " / 포트: " << port << std::endl;
 
 						freeReplyObject(replyData);
 					}
 				}
 			}
 
-
 		freeReplyObject(reply);
 		} while (cursor != 0);
+
+		return currentTargetLobbyPort;
 	}
 
 	std::string AuthManager::createJWT(const std::string& userId, const std::string& secret)

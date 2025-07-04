@@ -10,10 +10,10 @@
 int main()
 {
 #if defined(SettingMode)
-	Utility::CreateAuthServerSettingFiles();
+	Utility::CreateAuthServerSettingFiles("auth_config.json");
 #else
 
-	auto config = Utility::LoadSettingFiles();
+	auto config = Utility::LoadSettingFiles("auth_config.json");
 	if (config == NULL)
 	{
 		return 0;

@@ -24,9 +24,10 @@ namespace Lobby
 		void Initialize();
 		void ConnectDatabase(std::string userDatabaseName, std::string userSqlServerAddress, std::string gameDatabaseName, std::string gameSqlServerAddress);
 		void ConnectRedis(std::string ip, int redisPort);
-
+		void UpdateLobbyStateToRedis(const std::string& lobbyName, int connected, int capacity, int port);
 	private:
 		bool verifyJWT(const std::string& token, const std::string& secret);
+
 	private:
 		Network::NetworkManager _networkManager;
 		bool _serverOn;

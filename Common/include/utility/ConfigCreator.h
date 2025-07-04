@@ -6,7 +6,7 @@
 
 namespace Utility
 {
-	void CreateAuthServerSettingFiles()
+	void CreateAuthServerSettingFiles(std::string fileName)
 	{
 		nlohmann::json config;
 
@@ -27,7 +27,7 @@ namespace Utility
 
 
 
-		std::ofstream file("config.json");
+		std::ofstream file(fileName);
 		file << config.dump(4);  // 4는 들여쓰기 수준
 
 		std::string log = "[Utility] [JsonCreator] File CreateSuccess !";
@@ -35,7 +35,7 @@ namespace Utility
 	}
 
 
-	void CreateClientSettingFiles()
+	void CreateClientSettingFiles(std::string fileName)
 	{
 		nlohmann::json config;
 
@@ -50,14 +50,14 @@ namespace Utility
 		config["CLIENT"]["TEST_CLIENT_COUNT"] = 10;
 		config["CLIENT"]["TEST_THREAD_COUNT"] = 5;
 
-		std::ofstream file("config.json");
+		std::ofstream file(fileName);
 		file << config.dump(4);
 
 		std::string log = "[Utility] [JsonCreator] File CreateSuccess !";
 		std::cout << log << std::endl;
 	}
 
-	void CreateLobbySettingFiles()
+	void CreateLobbySettingFiles(std::string fileName)
 	{
 		nlohmann::json config;
 
@@ -83,16 +83,16 @@ namespace Utility
 		config["SQL"]["GAME_DB_NAME"] = "Game";
 		config["SQL"]["GAME_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=Game;Trusted_Connection=yes;";
 
-		std::ofstream file("config.json");
+		std::ofstream file(fileName);
 		file << config.dump(4);  // 4는 들여쓰기 수준
 
 		std::string log = "[Utility] [JsonCreator] File CreateSuccess !";
 		std::cout << log << std::endl;
 	}
 
-	nlohmann::json LoadSettingFiles()
+	nlohmann::json LoadSettingFiles(std::string fileName)
 	{
-		std::ifstream file("config.json");  // JSON 파일 열기
+		std::ifstream file(fileName);  // JSON 파일 열기
 		if (!file)
 		{
 			std::string log = "[Utility] [JsonCreator] File Find Fail !!";

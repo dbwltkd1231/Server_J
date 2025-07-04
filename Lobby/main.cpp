@@ -4,16 +4,15 @@
 #include "ConstValue.h"
 #include "../Common/include/utility/ConfigCreator.h"
 
-
 //#define SettingMode 
 
-int main()
+int main(int argc, char* argv[])
 {
 #if defined(SettingMode)
-	Utility::CreateLobbySettingFiles();
+	Utility::CreateLobbySettingFiles("lobby_config.json");
 #else
 
-	auto config = Utility::LoadSettingFiles();
+	auto config = Utility::LoadSettingFiles("lobby_config.json");
 	if (config == NULL)
 	{
 		return 0;
@@ -22,7 +21,8 @@ int main()
 	std::string secretKey = config["Auth"]["SECRET_KEY"];
 	std::string serverIP = config["NETWORK"]["IP"];
 	int networkPort = config["NETWORK"]["Lobby_START_PORT"].get<int>();
-	int startCount = config["NETWORK"]["Lobby_START_COUNT"].get<int>();
+	networkPort += argc;
+	std::string serverName = "Lobby " + std::to_string(0);
 	int redisPort = config["REDIS"]["PORT"].get<int>();
 	int overlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"].get<int>();
 	int buferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"].get<int>();
@@ -30,15 +30,14 @@ int main()
 	int clientCapacity = config["NETWORK"]["CLIENT_CAPACITY"].get<int>();
 
 
-
 	SYSTEM_INFO sysInfo;
 	GetSystemInfo(&sysInfo);
 	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
+	Lobby::ConstValue::GetInstance().ServerName = serverName;
 	Lobby::ConstValue::GetInstance().SecretKey = secretKey;
 	Lobby::ConstValue::GetInstance().IP = serverIP;
 	Lobby::ConstValue::GetInstance().StartPort = networkPort;
-	Lobby::ConstValue::GetInstance().StartCount = startCount;
 	Lobby::ConstValue::GetInstance().RedisPort = redisPort;
 	Lobby::ConstValue::GetInstance().OverlappedCountMax = overlappedCountMax;
 	Lobby::ConstValue::GetInstance().BuferSizeMax = buferSizeMax;
