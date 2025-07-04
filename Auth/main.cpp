@@ -19,6 +19,7 @@ int main()
 		return 0;
 	}
 
+	std::string secretKey = config["Auth"]["SECRET_KEY"];
 	std::string serverIP = config["NETWORK"]["IP"];
 	int networkPort = config["NETWORK"]["AUTHPORT"].get<int>();
 	int clientAcceptReadyCountMax = config["NETWORK"]["CLIENT_ACCEPTREADY_COUNT_MAX"].get<int>();
@@ -29,6 +30,7 @@ int main()
 	GetSystemInfo(&sysInfo);
 	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
+	Auth::ConstValue::GetInstance().SecretKey = secretKey;
 	Auth::ConstValue::GetInstance().ServerPort = networkPort;
 	Auth::ConstValue::GetInstance().RedisPort = redisPort;
 	Auth::ConstValue::GetInstance().ConnectReadyClientCountMax = clientAcceptReadyCountMax;
@@ -44,10 +46,9 @@ int main()
 	authManager.ConnectRedis(serverIP, Auth::ConstValue::GetInstance().RedisPort);
 
 
-	while (true)
-	{
+	std::thread mainThread([&authManager]() { authManager.Process(); });
 
-	}
+	mainThread.join();
 
 #endif
 

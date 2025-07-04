@@ -10,6 +10,8 @@ namespace Utility
 	{
 		nlohmann::json config;
 
+		config["Auth"]["SECRET_KEY"] = "YJS";
+
 		/// 네트워크 설정
 		config["NETWORK"]["IP"] = "127.0.0.1";
 		config["NETWORK"]["AUTHPORT"] = 9090;
@@ -59,6 +61,8 @@ namespace Utility
 	{
 		nlohmann::json config;
 
+		config["Auth"]["SECRET_KEY"] = "YJS";
+
 		/// 네트워크 설정
 		config["NETWORK"]["IP"] = "127.0.0.1";
 		config["NETWORK"]["Lobby_START_PORT"] = 9091;
@@ -77,7 +81,7 @@ namespace Utility
 		config["SQL"]["USER_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;";
 
 		config["SQL"]["GAME_DB_NAME"] = "Game";
-		config["SQL"]["GAME_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=User;Trusted_Connection=yes;";
+		config["SQL"]["GAME_DB_ADDRESS"] = "DRIVER={SQL Server};SERVER=DESKTOP-O5SU309\\SQLEXPRESS;DATABASE=Game;Trusted_Connection=yes;";
 
 		std::ofstream file("config.json");
 		file << config.dump(4);  // 4는 들여쓰기 수준

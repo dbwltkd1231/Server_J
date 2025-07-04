@@ -13,6 +13,7 @@ namespace Lobby
         }
 
         // 설정값들
+        std::string SecretKey = "";
         std::string IP = "";
         int StartPort = 0;
         int StartCount = 0;

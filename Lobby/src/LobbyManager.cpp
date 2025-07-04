@@ -7,6 +7,9 @@
 #include "../lobby/LobbyProtocol.h"
 #include <LobbyProcedureCreator.h>
 
+#include <openssl/hmac.h>
+#include <openssl/evp.h>
+
 
 namespace Lobby
 {
@@ -101,6 +104,28 @@ namespace Lobby
 		Utility::Log("Lobby", "LobbyManager", "Redis Connect Success");
 	}
 
+	//TODO 만료기간도 추가하면 더 좋다.
+	bool LobbyManager::verifyJWT(const std::string& token, const std::string& secret)
+	{
+		size_t pos1 = token.find('.');
+		size_t pos2 = token.find('.', pos1 + 1);
+
+		if (pos1 == std::string::npos || pos2 == std::string::npos)
+			return false;
+
+		std::string headerPayload = token.substr(0, pos2);
+		std::string signature = token.substr(pos2 + 1);
+
+		unsigned char* expectedSig = HMAC(EVP_sha256(),
+			secret.data(), secret.size(),
+			reinterpret_cast<const unsigned char*>(headerPayload.data()), headerPayload.size(),
+			nullptr, nullptr);
+
+		std::string encodedExpectedSig = std::string(reinterpret_cast<char*>(expectedSig), 32);
+
+		return (signature == encodedExpectedSig); 
+	}
+
 	void LobbyManager::ProcessAccept(ULONG_PTR& targetSocket)
 	{
 		_notLoginSocketSet.insert(targetSocket);
@@ -149,10 +174,14 @@ namespace Lobby
 				long accountNumber = requestConnect->account_number();
 				std::string authToken = requestConnect->auth_token()->str();
 
-				//authToken 확인 필요 !!
+				bool tokenBerify = verifyJWT(authToken, "YJS");
 
-				task = Common::Lobby::CreateQuerryUserLogIn(targetSocket, accountNumber);
-
+				if (tokenBerify)
+				{
+					Utility::Log("Lobby", "LobbyManager", " 인증토큰 검증 완료.");
+					task = Common::Lobby::CreateQuerryUserLogIn(targetSocket, accountNumber);
+				}
+				
 				break;
 			}
 

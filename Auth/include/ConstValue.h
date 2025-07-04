@@ -13,6 +13,7 @@ namespace Auth
         }
 
         // 설정값들
+        std::string SecretKey = "";
         std::string IP = "";
         int ServerPort = 0;
         int RedisPort = 0;

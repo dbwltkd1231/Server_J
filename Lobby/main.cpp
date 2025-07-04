@@ -19,6 +19,7 @@ int main()
 		return 0;
 	}
 
+	std::string secretKey = config["Auth"]["SECRET_KEY"];
 	std::string serverIP = config["NETWORK"]["IP"];
 	int networkPort = config["NETWORK"]["Lobby_START_PORT"].get<int>();
 	int startCount = config["NETWORK"]["Lobby_START_COUNT"].get<int>();
@@ -34,6 +35,7 @@ int main()
 	GetSystemInfo(&sysInfo);
 	int sessionCount = sysInfo.dwNumberOfProcessors * 2;
 
+	Lobby::ConstValue::GetInstance().SecretKey = secretKey;
 	Lobby::ConstValue::GetInstance().IP = serverIP;
 	Lobby::ConstValue::GetInstance().StartPort = networkPort;
 	Lobby::ConstValue::GetInstance().StartCount = startCount;

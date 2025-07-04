@@ -15,10 +15,12 @@ namespace Network
 	public:
 		void Initialze();
 		void CallbackSetting(
-			std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)>& acceptCallback,
+			std::function<void(Network::ServerType&, std::shared_ptr <Network::Client>, Network::CustomOverlapped*)>& acceptCallback,
 			std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)>& receiveCallback,
-			std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)>& disconnectCallback
+			std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode, CustomOverlapped*)>& disconnectCallback,
+			std::function<void(Network::CustomOverlapped*)>& sendCallback
 		);
+
 		void ConnectAuthServer(std::shared_ptr<Network::Client> targetClient, Network::CustomOverlapped* overlappedPtr);
 		void ConnectLobbyServer(std::shared_ptr<Network::Client> targetClient, Network::CustomOverlapped* overlappedPtr);
 		void ReceiveReadyToModule(Network::ServerType& serverType, ULONG_PTR& targetSocket, Network::CustomOverlapped* overlappedPtr);

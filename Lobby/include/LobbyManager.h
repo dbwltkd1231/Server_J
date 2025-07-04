@@ -26,8 +26,11 @@ namespace Lobby
 		void ConnectRedis(std::string ip, int redisPort);
 
 	private:
+		bool verifyJWT(const std::string& token, const std::string& secret);
+	private:
 		Network::NetworkManager _networkManager;
 		bool _serverOn;
+
 	private:
 		Database::Worker _userDatabaseWorker;
 		Database::Worker _gameDatabaseWorker;

@@ -27,13 +27,14 @@ namespace Network
 	}
 
 	void NetworkManager::CallbackSetting(
-		std::function<void(Network::ServerType&, std::shared_ptr <Network::Client>)>& acceptCallback,
+		std::function<void(Network::ServerType&, std::shared_ptr <Network::Client>, Network::CustomOverlapped*)>& acceptCallback,
 		std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)>& receiveCallback,
-		std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)>& disconnectCallback
+		std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode, CustomOverlapped*)>& disconnectCallback,
+		std::function<void(Network::CustomOverlapped*)>& sendCallback
 	)
 	{
-		_authModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback);
-		_lobbyModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback);
+		_authModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback, sendCallback);
+		_lobbyModule->CallbackSetting(acceptCallback, receiveCallback, disconnectCallback, sendCallback);
 	}
 
 

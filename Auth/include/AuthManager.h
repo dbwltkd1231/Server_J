@@ -6,6 +6,8 @@
 #include "../include/network/NetworkManager.h"
 #include "../include/database/Worker.h"
 
+#include <openssl/hmac.h>
+
 namespace Auth
 {
 	class AuthManager
@@ -18,6 +20,13 @@ namespace Auth
 		void Initialize();
 		void ConnectDatabase(std::string databaseName, std::string sqlServerAddress);
 		void ConnectRedis(std::string ip, int redisPort);
+
+	private:
+		bool isOn;
+
+	public:
+		void Process();
+
 	public:
 		void ProcessAccept(ULONG_PTR& targetSocket);
 		void ProcessDisconnect(ULONG_PTR& targetSocket, int errorCode);
@@ -45,5 +54,9 @@ namespace Auth
 
 	private:
 		void CheckLobbyServerState();
+
+	private:
+		std::string createJWT(const std::string& userId, const std::string& secret);
+
 	};
 }

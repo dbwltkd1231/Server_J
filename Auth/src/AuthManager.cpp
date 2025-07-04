@@ -12,12 +12,12 @@ namespace Auth
 {
 	AuthManager::AuthManager()
 	{
-
+		isOn = false;
 	}
 
 	AuthManager::~AuthManager()
 	{
-
+		isOn = false;
 	}
 
 	void AuthManager::Initialize()
@@ -95,6 +95,15 @@ namespace Auth
 		Utility::Log("Auth", "AuthManager", "Redis Connect Success");
 	}
 
+	void AuthManager::Process()
+	{
+		isOn = true;
+
+		while (isOn)
+		{
+
+		}
+	}
 
 	void AuthManager::ProcessAccept(ULONG_PTR& targetSocket)
 	{
@@ -154,9 +163,11 @@ namespace Auth
 				auto requestConnectData = std::static_pointer_cast<Common::Auth::RequestConnectData>(result);
 
 				//TOKEN처리
+				std::string accountNumberStr = std::to_string(requestConnectData->AccountNumber);
+				auto token = createJWT(accountNumberStr, "YJS");
 				CheckLobbyServerState();
 
-				Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, "TOKEN", 9091, contentsType, stringBuffer, bodySize);
+				Common::Auth::CreateResponseConnect(requestConnectData->AccountNumber, requestConnectData->AccountUID, requestConnectData->IsNew, token, 9091, contentsType, stringBuffer, bodySize);
 				break;
 			}
 			default:
@@ -204,7 +215,6 @@ namespace Auth
 							else if (field == "port") port = std::stoi(value);
 						}
 
-						// 테스트용 출력
 						std::cout << "[로비 상태] " << key << " - 접속자: " << connected
 							<< " / 최대: " << capacity << " / 포트: " << port << std::endl;
 
@@ -217,4 +227,27 @@ namespace Auth
 		freeReplyObject(reply);
 		} while (cursor != 0);
 	}
+
+	std::string AuthManager::createJWT(const std::string& userId, const std::string& secret)
+	{
+		std::string header = R"({"alg":"HS256","typ":"JWT"})";
+		std::string payload = R"({"sub":")" + userId + R"(","exp":1727816400})"; // 예: Unix timestamp
+
+		std::string encodedHeader = header;//Base64Encode(header);
+		std::string encodedPayload = payload;//Base64Encode(payload);
+
+		std::string dataToSign = encodedHeader + "." + encodedPayload;
+
+		// HMAC-SHA256 서명
+		unsigned char* signature = HMAC(EVP_sha256(),
+			secret.data(), secret.size(),
+			reinterpret_cast<const unsigned char*>(dataToSign.data()), dataToSign.size(),
+			nullptr, nullptr);
+
+		//std::string encodedSignature = Base64Encode(std::string(reinterpret_cast<char*>(signature), 32));
+		std::string encodedSignature = std::string(reinterpret_cast<char*>(signature), 32);
+		return dataToSign + "." + encodedSignature;
+	}
+
+
 }

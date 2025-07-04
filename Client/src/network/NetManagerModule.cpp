@@ -71,14 +71,16 @@ namespace Network
 	}
 
 	void NetManagerModule::CallbackSetting(
-		std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>)> acceptCallback,
+		std::function<void(Network::ServerType&, std::shared_ptr<Network::Client>, CustomOverlapped*)> acceptCallback,
 		std::function<void(Network::ServerType&, ULONG_PTR&, CustomOverlapped*)> receiveCallback,
-		std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode)> disconnectCallback
+		std::function<void(Network::ServerType&, ULONG_PTR& socket, int bytesTransferred, int errorCode, CustomOverlapped*)> disconnectCallback,
+		std::function<void(CustomOverlapped*)> sendCallback
 	)
 	{
 		_acceptCallback = acceptCallback;
 		_receiveCallback = receiveCallback;
 		_disconnectCallback = disconnectCallback;
+		_sendCallback = sendCallback;
 
 	}
 
@@ -136,15 +138,15 @@ namespace Network
 	{
 		DWORD bytesTransferred;
 		ULONG_PTR completionKey;
-		Network::CustomOverlapped* oerlapped = nullptr;
+		Network::CustomOverlapped* overlapped = nullptr;
 
 		while (_isOn)
 		{
 			bytesTransferred = 0;
 			completionKey = 0;
-			oerlapped = nullptr;
+			overlapped = nullptr;
 
-			bool result = GetQueuedCompletionStatus(_iocpHandle, &bytesTransferred, &completionKey, reinterpret_cast<LPOVERLAPPED*>(&oerlapped), INFINITE);
+			bool result = GetQueuedCompletionStatus(_iocpHandle, &bytesTransferred, &completionKey, reinterpret_cast<LPOVERLAPPED*>(&overlapped), INFINITE);
 			if (!result)
 			{
 				int errorCode = WSAGetLastError();
@@ -161,7 +163,7 @@ namespace Network
 				case ERROR_NETNAME_DELETED:
 				case ERROR_CONNECTION_ABORTED:
 					_clientMap.unsafe_erase(completionKey);
-					_disconnectCallback(_serverType, completionKey, bytesTransferred, errorCode);
+					_disconnectCallback(_serverType, completionKey, bytesTransferred, errorCode, overlapped);
 					break;
 				default:
 					break;
@@ -172,7 +174,7 @@ namespace Network
 
 			if (result)
 			{
-				auto targetOverlapped = static_cast<Network::CustomOverlapped*>(oerlapped);
+				auto targetOverlapped = static_cast<Network::CustomOverlapped*>(overlapped);
 
 				auto finder = _clientMap.find(completionKey);
 				if (finder == _clientMap.end())
@@ -190,7 +192,7 @@ namespace Network
 				{
 					Utility::Log("Client", "ClientManager", "Client Connect !!");
 
-					_acceptCallback(_serverType, client);
+					_acceptCallback(_serverType, client, overlapped);
 					break;
 				}
 
@@ -198,7 +200,7 @@ namespace Network
 				{
 					if (bytesTransferred <= 0)
 					{
-						_disconnectCallback(_serverType, completionKey, bytesTransferred, 0);
+						_disconnectCallback(_serverType, completionKey, bytesTransferred, 0, overlapped);
 						continue;
 					}
 
@@ -211,7 +213,7 @@ namespace Network
 				case Network::OperationType::OP_SEND:
 				{
 					Utility::Log("Client", "ClientManager", "Client Send !!");
-
+					_sendCallback(overlapped);
 					break;
 				}
 				}

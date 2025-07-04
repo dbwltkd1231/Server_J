@@ -24,11 +24,11 @@ namespace Game
 	{
 		_networkManager.Initialze();
 
-		_acceptCallback = std::bind(&GameManager::AcceptCallback, this, std::placeholders::_1, std::placeholders::_2);
+		_acceptCallback = std::bind(&GameManager::AcceptCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		_receiveCallback = std::bind(&GameManager::ReceiveCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-		_disconnectCallback = std::bind(&GameManager::DisconnectCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-		
-		_networkManager.CallbackSetting(_acceptCallback, _receiveCallback, _disconnectCallback);
+		_disconnectCallback = std::bind(&GameManager::DisconnectCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
+		_sendCallback = std::bind(&GameManager::SendCallback, this, std::placeholders::_1);
+		_networkManager.CallbackSetting(_acceptCallback, _receiveCallback, _disconnectCallback, _sendCallback);
 
 		_overlappedQueue = std::make_shared<Utility::LockFreeCircleQueue<Network::CustomOverlapped*>>();
 		_overlappedQueue->Construct(Game::ConstValue::GetInstance().OverlappedCountMax);
@@ -66,7 +66,7 @@ namespace Game
 	}
 
 	// Callback functions for network events
-	void GameManager::AcceptCallback(Network::ServerType& targetServer, std::shared_ptr<Network::Client> client)
+	void GameManager::AcceptCallback(Network::ServerType& targetServer, std::shared_ptr<Network::Client> client, Network::CustomOverlapped* overlappedPtr)
 	{
 		auto receiveOverlappedPtr = _overlappedQueue->pop();
 		receiveOverlappedPtr->Clear();
@@ -79,10 +79,10 @@ namespace Game
 			std::shared_ptr<Game::User> newUser = std::make_shared<Game::User>();
 			newUser->Initialize(client);
 
-			auto overlappedPtr = _overlappedQueue->pop();
-			overlappedPtr->Clear();
+			auto newOverlapped = _overlappedQueue->pop();
+			newOverlapped->Clear();
 
-			newUser->RequestConnect(overlappedPtr);
+			newUser->RequestConnect(newOverlapped);
 			_socketUserMap->insert({ socketPtr, newUser});
 		}
 		else if (targetServer == Network::ServerType::Lobby)
@@ -91,15 +91,18 @@ namespace Game
 			if (finder != _socketUserMap->end())
 			{
 				auto user = finder->second;
-				auto overlappedPtr = _overlappedQueue->pop();
-				overlappedPtr->Clear();
+				auto newOverlapped = _overlappedQueue->pop();
+				newOverlapped->Clear();
 
-				user->RequestLogIn(overlappedPtr);
+				user->RequestLogIn(newOverlapped);
 			}
 		}
+
+		overlappedPtr->Clear();
+		_overlappedQueue->push(std::move(overlappedPtr));
 	}
 
-	void GameManager::DisconnectCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, int bytesTransferred, int errorCode)
+	void GameManager::DisconnectCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, int bytesTransferred, int errorCode, Network::CustomOverlapped* overlappedPtr)
 	{
 		auto finder = _socketUserMap->find(targetSocket);
 		if (finder == _socketUserMap->end())
@@ -116,6 +119,15 @@ namespace Game
 		}
 
 		_socketUserMap->unsafe_erase(targetSocket);
+
+		overlappedPtr->Clear();
+		_overlappedQueue->push(std::move(overlappedPtr));
+	}
+
+	void GameManager::SendCallback(Network::CustomOverlapped* overlappedPtr)
+	{
+		overlappedPtr->Clear();
+		_overlappedQueue->push(std::move(overlappedPtr));
 	}
 
 	void GameManager::ReceiveCallback(Network::ServerType& targetServer, ULONG_PTR& targetSocket, Network::CustomOverlapped* overlappedPtr)
@@ -314,7 +326,7 @@ namespace Game
 
 				if (responseItemBreak->feedback() == true)
 				{
-					targetUser->ItemBreak(guid, moneyReward, removeCount);
+					targetUser->ItemBreak(guid, removeCount, moneyReward);
 				}
 			}
 		}
