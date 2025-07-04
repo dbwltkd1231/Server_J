@@ -18,11 +18,23 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
+	int instanceIndex = 0;
+	if (argc > 1) {
+		try {
+			instanceIndex = std::stoi(argv[1]);
+		}
+		catch (...) {
+			std::cerr << "Invalid instance index: " << argv[1] << std::endl;
+			return -1;
+		}
+	}
+
+
 	std::string secretKey = config["Auth"]["SECRET_KEY"];
 	std::string serverIP = config["NETWORK"]["IP"];
 	int networkPort = config["NETWORK"]["Lobby_START_PORT"].get<int>();
-	networkPort += argc;
-	std::string serverName = "Lobby " + std::to_string(0);
+	networkPort += instanceIndex;
+	std::string serverName = "Lobby " + std::to_string(instanceIndex);
 	int redisPort = config["REDIS"]["PORT"].get<int>();
 	int overlappedCountMax = config["NETWORK"]["OVERLAPPED_COUNT_MAX"].get<int>();
 	int buferSizeMax = config["NETWORK"]["BUFFER_SIZE_MAX"].get<int>();

@@ -92,7 +92,7 @@ namespace Game
 		return _accountNumber;
 	}
 
-	void User::BreakRandomItem(Network::CustomOverlapped* sendOverlappedPtr)
+	void User::BreakItem(std::string guid, Network::CustomOverlapped* sendOverlappedPtr)
 	{
 		if (!_isLogin)
 			return;
@@ -108,10 +108,10 @@ namespace Game
 		int sum = localTime.tm_min + localTime.tm_sec;
 		if (sum % 2 == 0)
 		{
-			auto it = _inventoryMap.begin();
-			if (it != _inventoryMap.end())
+			auto finder = _inventoryMap.find(guid);
+			if (finder != _inventoryMap.end())
 			{
-				auto inventorySlot = it->second;
+				auto inventorySlot = finder->second;
 				if (inventorySlot.ItemCount > 0)
 				{
 					int removeCount = 1;

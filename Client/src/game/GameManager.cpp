@@ -301,7 +301,7 @@ namespace Game
 					Utility::Log("Game", "GameManager", log);
 					auto overlappedPtr = _overlappedQueue->pop();
 					overlappedPtr->Clear();
-					targetUser->BreakRandomItem(overlappedPtr);
+					targetUser->BreakItem(guid, overlappedPtr);
 				}
 
 				if (inventoryUpdateTotalCount < 1)
@@ -316,13 +316,11 @@ namespace Game
 			{
 				auto responseItemBreak = flatbuffers::GetRoot<protocol::RESPONSE_ITEM_BREAK>(buffer);
 
-				std::string successStr = (responseItemBreak->feedback() == true ? "TRUE" : "FALSE");
 				std::string guid = responseItemBreak->guid()->str();
 				int moneyReward = responseItemBreak->money_reward();
 				int removeCount = responseItemBreak->remove_count();
 
-				//TODO seed기반 업데이트요청필요...
-				Utility::Log("Game", "GameManager", "RESPONSE_ITEM_BREAK " + successStr);
+				Utility::Log("Game", "GameManager", "RESPONSE_ITEM_BREAK ");
 
 				if (responseItemBreak->feedback() == true)
 				{

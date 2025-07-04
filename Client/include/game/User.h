@@ -37,7 +37,7 @@ namespace Game
 		void UpdateInventory(std::string guid, long itemSeed, int itemCount);
 		void ItemBreak(std::string guid, int removeCount, int moneyReward);
 		long GetAccountNumber();
-		void BreakRandomItem(Network::CustomOverlapped* sendOverlappedPtr);
+		void BreakItem(std::string guid, Network::CustomOverlapped* sendOverlappedPtr);
 		
 	public:
 		std::shared_ptr<Network::Client> ClientPtr;
